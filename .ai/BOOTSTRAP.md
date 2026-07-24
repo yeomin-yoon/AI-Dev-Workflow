@@ -46,7 +46,7 @@ For an explicit Integration Gate start or continuation, only the `main` Work ses
 
 For an actual cross-session handoff or user-owned external/manual action, read `.ai/contracts/ACTION_CARDS.md`. For an explicit close/replacement/return, read `.ai/contracts/SESSION_CLOSE.md`, then `MAIN_DESK.md` only when non-`main` or handling its return.
 
-For an explicit Workflow observation capture, collection, triage, update-check, or update-apply request, read only the matching `.ai/maintenance/MAINTAIN.md` or `.ai/maintenance/UPDATE.md`. This maintenance action may run from any valid session without activating its project role or changing lane state.
+For an explicit Workflow observation capture, collection, clean-release, triage, update-check, or update-apply request, read only the matching `.ai/maintenance/MAINTAIN.md` or `.ai/maintenance/UPDATE.md`. This maintenance action may run from any valid session without activating its project role or changing lane state.
 
 ## Readiness vs activation
 

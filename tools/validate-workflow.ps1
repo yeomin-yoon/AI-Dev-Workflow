@@ -102,6 +102,11 @@ $requiredPaths = @(
     '.ai/maintenance/release.yaml',
     '.ai/maintenance/update-state.yaml',
     '.ai/maintenance/managed-paths.yaml',
+    '.ai/shared/PROJECT.md',
+    '.ai/shared/SYSTEM_ARCHITECTURE.md',
+    '.ai/shared/knowledge/manifest.yaml',
+    '.ai/integration/queue.yaml',
+    '.gitignore',
     'tools/validate-workflow.ps1',
     '.github/workflows/validate.yml'
 )
@@ -124,6 +129,62 @@ if ($null -ne $releaseVersion -and $null -ne $installedVersion -and $releaseVers
 }
 if ($null -ne $scorecardVersion -and $scorecardVersion -ne 'null') {
     Add-Failure "SCORECARD.md is a reusable template and must keep workflow_version: null"
+}
+
+$projectStatus = Get-YamlScalar '.ai/shared/PROJECT.md' 'status'
+$architectureStatus = Get-YamlScalar '.ai/shared/SYSTEM_ARCHITECTURE.md' 'status'
+$knowledgeStatus = Get-YamlScalar '.ai/shared/knowledge/manifest.yaml' 'status'
+$integrationStatus = Get-YamlScalar '.ai/integration/queue.yaml' 'status'
+$integrationItems = Get-YamlScalar '.ai/integration/queue.yaml' 'items'
+$localUpdateSource = Get-YamlScalar '.ai/maintenance/update-state.yaml' 'source'
+
+if ($null -ne $projectStatus -and $projectStatus -ne 'uninitialized') {
+    Add-Failure "Canonical PROJECT.md must remain uninitialized, found: $projectStatus"
+}
+if ($null -ne $architectureStatus -and $architectureStatus -ne 'uninitialized') {
+    Add-Failure "Canonical SYSTEM_ARCHITECTURE.md must remain uninitialized, found: $architectureStatus"
+}
+if ($null -ne $knowledgeStatus -and $knowledgeStatus -ne 'uninitialized') {
+    Add-Failure "Canonical Knowledge manifest must remain uninitialized, found: $knowledgeStatus"
+}
+if ($null -ne $integrationStatus -and $integrationStatus -ne 'idle') {
+    Add-Failure "Canonical Integration queue must remain idle, found: $integrationStatus"
+}
+if ($null -ne $integrationItems -and $integrationItems -ne '[]') {
+    Add-Failure "Canonical Integration queue must contain no runtime items"
+}
+if ($null -ne $localUpdateSource -and $localUpdateSource -ne 'null') {
+    Add-Failure "Canonical update-state source must remain null"
+}
+
+$laneRoot = Get-RepositoryPath '.ai/lanes'
+if (Test-Path -LiteralPath $laneRoot -PathType Container) {
+    $runtimeLanes = @(Get-ChildItem -LiteralPath $laneRoot -Directory | Where-Object { $_.Name -ne '_template' })
+    foreach ($runtimeLane in $runtimeLanes) {
+        Add-Failure "Canonical source contains runtime Lane: .ai/lanes/$($runtimeLane.Name)"
+    }
+}
+
+foreach ($artifactDirectory in @('.ai/integration/requests', '.ai/integration/reviews')) {
+    $artifactRoot = Get-RepositoryPath $artifactDirectory
+    if (Test-Path -LiteralPath $artifactRoot -PathType Container) {
+        $runtimeArtifacts = @(Get-ChildItem -LiteralPath $artifactRoot -File | Where-Object { $_.Name -ne 'README.md' })
+        foreach ($runtimeArtifact in $runtimeArtifacts) {
+            Add-Failure "Canonical source contains runtime Integration artifact: $artifactDirectory/$($runtimeArtifact.Name)"
+        }
+    }
+}
+
+$gitDirectory = Get-RepositoryPath '.git'
+if (Test-Path -LiteralPath $gitDirectory) {
+    $trackedObservations = @(& git -C $RepositoryRoot ls-files -- '.ai/maintenance/observations/OBS-*.yaml')
+    if ($LASTEXITCODE -eq 0) {
+        foreach ($trackedObservation in $trackedObservations) {
+            if (-not [string]::IsNullOrWhiteSpace($trackedObservation)) {
+                Add-Failure "Canonical Git distribution tracks installation-specific Observation: $trackedObservation"
+            }
+        }
+    }
 }
 
 $changelogPath = Get-RepositoryPath '.ai/maintenance/CHANGELOG.md'

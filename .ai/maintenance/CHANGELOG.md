@@ -1,5 +1,11 @@
 # Workflow Changelog
 
+## manual-v1.21 — 2026-07-25
+
+- Added one explicit `CLEAN_RELEASE` command that turns supplied installed-project evidence into the latest clean canonical `.ai` without reverse-copying project state.
+- Treats installed common-file differences as untrusted candidates, rebuilds accepted changes against the latest canonical Core, and keeps release metadata and sanitized Evals source-owned.
+- Keeps publication human-controlled: the command validates a ready-to-publish source but never commits, pushes, changes remotes, or edits supplied projects.
+
 ## manual-v1.20 — 2026-07-25
 
 - Made `release.yaml` the single current-version authority and changed the reusable Scorecard to an unversioned template while preserving historical Eval versions.

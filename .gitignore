@@ -1,0 +1,3 @@
+# Canonical-source intake evidence may contain installation-specific locators.
+# Accepted changes are published as generic Core, Changelog, and sanitized Eval updates.
+.ai/maintenance/observations/OBS-*.yaml

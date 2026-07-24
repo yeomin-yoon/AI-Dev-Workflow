@@ -114,6 +114,47 @@ OBSERVATION_COLLECTION scanned=<n> new=<n> merged=<n> skipped=<n> conflicts=<n>
 destination=<canonical observations path> next=<triage|resolve_conflicts|none>
 ```
 
+## CLEAN_RELEASE: create the clean canonical `.ai`
+
+Run only when the user explicitly requests `CLEAN_RELEASE` from the canonical AI Dev Workflow source checkout and supplies every installed project/worktree root. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, directly affected Eval work, and source validation. It does not authorize a Git commit, push, remote change, project edit, or full installed `.ai` copy.
+
+The canonical source checkout is the output. Do not create a second nested repository or treat an installed project as the release source. Before writing, verify the canonical checkout and inventory its existing changes. Stop on unrelated or unexplained Core dirt instead of mixing releases.
+
+Every supplied installation is read-only. Use two evidence channels:
+
+1. collect direct `OBS-*.yaml` records using the rules above; and
+2. compare only common paths covered by the `managed` section of the canonical `.ai/maintenance/managed-paths.yaml`.
+
+An installed managed-file difference is an untrusted candidate, not authoritative content. Never bulk-copy or mirror it. Confirm its intent from an Observation, user report, current canonical contract, or a minimal diff; then reapply only the generic change onto the latest canonical file. An older installed version never overwrites a newer canonical rule. Ambiguous, conflicting, project-specific, or unsupported differences become `needs_evidence` or a user Decision Brief.
+
+Never read for reverse synchronization or copy into the canonical source:
+
+- `.ai/shared/PROJECT.md`, `.ai/shared/SYSTEM_ARCHITECTURE.md`, or project Knowledge except the managed Knowledge README;
+- any runtime Lane other than the canonical `_template`, including Architecture, Tasks, Builds, Reviews, state, and knowledge deltas;
+- Integration queue/items, requests, reviews, project Eval runs, local update state, backups, staging, or full chats/logs;
+- production code, documents, credentials, secrets, absolute project paths, project names, IDs, or user data.
+
+Canonical release metadata is rebuilt in the source; never reverse-copy installed `release.yaml`, `managed-paths.yaml`, `CHANGELOG.md`, Eval runs, or `update-state.yaml`. Raw collected observations are local intake evidence and are not part of the public clean distribution. Accepted changes are represented by the generic Core diff, Changelog, and a sanitized canonical Eval.
+
+For one accepted release batch:
+
+1. retain the uninitialized project/Knowledge/Integration scaffold and `_template` as the only Lane;
+2. apply the smallest generic change without weakening correctness, safety, explanation, or verification;
+3. add/update directly affected regression cases;
+4. bump the canonical version exactly once and update Changelog; do not rewrite historical Eval versions;
+5. create a sanitized Eval record with no project-specific content;
+6. run `tools/validate-workflow.ps1` from the source root and require PASS; and
+7. leave all changes uncommitted for human review and GitHub publication.
+
+If no candidate is accepted, do not bump the version or create release artifacts. Report exactly:
+
+```text
+CLEAN_RELEASE RESULT=<ready_to_publish|no_change|blocked> version=<version>
+sources=<n> observations=<n> common_candidates=<n> accepted=<n>
+excluded_project_state=<yes> validation=<pass|not_run|failed>
+artifacts=<paths|none> next=<review_and_commit|none|resolve_conflict|user_decision>
+```
+
 ## Triage and release
 
 Run only on explicit maintenance request. Batch related pending observations, verify the root cause against current Core and Evals, and classify each `accepted | rejected | needs_evidence`. An accepted change requires:
