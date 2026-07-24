@@ -124,7 +124,7 @@ Regression catalog:
 - integration order is reused without a redundant gate, and each copied sealed return integrates no more than one exact handoff revision before independent exact-range Review
 - a Workflow update restarts every session using the affected checkout, including all active Lanes and strict fixed-role sessions
 - update checks never silently apply a release, and update apply never overwrites preserved project state
-- release-copy build: one explicit canonical-source command may collect and triage supplied installed evidence, but supplied projects remain unchanged and complete; it updates only the separate canonical distribution copy with accepted generic Core changes, release metadata, sanitized Eval evidence, and stops before commit/push
+- release-copy build: one explicit canonical-distribution command may collect and triage supplied installed evidence, but supplied projects remain unchanged and complete; it updates only the separate canonical distribution copy with accepted generic Core changes, release metadata, sanitized Eval evidence, and stops before commit/push
 
 Treat low-cost and strong-model runs as practically equivalent only when both meet the floor on the same cases, the low-cost run adds no critical/scope failure, and its median review-cycle gap is at most one. Report human corrections and token/time differences; do not hide failed cases in averages.
 

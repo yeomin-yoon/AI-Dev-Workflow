@@ -86,9 +86,9 @@ Otherwise say nothing about capture during ordinary work. A `RETURN_TO_MAIN` car
 
 ## Collect from installed copies
 
-Run only when the user explicitly asks from the canonical AI Dev Workflow source checkout and supplies each source root. This is observation intake, not project/Git integration. Never discover sources by crawling parent directories or drives.
+Run only when the user explicitly asks from the canonical AI Dev Workflow distribution checkout and supplies each installation root. This is observation intake, not project/Git integration. Never discover installations by crawling parent directories or drives.
 
-A source may be an installed project/worktree root or its direct `.ai/maintenance/observations/` directory. For a project root, resolve only that exact child directory. Read only direct `OBS-*.yaml` files; never import project code, Knowledge, lanes, Tasks, Integration artifacts, Evals, update state, backups, full chats, or logs. Source files are read-only.
+An installation input may be a project/worktree root or its direct `.ai/maintenance/observations/` directory. For a project root, resolve only that exact child directory. Read only direct `OBS-*.yaml` files; never import project code, Knowledge, lanes, Tasks, Integration artifacts, Evals, update state, backups, full chats, or logs. Input files are read-only.
 
 Use two passes:
 
@@ -116,9 +116,9 @@ destination=<canonical observations path> next=<triage|resolve_conflicts|none>
 
 ## BUILD_RELEASE_COPY: update the separate distributable `.ai`
 
-Run only when the user explicitly requests `BUILD_RELEASE_COPY` from the separate canonical AI Dev Workflow source checkout and supplies every installed project/worktree root. The supplied installations retain their complete project state; the canonical checkout is the independent GitHub distribution copy. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, directly affected Eval work, and source validation. It does not authorize a Git commit, push, remote change, supplied-project edit/cleanup/deletion, or full installed `.ai` copy.
+Run only when the user explicitly requests `BUILD_RELEASE_COPY` from the separate canonical AI Dev Workflow distribution checkout and supplies every installed project/worktree root. The supplied installations retain their complete project state; the canonical checkout is the independent GitHub distribution copy. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, directly affected Eval work, and distribution validation. It does not authorize a Git commit, push, remote change, supplied-project edit/cleanup/deletion, or full installed `.ai` copy.
 
-The canonical source checkout's `.ai` is the output copy. Do not create a nested repository, sanitize an installation in place, or treat an installed project as the release destination. A third generated copy is unnecessary and would add another drift boundary. Before writing, verify the canonical checkout and inventory its existing changes. Stop on unrelated or unexplained Core dirt instead of mixing releases.
+The canonical distribution checkout's `.ai` is the output copy. Do not create a nested repository, sanitize an installation in place, or treat an installed project as the release destination. A third generated copy is unnecessary and would add another drift boundary. Before writing, verify the canonical checkout and inventory its existing changes. Stop on unrelated or unexplained Core dirt instead of mixing releases.
 
 Every supplied installation is read-only and lossless. Record its revision/status before inspection and verify that the command made no writes before reporting success. Use two evidence channels:
 
@@ -127,14 +127,14 @@ Every supplied installation is read-only and lossless. Record its revision/statu
 
 An installed managed-file difference is an untrusted candidate, not authoritative content. Never bulk-copy or mirror it. Confirm its intent from an Observation, user report, current canonical contract, or a minimal diff; then reapply only the generic change onto the latest canonical file. An older installed version never overwrites a newer canonical rule. Ambiguous, conflicting, project-specific, or unsupported differences become `needs_evidence` or a user Decision Brief.
 
-Never read for reverse synchronization or copy into the canonical source:
+Never read for reverse synchronization or copy into the canonical distribution:
 
 - `.ai/shared/PROJECT.md`, `.ai/shared/SYSTEM_ARCHITECTURE.md`, or project Knowledge except the managed Knowledge README;
 - any runtime Lane other than the canonical `_template`, including Architecture, Tasks, Builds, Reviews, state, and knowledge deltas;
 - Integration queue/items, requests, reviews, project Eval runs, local update state, backups, staging, or full chats/logs;
 - production code, documents, credentials, secrets, absolute project paths, project names, IDs, or user data.
 
-Canonical release metadata is rebuilt in the source; never reverse-copy installed `release.yaml`, `managed-paths.yaml`, `CHANGELOG.md`, Eval runs, or `update-state.yaml`. Raw collected observations are local intake evidence and are not part of the public clean distribution. Accepted changes are represented by the generic Core diff, Changelog, and a sanitized canonical Eval.
+Canonical release metadata is rebuilt in the distribution checkout; never reverse-copy installed `release.yaml`, `managed-paths.yaml`, `CHANGELOG.md`, Eval runs, or `update-state.yaml`. Raw collected observations are local intake evidence and are not part of the published distribution. Accepted changes are represented by the generic Core diff, Changelog, and a sanitized canonical Eval.
 
 For one accepted release batch:
 
@@ -143,7 +143,7 @@ For one accepted release batch:
 3. add/update directly affected regression cases;
 4. bump the canonical version exactly once and update Changelog; do not rewrite historical Eval versions;
 5. create a sanitized Eval record with no project-specific content;
-6. run `tools/validate-workflow.ps1` from the source root and require PASS; and
+6. run `tools/validate-workflow.ps1` from the distribution root and require PASS; and
 7. leave all changes uncommitted for human review and GitHub publication.
 
 If no candidate is accepted, do not bump the version or create release artifacts. Report exactly:

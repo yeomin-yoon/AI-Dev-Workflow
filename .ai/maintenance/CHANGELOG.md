@@ -1,5 +1,11 @@
 # Workflow Changelog
 
+## manual-v1.23 — 2026-07-25
+
+- Standardized user-facing terms around the AI Dev Workflow distribution repository, installed project state, shared Knowledge, commits, and Integration order to remove source/copy ambiguity.
+- Labeled Windows PowerShell 5.1 as the default Windows validation path and PowerShell 7 as the optional `pwsh` path.
+- Clarified that GitHub Actions is configured but remote CI success must be confirmed after the first Push; a local PASS is not remote-run evidence.
+
 ## manual-v1.22 — 2026-07-25
 
 - Renamed `CLEAN_RELEASE` to `BUILD_RELEASE_COPY` so the command states that it updates a separate GitHub distribution copy rather than cleaning an installed project in place.

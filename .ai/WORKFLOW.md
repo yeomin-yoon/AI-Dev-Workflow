@@ -112,7 +112,7 @@ observed friction → local Observation → explicit canonical collection
 - Manual capture always records the user's report as pending, marking unsupported details `unknown`.
 - Automatic capture runs only at a natural role stop and requires the narrow evidence triggers in `BOOTSTRAP.md`; ordinary project defects and isolated corrected model slips are excluded.
 - Capture never edits Workflow Core, blocks the current Task, or changes lane state. Triage/release happens only on explicit maintenance request.
-- Records from installed projects/worktrees remain local until an explicit canonical-source collection request supplies their roots. Collection reads only Observation YAML, is idempotent by source record, groups exact fingerprints, and never imports project state or starts triage/release.
+- Records from installed projects/worktrees remain local until an explicit canonical-distribution collection request supplies their roots. Collection reads only Observation YAML, is idempotent by source record, groups exact fingerprints, and never imports project state or starts triage/release.
 - `.ai/maintenance/managed-paths.yaml` separates replaceable Core/templates from preserved project Knowledge, lanes, integration/eval results, observations, and local update state.
 - Update check and apply are separate actions. Apply backs up managed files, preserves project state, executes only declared migrations, validates contracts, and leaves a rollback path.
 - No downloaded installer, hook, or migration script executes merely because an upstream release says so; inspect a pinned source first.
