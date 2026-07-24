@@ -215,18 +215,43 @@ sources:
 
 </details>
 
-공통 개선을 반영한 깨끗한 `.ai` 배포 원본이 필요하면 **AI Dev Workflow 원본 저장소**를 새 AI 세션으로 열고 다음 한 번만 보낸다.
+### GitHub용 `.ai` 복사본 갱신
+
+개발 프로젝트의 `.ai`를 정리하거나 지우지 않는다. 상태가 모두 남아 있는 개발 프로젝트와, 프로젝트 내용이 없는 GitHub 배포용 복사본을 별도로 유지한다.
 
 ```text
-Read `.ai/maintenance/MAINTAIN.md` and run CLEAN_RELEASE.
+개발 프로젝트/.ai       → Knowledge·Lane·Task·Review를 그대로 보존
+AI-Dev-Workflow/.ai     → 공통 Workflow만 담은 별도 배포용 복사본
+```
+
+공통 개선을 배포용 복사본에 반영하려면 **AI Dev Workflow 원본 저장소**를 새 AI 세션으로 열고 다음 한 번만 보낸다.
+
+```text
+Read `.ai/maintenance/MAINTAIN.md` and run BUILD_RELEASE_COPY.
 sources:
 - <개발 프로젝트 또는 Worktree 경로>
 user_language=ko
 ```
 
-이 명령은 지정한 설치본을 읽기 전용으로 비교하고, Observation과 공통 Workflow 파일의 차이를 개선 후보로 사용한다. 프로젝트 Knowledge·실제 Lane·Architecture·Task·Build·Review·Integration·업데이트 상태는 복사하지 않는다. 승인 가능한 공통 변경만 현재 원본에 일반화해 반영하고 버전·Changelog·Eval·검증까지 마친다. 중요한 정책 충돌은 적용하지 않고 먼저 묻는다.
+이 명령은 지정한 개발 프로젝트를 읽기 전용으로 비교하고, Observation과 공통 Workflow 파일의 차이를 개선 후보로 사용한다. 개발 프로젝트의 파일을 삭제·정리·수정하지 않으며, 프로젝트 Knowledge·실제 Lane·Architecture·Task·Build·Review·Integration·업데이트 상태도 배포용 복사본에 넣지 않는다. 승인 가능한 공통 변경만 별도 `AI-Dev-Workflow/.ai`에 일반화해 반영하고 버전·Changelog·Eval·검증까지 마친다. 중요한 정책 충돌은 적용하지 않고 먼저 묻는다.
 
-성공 결과가 `CLEAN_RELEASE RESULT=ready_to_publish`이면 원본 저장소가 GitHub에 올릴 최신 배포본이다. Commit과 Push는 실행하지 않으므로 변경 내용을 확인한 뒤 GitHub Desktop에서 올리면 된다. `no_change`이면 올릴 새 공통 변경이 없고, `blocked`이면 함께 나온 충돌이나 사용자 결정을 먼저 해결한다.
+성공 결과가 `BUILD_RELEASE_COPY RESULT=ready_to_publish`이면 `AI-Dev-Workflow/.ai`가 GitHub에 올릴 최신 복사본이다. Commit과 Push는 실행하지 않으므로 변경 내용을 확인한 뒤 GitHub Desktop에서 올리면 된다. `no_change`이면 올릴 새 공통 변경이 없고, `blocked`이면 함께 나온 충돌이나 사용자 결정을 먼저 해결한다.
+
+<details>
+<summary>무엇이 보존되고 무엇이 반영되는가</summary>
+
+| 구분 | 처리 |
+|---|---|
+| 개발 프로젝트의 코드·문서 | 읽거나 복사하지 않음 |
+| Project Knowledge·Architecture·실제 Lane·Task·Build·Review | 개발 프로젝트에 그대로 보존 |
+| Observation과 공통 파일 Diff | 개선 여부를 판단하는 후보로만 사용 |
+| `BOOTSTRAP`, `WORKFLOW`, 역할·계약·공통 템플릿 | 승인된 일반 개선만 배포용 복사본에 재적용 |
+| 버전·Changelog·Eval | 배포용 복사본에서 새로 생성·검증 |
+| Commit·Push | 사용자가 Diff를 확인한 뒤 수행 |
+
+배포본을 다시 프로젝트에 적용할 때도 관리 대상 공통 파일만 갱신하고 기존 Knowledge·Lane·작업 기록은 보존하므로, 제외된 프로젝트 상태를 다시 만들 필요가 없다.
+
+</details>
 
 배포 출처를 처음 한 번 지정한 뒤 업데이트는 확인과 적용을 나눠 실행한다.
 
@@ -313,7 +338,7 @@ Reviewer PASS 후 사용자는 `RETURN_TO_MAIN`의 복붙 문장만 main Work에
 
 이 GitHub 저장소는 Workflow 배포 원본이다. 저장소 자체의 Git 이력, `tools/`, `.github/`는 원본 유지보수와 배포 전 검증에만 사용한다. 실제 프로젝트는 복사된 `.ai`와 그 프로젝트 자신의 Git을 사용하며, 원본 저장소의 `.git`을 복사하거나 공유하지 않는다.
 
-현재 Workflow 버전의 단일 원본은 `.ai/maintenance/release.yaml`이다. Scorecard 템플릿은 버전을 고정하지 않고, 실제 Eval 기록을 만들 때 해당 값을 복사한다. 이미 완료된 과거 Eval의 버전은 변경하지 않는다. 설치본에서 원본을 갱신할 때는 위의 `CLEAN_RELEASE`를 사용하며 `.ai` 전체를 역복사하지 않는다.
+현재 Workflow 버전의 단일 원본은 `.ai/maintenance/release.yaml`이다. Scorecard 템플릿은 버전을 고정하지 않고, 실제 Eval 기록을 만들 때 해당 값을 복사한다. 이미 완료된 과거 Eval의 버전은 변경하지 않는다. 설치본의 공통 개선을 별도 배포용 복사본에 반영할 때는 위의 `BUILD_RELEASE_COPY`를 사용하며 `.ai` 전체를 역복사하거나 개발 프로젝트를 정리하지 않는다.
 
 원본을 수정하거나 배포하기 전에는 저장소 루트에서 다음 읽기 전용 검사를 실행한다.
 

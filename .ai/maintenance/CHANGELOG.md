@@ -1,5 +1,11 @@
 # Workflow Changelog
 
+## manual-v1.22 — 2026-07-25
+
+- Renamed `CLEAN_RELEASE` to `BUILD_RELEASE_COPY` so the command states that it updates a separate GitHub distribution copy rather than cleaning an installed project in place.
+- Added a user-facing two-copy guide and explicit preservation matrix: complete project state remains in each development repository while only generic Workflow improvements reach the distribution copy.
+- Requires supplied project roots to remain read-only/lossless and reports whether their revision/status stayed unchanged before publication is considered ready.
+
 ## manual-v1.21 — 2026-07-25
 
 - Added one explicit `CLEAN_RELEASE` command that turns supplied installed-project evidence into the latest clean canonical `.ai` without reverse-copying project state.

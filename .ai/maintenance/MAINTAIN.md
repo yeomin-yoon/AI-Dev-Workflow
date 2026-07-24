@@ -114,13 +114,13 @@ OBSERVATION_COLLECTION scanned=<n> new=<n> merged=<n> skipped=<n> conflicts=<n>
 destination=<canonical observations path> next=<triage|resolve_conflicts|none>
 ```
 
-## CLEAN_RELEASE: create the clean canonical `.ai`
+## BUILD_RELEASE_COPY: update the separate distributable `.ai`
 
-Run only when the user explicitly requests `CLEAN_RELEASE` from the canonical AI Dev Workflow source checkout and supplies every installed project/worktree root. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, directly affected Eval work, and source validation. It does not authorize a Git commit, push, remote change, project edit, or full installed `.ai` copy.
+Run only when the user explicitly requests `BUILD_RELEASE_COPY` from the separate canonical AI Dev Workflow source checkout and supplies every installed project/worktree root. The supplied installations retain their complete project state; the canonical checkout is the independent GitHub distribution copy. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, directly affected Eval work, and source validation. It does not authorize a Git commit, push, remote change, supplied-project edit/cleanup/deletion, or full installed `.ai` copy.
 
-The canonical source checkout is the output. Do not create a second nested repository or treat an installed project as the release source. Before writing, verify the canonical checkout and inventory its existing changes. Stop on unrelated or unexplained Core dirt instead of mixing releases.
+The canonical source checkout's `.ai` is the output copy. Do not create a nested repository, sanitize an installation in place, or treat an installed project as the release destination. A third generated copy is unnecessary and would add another drift boundary. Before writing, verify the canonical checkout and inventory its existing changes. Stop on unrelated or unexplained Core dirt instead of mixing releases.
 
-Every supplied installation is read-only. Use two evidence channels:
+Every supplied installation is read-only and lossless. Record its revision/status before inspection and verify that the command made no writes before reporting success. Use two evidence channels:
 
 1. collect direct `OBS-*.yaml` records using the rules above; and
 2. compare only common paths covered by the `managed` section of the canonical `.ai/maintenance/managed-paths.yaml`.
@@ -149,9 +149,9 @@ For one accepted release batch:
 If no candidate is accepted, do not bump the version or create release artifacts. Report exactly:
 
 ```text
-CLEAN_RELEASE RESULT=<ready_to_publish|no_change|blocked> version=<version>
+BUILD_RELEASE_COPY RESULT=<ready_to_publish|no_change|blocked> version=<version>
 sources=<n> observations=<n> common_candidates=<n> accepted=<n>
-excluded_project_state=<yes> validation=<pass|not_run|failed>
+source_projects_unchanged=<yes|no|unknown> excluded_project_state=<yes> validation=<pass|not_run|failed>
 artifacts=<paths|none> next=<review_and_commit|none|resolve_conflict|user_decision>
 ```
 
