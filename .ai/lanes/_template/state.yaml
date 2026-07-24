@@ -1,0 +1,34 @@
+schema_version: 2
+lane: <lane-id>
+phase: uninitialized
+status: idle # idle | active | blocked | complete
+source_revision: null
+active_feature: null
+active_task: null
+
+artifacts:
+  architecture: .ai/lanes/<lane-id>/architecture.md
+  task: null
+  build_result: null
+  review_result: null
+  integration_requests: []
+
+next:
+  role: knowledge_maintainer # knowledge_maintainer | architect | builder | reviewer
+  action: initialize_lane
+  inputs:
+    - .ai/BOOTSTRAP.md
+    - .ai/lanes/<lane-id>/lane.yaml
+
+blocked:
+  type: null
+  reason: null
+  need: null
+  owner: null
+
+knowledge_sync:
+  status: clean # clean | pending | required
+  pending_reviews: []
+
+open_risks: []
+updated_at: null

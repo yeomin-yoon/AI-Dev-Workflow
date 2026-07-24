@@ -1,0 +1,49 @@
+schema_version: 1
+
+managed:
+  - .ai/BOOTSTRAP.md
+  - .ai/WORKFLOW.md
+  - .ai/roles/**
+  - .ai/contracts/**
+  - .ai/reference/**
+  - .ai/lanes/README.md
+  - .ai/lanes/_template/**
+  - .ai/integration/README.md
+  - .ai/integration/requests/README.md
+  - .ai/integration/reviews/README.md
+  - .ai/evals/README.md
+  - .ai/evals/SCORECARD.md
+  - .ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md
+  - .ai/shared/knowledge/README.md
+  - .ai/maintenance/release.yaml
+  - .ai/maintenance/managed-paths.yaml
+  - .ai/maintenance/.gitignore
+  - .ai/maintenance/MAINTAIN.md
+  - .ai/maintenance/UPDATE.md
+  - .ai/maintenance/CHANGELOG.md
+  - .ai/maintenance/observations/README.md
+  - .ai/maintenance/migrations/**
+
+preserved:
+  - .ai/shared/PROJECT.md
+  - .ai/shared/SYSTEM_ARCHITECTURE.md
+  - .ai/shared/knowledge/manifest.yaml
+  - .ai/shared/knowledge/project.yaml
+  - .ai/shared/knowledge/glossary.yaml
+  - .ai/shared/knowledge/modules/**
+  - .ai/shared/knowledge/features/**
+  - .ai/shared/knowledge/interfaces/**
+  - .ai/shared/knowledge/rules/**
+  - .ai/shared/knowledge/documents/**
+  - .ai/lanes/<runtime-lane>/** # every lane except _template
+  - .ai/integration/queue.yaml
+  - .ai/integration/requests/<request-artifact> # every file except README.md
+  - .ai/integration/reviews/<review-artifact> # every file except README.md
+  - .ai/evals/runs/**
+  - .ai/maintenance/update-state.yaml
+  - .ai/maintenance/observations/<observation>.yaml
+  - .ai/maintenance/backups/**
+
+precedence:
+  - Managed documentation/template paths and preserved runtime paths do not overlap.
+  - All other ambiguous or unknown paths are preserved and reported for review.

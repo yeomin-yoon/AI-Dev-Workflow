@@ -1,0 +1,18 @@
+schema_version: 1
+workflow_version: manual-v1.20
+released_at: 2026-07-25
+
+compatibility:
+  lane_schema: [2]
+  lane_state_schema: [2]
+  knowledge_schema: [2]
+  maintenance_schema: [1]
+
+source:
+  repository: null
+  release_ref: null
+
+migrations:
+  - from: manual-v1.11
+    to: manual-v1.12
+    path: .ai/maintenance/migrations/manual-v1.11-to-manual-v1.12.md

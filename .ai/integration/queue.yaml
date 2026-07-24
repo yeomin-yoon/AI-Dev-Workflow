@@ -1,0 +1,24 @@
+schema_version: 1
+status: idle # idle | integrating | blocked | verified
+base_revision: null
+
+items: []
+# - lane: character
+#   task: TASK-CHAR-001
+#   base_revision: abc1000
+#   reviewed_revision: abc1234
+#   reviewed_tree: def5678
+#   handoff_revision: abc1250
+#   review: .ai/lanes/character/reviews/REVIEW-TASK-CHAR-001-1.md
+#   main_before: null
+#   main_after: null
+#   merge_strategy: null # fast_forward | merge | cherry_pick | squash
+#   review_range: null
+#   integration_review: null
+#   status: queued # queued | merging | merged | failed | verified
+#   depends_on: []
+
+integration_checks: []
+knowledge_sync_required: false
+blocked_reason: null
+updated_at: null

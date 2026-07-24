@@ -1,0 +1,20 @@
+schema_version: 2
+status: uninitialized
+source_revision: null
+generated_at: null
+last_validated_at: null
+
+project_profile: .ai/shared/PROJECT.md
+system_architecture: .ai/shared/SYSTEM_ARCHITECTURE.md
+glossary: .ai/shared/knowledge/glossary.yaml
+
+indexes:
+  modules: []
+  features: []
+  interfaces: []
+  rules: []
+  documents: []
+
+known_stale: []
+known_conflicts: []
+unknowns: []

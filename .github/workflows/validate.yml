@@ -1,0 +1,19 @@
+name: Validate workflow source
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+      - name: Validate workflow
+        shell: pwsh
+        run: ./tools/validate-workflow.ps1

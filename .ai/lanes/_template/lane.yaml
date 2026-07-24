@@ -1,0 +1,32 @@
+schema_version: 2
+id: <lane-id>
+display_name: <Lane Name>
+status: uninitialized # uninitialized | active | retired
+purpose: unknown
+
+owned_paths: [] # production paths; no write access until evidence or approved Architecture assigns them
+shared_read_only: [] # shared production paths; role contracts govern .ai artifact writes
+forbidden_paths: []
+
+architecture:
+  global: .ai/shared/SYSTEM_ARCHITECTURE.md
+  local: .ai/lanes/<lane-id>/architecture.md
+
+artifacts:
+  tasks: .ai/lanes/<lane-id>/tasks
+  builds: .ai/lanes/<lane-id>/builds
+  reviews: .ai/lanes/<lane-id>/reviews
+  knowledge_delta: .ai/lanes/<lane-id>/knowledge-delta
+
+dependencies:
+  upstream_lanes: []
+  downstream_lanes: []
+  shared_contracts: []
+
+verification:
+  build: []
+  tests: []
+  runtime: []
+
+source_revision: null
+last_validated: null
