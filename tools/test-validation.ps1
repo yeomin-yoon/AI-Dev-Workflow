@@ -42,6 +42,18 @@ function New-Fixture {
             Copy-Item -LiteralPath $source -Destination $fixtureRoot -Recurse -Force
         }
     }
+
+    # Source Eval records are bound to the repository's real Git graph. Generic
+    # fixtures create their own Git-backed records when release evidence is in
+    # scope, so importing source history into a detached fixture is invalid.
+    $copiedEvalRuns = Join-Path $fixtureRoot 'evals/runs'
+    if (Test-Path -LiteralPath $copiedEvalRuns -PathType Container) {
+        foreach ($sourceEval in @(Get-ChildItem -LiteralPath $copiedEvalRuns -File -Filter 'EVAL-*.md')) {
+            Assert-SafeFixturePath $sourceEval.FullName
+            Remove-Item -LiteralPath $sourceEval.FullName -Force
+        }
+    }
+
     return $fixtureRoot
 }
 
