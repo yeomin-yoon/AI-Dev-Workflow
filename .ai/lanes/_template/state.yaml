@@ -1,10 +1,8 @@
-schema_version: 2
+schema_version: 3
 lane: <lane-id>
 phase: uninitialized
 status: idle # idle | active | blocked | complete
 source_revision: null
-active_feature: null
-active_task: null
 
 artifacts:
   architecture: .ai/lanes/<lane-id>/architecture.md
@@ -30,5 +28,4 @@ knowledge_sync:
   status: clean # clean | pending | required
   pending_reviews: []
 
-open_risks: []
 updated_at: null

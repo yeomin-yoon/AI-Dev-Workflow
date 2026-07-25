@@ -36,7 +36,7 @@ function New-Fixture {
     $fixtureRoot = Join-Path $runRoot $Name
     Assert-SafeFixturePath $fixtureRoot
     $null = New-Item -ItemType Directory -Path $fixtureRoot -Force
-    foreach ($entry in @('.ai', '.github', 'tools', 'README.md', '.gitignore', '.gitattributes')) {
+    foreach ($entry in @('.ai', '.github', 'tools', 'maintenance', 'evals', 'README.md', 'LICENSE', '.gitignore', '.gitattributes')) {
         $source = Join-Path $RepositoryRoot $entry
         if (Test-Path -LiteralPath $source) {
             Copy-Item -LiteralPath $source -Destination $fixtureRoot -Recurse -Force
@@ -98,11 +98,11 @@ function Write-ModernEval {
     $sourceTree = (& git -C $FixtureRoot rev-parse 'HEAD^{tree}').Trim()
     $quality = if ($Result -eq 'pass') { 'pass' } else { 'fail' }
     $accepted = if ($Result -eq 'pass') { 'yes' } else { 'no' }
-    $target = Join-Path $FixtureRoot ".ai/evals/runs/EVAL-20990101T000000000Z-test-manual-v1.24-${Result}.md"
+    $target = Join-Path $FixtureRoot "evals/runs/EVAL-20990101T000000000Z-test-manual-v1.0-${Result}.md"
     $content = @"
 ---
 schema_version: 2
-id: EVAL-20990101T000000000Z-test-manual-v1.24-$Result
+id: EVAL-20990101T000000000Z-test-manual-v1.0-$Result
 status: completed
 result: $Result
 completed_at: 2099-01-01T00:00:00.000Z
@@ -117,7 +117,7 @@ model: test
 reasoning: test
 optional_interventions: []
 user_language: ko
-workflow_version: manual-v1.24
+workflow_version: manual-v1.0
 eval_type: fixed_contract
 regression_cases:
   - source-validation
@@ -270,6 +270,14 @@ try {
     }
     Write-Output 'PASS release-evidence=failed-history-not-eligible'
 
+    Assert-NegativeFixture 'shallow-release-checkout' {
+        param($root)
+        $target = Join-Path $root '.github/workflows/release-evidence.yml'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('          fetch-depth: 0', '          fetch-depth: 1')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'CI workflow is missing required token: path=.github/workflows/release-evidence.yml token=fetch-depth: 0'
+
     Assert-NegativeFixture 'missing-role' {
         param($root)
         $target = Join-Path $root '.ai/roles/ARCHITECT.md'
@@ -284,6 +292,42 @@ try {
         $text = $text.Replace('phase: uninitialized', 'phase: building')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } "Unexpected 'phase' in .ai/lanes/_template/state.yaml"
+
+    Assert-NegativeFixture 'legacy-template-state-key' {
+        param($root)
+        $target = Join-Path $root '.ai/lanes/_template/state.yaml'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('source_revision: null', "source_revision: null`nactive_task: null")
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Canonical template state contains removed schema-2 key: active_task'
+
+    Assert-NegativeFixture 'source-eval-install-leak' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/runs/EVAL-20990101T000000000Z-test-manual-v1.0-leak.md'
+        [System.IO.File]::WriteAllText($target, "source-only release evidence must not be installed`n", [System.Text.UTF8Encoding]::new($false))
+    } 'Installable .ai contains a canonical/source Eval record'
+
+    Assert-NegativeFixture 'source-release-procedure-install-leak' {
+        param($root)
+        $target = Join-Path $root '.ai/maintenance/MAINTAIN.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text += "`n## BUILD_RELEASE_COPY`n"
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Installable MAINTAIN.md contains source-only release procedure'
+
+    Assert-NegativeFixture 'incomplete-migration-metadata' {
+        param($root)
+        $target = Join-Path $root '.ai/maintenance/release.yaml'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $malformedMigration = @'
+migrations:
+  - from: manual-v0.9
+    to: manual-v1.0
+    path: .ai/maintenance/migrations/manual-v0.9-to-manual-v1.0.md
+'@
+        $text = $text.Replace('migrations: []', $malformedMigration.TrimEnd())
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'release.yaml migration entries must declare from, to, required, and path in that order'
 
     Assert-NegativeFixture 'incomplete-state-fsm' {
         param($root)
@@ -307,18 +351,18 @@ try {
 
     Assert-NegativeFixture 'empty-modern-eval' {
         param($root)
-        $target = Join-Path $root '.ai/evals/runs/EVAL-20990101T000000000Z-test-manual-v1.24-empty.md'
+        $target = Join-Path $root 'evals/runs/EVAL-20990101T000000000Z-test-manual-v1.0-empty.md'
         $content = @'
 ---
 schema_version: 2
-id: EVAL-20990101T000000000Z-test-manual-v1.24-empty
+id: EVAL-20990101T000000000Z-test-manual-v1.0-empty
 status: completed
 result: pass
 completed_at: 2099-01-01T00:00:00.000Z
 source_revision: 0000000000000000000000000000000000000000
 source_tree: 0000000000000000000000000000000000000000
 quality_floor: pass
-workflow_version: manual-v1.24
+workflow_version: manual-v1.0
 regression_cases: []
 ---
 

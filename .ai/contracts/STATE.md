@@ -3,13 +3,11 @@
 Path: `.ai/lanes/<lane>/state.yaml`
 
 ```yaml
-schema_version: 2
+schema_version: 3
 lane: <lane>
 phase: uninitialized
 status: idle
 source_revision: null
-active_feature: null
-active_task: null
 artifacts:
   architecture: null
   task: null
@@ -28,11 +26,12 @@ blocked:
 knowledge_sync:
   status: clean
   pending_reviews: []
-open_risks: []
 updated_at: null
 ```
 
 State is a pointer record, not a chat summary. Update evidence artifact and next role with every phase change. One writer edits a lane state at a time. Do not add progress prose, completed-task history, or model-specific phases; Review artifacts and Git carry history.
+
+Schema `2` remains readable for preserved installations. Its legacy `active_feature`, `active_task`, and `open_risks` keys are non-authoritative and must not be updated: derive the Task from `artifacts.task`, and read risks from the referenced Architecture/Review artifact. New state and migrated state use schema `3` without those keys.
 
 - `phase` is the preserved lifecycle position shown below; never set it to `blocked`.
 - `status` is `idle | active | blocked | complete`.
@@ -75,7 +74,7 @@ Issue type and owner classification come only from `.ai/reference/OPERATIONS.md`
 | From | Event | To | Next |
 |---|---|---|---|
 | `uninitialized/idle` | Knowledge Maintainer starts first `BUILD` | `discovery/active` | Knowledge Maintainer with `continue_initial_discovery` |
-| `discovery/active` | initial discovery completes | `synced/idle`; clear active Feature/Task and Task/Build/Review pointers, retain Architecture | Architect with `await_feature_seed` |
+| `discovery/active` | initial discovery completes | `synced/idle`; clear Task/Build/Review pointers, retain Architecture | Architect with `await_feature_seed` |
 | `synced/idle` or `accepted/active` | Architect accepts a Feature seed or starts approved redesign | `design/active` | Architect with `continue_design` |
 | `design/active` | consequential user decision is pending | preserve `design/active` | Architect with `await_user_*` action |
 | `design/active` | approved Task is materialized | `ready_to_build/active` | Builder with Task inputs |

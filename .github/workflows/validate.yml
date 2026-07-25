@@ -1,4 +1,4 @@
-name: Validate workflow source
+name: Validate workflow structure
 
 on:
   push:
@@ -18,21 +18,23 @@ jobs:
     steps:
       - name: Check out source
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-      - name: Validate release source (Windows PowerShell 5.1)
+      - name: Validate structure (Windows PowerShell 5.1)
         if: runner.os == 'Windows'
         shell: powershell
-        run: .\tools\validate-workflow.ps1 -RequireReleaseEvidence
+        run: .\tools\validate-workflow.ps1
 
       - name: Run negative fixtures (Windows PowerShell 5.1)
         if: always() && runner.os == 'Windows'
         shell: powershell
         run: .\tools\test-validation.ps1
 
-      - name: Validate release source (Ubuntu PowerShell 7)
+      - name: Validate structure (Ubuntu PowerShell 7)
         if: runner.os == 'Linux'
         shell: pwsh
-        run: ./tools/validate-workflow.ps1 -RequireReleaseEvidence
+        run: ./tools/validate-workflow.ps1
 
       - name: Run negative fixtures (Ubuntu PowerShell 7)
         if: always() && runner.os == 'Linux'

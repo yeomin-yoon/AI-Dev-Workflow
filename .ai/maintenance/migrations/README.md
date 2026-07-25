@@ -1,9 +1,7 @@
 # Workflow Migrations
 
-Versioned migrations are required only when a new Workflow release changes preserved-state schemas or paths.
+Versioned migrations are required when a new Workflow release makes a preserved-state schema/path incompatible. A release may also declare `required: false` for a lossless cleanup when both old and new schemas remain compatible; optional cleanup must write nothing when its preconditions are not met.
 
 Each migration declares supported `from/to` versions, exact readable/writable paths, preconditions, transformation, validation, and rollback.
 
-Available:
-
-- `manual-v1.11-to-manual-v1.12.md`: preserves project state while normalizing lane/state ownership, Task approval status, and Knowledge revision keys.
+No migration is required for the first public release, `manual-v1.0`.

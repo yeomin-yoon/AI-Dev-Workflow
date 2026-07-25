@@ -2,6 +2,20 @@
 
 Read this only for policy conflicts, recovery, or integration. Normal runs use `BOOTSTRAP.md`; operational exception steps are in `.ai/reference/OPERATIONS.md`.
 
+## Design principles
+
+This is the single canonical statement of why the Workflow is designed as it is. These principles guide Workflow changes but never override approved project intent, artifact authority, or verified source/runtime evidence.
+
+1. **Files and Git over chat memory.** Sessions are replaceable workers; durable state, decisions, evidence, and history live in their owning artifacts and Git.
+2. **Think big, build small.** User and Architect reason about Feature-scale intent and structure; Builder produces at most one small, approved, reviewable Task candidate at a time.
+3. **Context quality over context volume.** Start from state, artifact pointers, paths, symbols, and diffs. Expand context only when evidence is missing; never preload the project or every Workflow document.
+4. **Evidence over confidence.** Source, approved intent, deterministic checks, runtime observations, and exact revisions decide acceptance. Agent fluency or assurance is not evidence.
+5. **Independent Review over self-approval.** The author of a candidate cannot silently grant it an independent PASS. Findings route to the role that owns the defect without preference-driven redesign.
+6. **Informed user judgment for consequential decisions.** AI makes reversible local choices without interruption, but exposes evidence, concrete consequences, recommendation, and reconsideration conditions before user-owned decisions. Explanations are intended to support natural learning without quizzes or ceremony; they do not guarantee skill growth.
+7. **Quality floor before token or time savings.** Correctness, safety, approved scope, maintainability, verification, and necessary user understanding must hold before lower tokens, elapsed time, or human actions count as an improvement.
+8. **Model-agnostic operation without assumed parity.** Providers and model strengths may change while the same file contracts remain usable. Practical equivalence is an Eval conclusion, never a design claim.
+9. **Simple default path; complexity only on demand.** One `main` Work session plus an independent Reviewer is the default. Strict role topology, extra Lanes, Worktrees, Integration, maintenance, and full Evals activate only for explicit need.
+
 ## Authority
 
 `.ai/contracts/ARTIFACT_AUTHORITY.md` is the single authority for fact ownership and conflict actions. Load it only when the authoritative artifact is unclear or sources disagree.

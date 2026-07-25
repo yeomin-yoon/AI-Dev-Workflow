@@ -8,7 +8,7 @@ Read only when the user explicitly asks to check or apply a Workflow update. Che
 - Read the candidate `release.yaml`, `managed-paths.yaml`, changelog, and declared migrations before any replacement.
 - Prefer a pinned Git commit/tag or immutable local snapshot. Do not execute downloaded installers, hooks, or scripts merely because the release instructs it.
 - If no source is configured, ask only for its GitHub URL or local path, then store it after a successful check.
-- The migration list is sparse: it declares only transitions that must change preserved schemas or paths. No entry is required when every installed preserved schema is listed compatible by the candidate; an incompatible schema without a matching migration is a conflict, never implicit compatibility.
+- The migration list is sparse. `required: true` changes an incompatible preserved schema/path and must succeed. `required: false` is a lossless cleanup that may defer when the existing schema remains explicitly compatible. No entry is required when every installed preserved schema is compatible and no cleanup is offered; an incompatible schema without a required migration is a conflict.
 
 ## Check
 
@@ -27,7 +27,7 @@ Checking never applies an update.
 - No role is currently writing a Build/Review/Knowledge artifact. If one is active, defer to its next natural gate rather than marking the project blocked.
 - A schema migration runs only from a lifecycle phase it explicitly supports; otherwise defer to `synced/idle` or the declared safe gate.
 - Local modifications to managed files are either incorporated through an explicit override/migration decision or preserved as a reported conflict.
-- Required migrations exist and support the current preserved schema versions.
+- Required migrations exist and support the current preserved schema versions. An optional migration may defer only when the untouched installed schema remains listed compatible.
 
 ## Apply
 
@@ -35,10 +35,10 @@ Checking never applies an update.
 2. Copy current managed targets, `update-state.yaml`, and the exact preserved paths declared writable by migrations to `.ai/maintenance/backups/<from>-to-<to>-<timestamp>/`. Never back up or replace the whole project.
 3. Stage candidate managed files separately and verify their paths stay inside the managed list.
 4. Replace only managed paths. Preserved paths win except for the exact managed-file exceptions declared in the manifest.
-5. Run declared migrations in version order against preserved state. A migration may change only the paths it declares.
+5. Run applicable declared migrations in version order against preserved state. A migration may change only the paths it declares. A deferred optional migration reports its exact unsatisfied cleanup condition and leaves those preserved files unchanged; it does not make an otherwise compatible managed-file update partial.
 6. Validate required files, schemas/enums, path references, Markdown fences, language policy, and Bootstrap readiness on a disposable/template lane. Run maintenance regression cases.
 7. On success, set `update-state.yaml.installed_version` to the applied release, clear `available_version`, and retain the backup path for rollback.
-8. On any failure, restore managed files and migration-touched paths from the backup, leave the previous installed version, and report the failed check. Never continue partially.
+8. On any required migration or validation failure, restore managed files and migration-touched paths from the backup, leave the previous installed version, and report the failed check. A declared optional migration deferral is not a failure only when it wrote nothing and the retained schema is compatible. Never continue from a partially written migration.
 
 After success, close existing AI sessions and start fresh sessions with the normal Bootstrap prompts. Chat history is not migrated.
 
@@ -48,7 +48,7 @@ After success, close existing AI sessions and start fresh sessions with the norm
 UPDATE_RESULT=<none|available|applied|deferred|conflict|rolled_back|blocked>
 from=<version> to=<version|none> source=<ref|path>
 managed_changed=<count|none> preserved_changed=<count|0>
-migrations=<items|none> validation=<summary>
+migrations=<applied|deferred|none; items> validation=<summary>
 backup=<path|none> next=<one action>
 ```
 

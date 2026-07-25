@@ -17,10 +17,12 @@ Rules:
 - Put shared production interfaces/build config in `shared_read_only`; `.ai` artifact permissions come from role contracts, not these production-path lists.
 - Use project-relative paths/globs. `forbidden_paths` wins; a path cannot be both owned and shared-read-only.
 - Lane status is `uninitialized | active | retired`; it describes lane availability, never Task progress.
-- Record dependencies in System Architecture and Integration Requests.
+- Record authoritative dependencies in System Architecture and Integration Requests. `lane.yaml.dependencies` is only their local execution projection; never add reverse `downstream_lanes` state.
 - Avoid lanes whose handoff cost exceeds implementation risk.
 - Combine areas that cannot be independently built, tested, or merged.
 
 Create a lane from `_template` and replace evidence-based placeholders in `lane.yaml`, `state.yaml`, and `architecture.md`. Tool and model selection stay outside durable lane state.
+
+New Lane files use schema `3`. Preserved schema-`2` Lane files remain readable: ignore legacy `downstream_lanes`, lane-level `verification`, `last_validated`, state `active_feature`, state `active_task`, and state `open_risks`. Do not update those keys. The declared update migration removes them only when doing so cannot discard unresolved data.
 
 For existing projects, Knowledge Maintainer seeds `owned_paths` and `shared_read_only` from live production roots. For greenfield or new roots, Architect records the ownership decision in approved Architecture and then updates the current lane before Builder starts. Empty `owned_paths` grants no production write access.

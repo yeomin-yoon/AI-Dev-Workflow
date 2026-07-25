@@ -1,36 +1,68 @@
 # AI Dev Workflow
 
-AI Dev Workflow는 특정 AI 모델이나 자동화 프로그램이 아니라, 파일과 Git을 상태로 사용해 `설계 → 작은 구현 → 독립 검증 → 필요한 지식 갱신`을 반복하는 수동 개발 규약이다. 짧은 요청을 근거 있는 설계와 작은 Task로 바꾸고 독립 검증을 거쳐, 세션·모델이 바뀌어도 작업을 이어가며 토큰과 재작업을 줄이는 것이 목적이다.
+*A file-backed, model-agnostic workflow for small implementation steps and independent review.*
 
-저장소 파일을 읽고 쓸 수 있는 AI 도구라면 모델과 무관하게 사용할 수 있다. Git은 강력히 권장하며 PowerShell은 이 배포 저장소 자체를 검증할 때만 필요하다. 기본 구성은 `main` Lane 하나, 작업 세션 하나, 독립 Reviewer 세션 하나다.
+**세션과 모델이 바뀌어도 파일에서 작업을 복원하고, 작은 구현과 독립 검증으로 불필요한 Context와 재작업을 줄이도록 설계됐다.**
+
+AI Dev Workflow는 특정 AI 모델이나 자동화 프로그램이 아니라, 파일과 Git을 상태로 사용해 `설계 → 작은 구현 → 독립 검증 → 필요한 지식 갱신`을 반복하는 수동 개발 규약이다. 저장소 파일을 읽고 쓸 수 있는 AI 도구라면 모델과 무관하게 사용할 수 있다.
 
 ## 사용법
 
-### 처음 설치
+### 30초 시작
 
 > [!NOTE]
-> 대상 프로젝트에는 **`.ai` 폴더만** 복사한다. `.git`, `.github`, `tools`는 배포 저장소 유지·검증용이며 설치물이 아니다.
-
-| 도구 능력 | 필요도 | 없을 때의 영향 |
-|---|---|---|
-| 프로젝트 루트의 파일 읽기·쓰기 | 필수 | 상태 복원과 결과물 저장을 할 수 없다. |
-| 같은 프로젝트 폴더(Checkout)를 여는 별도 Work·Reviewer 세션 | 기본 구성에 필수 | 독립 Review가 불가능해져 검증 신뢰도가 낮아진다. |
-| 빌드·테스트 등 터미널 명령 실행 | 강력 권장 | 사용자가 직접 실행해 근거를 전달해야 한다. |
-| 프로젝트 자체 Git 저장소 | 강력 권장 | Worktree·후보 봉인·정확한 통합 검증을 사용할 수 없다. |
-
-가능하면 대상 프로젝트에서 최초 실행 전에 Git 기준 커밋 하나를 만든다. Git이 없어도 기본 사용은 가능하지만 Review 근거가 약해지고 Worktree·후보 봉인·통합 기능은 사용할 수 없다.
+> 대상 프로젝트에는 **`.ai` 폴더만** 복사한다. 저장소 루트의 `.git`, `.github`, `tools`, `evals`, `maintenance`는 배포 저장소의 검증·감사·릴리스 관리용이며 설치물이 아니다.
 
 1. 이 저장소의 `.ai` 폴더를 대상 프로젝트 루트에 복사한다. 기존 `.ai`가 있다면 먼저 백업한다.
-2. 파일을 읽고 쓸 수 있는 AI 도구로 대상 프로젝트 루트를 연다.
-3. 아래 순서로 세션 두 개를 직접 만든다.
+2. AI 도구로 프로젝트 루트를 열고 새 **Work** 세션에 아래 Prompt를 붙인다.
+3. `READY`를 확인한 뒤 새 **Reviewer** 세션에 Reviewer Prompt를 붙인다.
 
-처음 설치에서는 아래 Prompt를 수정하지 않고 그대로 복붙한다. 각 Prompt는 AI 도구에서 **새 세션을 만든 뒤 첫 번째 사용자 메시지**로 보낸다. System Prompt·Custom Instructions·터미널 명령으로 넣을 필요는 없다.
+> [!IMPORTANT]
+> 아래 Bootstrap Prompt는 각각 **새 세션의 첫 번째 사용자 메시지**로 수정 없이 보낸다. System Prompt·Custom Instructions·터미널 명령으로 넣지 않는다.
 
-**Work** 세션을 먼저 만들고 초기화가 끝날 때까지 기다린다. 이 세션 안에서 파일 상태에 따라 Knowledge Maintainer → Architect → Builder 역할만 전환한다. Reviewer 역할은 하지 않는다.
+**1) Work — 먼저 만들고 초기화가 끝날 때까지 기다린다.** 이 세션은 파일 상태에 따라 Knowledge Maintainer → Architect → Builder 역할만 전환하며 Reviewer 역할은 하지 않는다.
 
 ```text
 Read `.ai/BOOTSTRAP.md`. role=work, lane=main, session_mode=compact, user_language=ko. If lane `main` is missing, create it from `.ai/lanes/_template`. Initialize only if needed, restore durable state, and reply READY or BLOCKED.
 ```
+
+**2) Reviewer — Work 초기화가 끝나면 별도 세션으로 만든다.**
+
+```text
+Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=compact, user_language=ko. Restore durable state from files and reply READY or BLOCKED.
+```
+
+현재 차례가 아닌 세션도 `READY ... next=wait_for_...`로 대기하는 것이 정상이다. 아직 Task나 Build Result가 없다는 이유만으로 `BLOCKED`가 되지는 않는다.
+
+### 기본 개발 흐름
+
+```mermaid
+flowchart LR
+    Seed["짧은 기능 요청"] --> Design["Work · Architect<br/>근거 · 설계 · Task"]
+    Design --> Gate{"중요한 구조 결정?"}
+    Gate -->|있음| User["사용자 승인"]
+    Gate -->|없음| Build["Work · Builder<br/>작은 구현"]
+    User --> Build
+    Build --> Review["독립 Reviewer"]
+    Review -->|구현 문제| Build
+    Review -->|구조 문제| Design
+    Review -->|PASS| Sync["필요한 Knowledge 갱신"]
+    Sync --> Next{"다음 단계"}
+    Next -->|승인된 다음 Task| Build
+    Next -->|새 기능 · 구조 변경| Design
+```
+
+<details>
+<summary>설치 조건과 초기화 확인</summary>
+
+| 도구 능력 | 필요도 | 없을 때의 영향 |
+|---|---|---|
+| 프로젝트 루트의 파일 읽기·쓰기 | 필수 | 상태 복원과 결과물 저장을 할 수 없다. |
+| 같은 프로젝트 폴더를 여는 별도 Work·Reviewer 세션 | 기본 구성에 필수 | 독립 Review가 불가능해져 검증 신뢰도가 낮아진다. |
+| 빌드·테스트 등 터미널 명령 실행 | 강력 권장 | 사용자가 직접 실행해 근거를 전달해야 한다. |
+| 프로젝트 자체 Git 저장소 | 강력 권장 | Worktree·후보 봉인·정확한 통합 검증을 사용할 수 없다. |
+
+가능하면 최초 실행 전에 대상 프로젝트에 Git 기준 커밋 하나를 만든다. Git이 없어도 기본 사용은 가능하지만 Review 근거가 약해지고 Worktree·후보 봉인·통합 기능은 사용할 수 없다. PowerShell은 이 배포 저장소 자체를 검증할 때만 필요하다.
 
 최초 초기화가 성공하면 응답은 대략 다음 형태이며 `initialization=complete`가 포함된다.
 
@@ -40,17 +72,11 @@ inputs=<최소 입력 경로>
 initialization=complete updated=<갱신한 경로>
 ```
 
-이때 `.ai/lanes/<lane>/lane.yaml`과 `.ai/lanes/<lane>/state.yaml`이 생성되어 있어야 하며, 최초 설치에서는 `<lane>`이 `main`이다. `BLOCKED`이거나 두 파일이 없다면 Reviewer를 만들기 전에 같은 Work 세션에서 누락 원인과 복구 방법을 요청한다. 이미 초기화된 프로젝트를 다시 열 때는 `initialization=complete`가 나오지 않아도 정상이다.
+이때 `.ai/lanes/<lane>/lane.yaml`과 `.ai/lanes/<lane>/state.yaml`이 생성되어 있어야 하며, 최초 설치의 `<lane>`은 `main`이다. `BLOCKED`이거나 두 파일이 없다면 Reviewer를 만들기 전에 같은 Work 세션에서 누락 원인과 복구 방법을 요청한다. 이미 초기화된 프로젝트를 다시 열 때는 `initialization=complete`가 나오지 않아도 정상이다.
 
-초기화가 끝나면 별도의 **Reviewer** 세션을 만든다.
+</details>
 
-```text
-Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=compact, user_language=ko. Restore durable state from files and reply READY or BLOCKED.
-```
-
-현재 차례가 아닌 세션도 `READY ... next=wait_for_...`로 대기하는 것이 정상이다. 아직 Task나 Build Result가 없다는 이유만으로 `BLOCKED`가 되지는 않는다.
-
-엄격한 역할 분리나 워크플로우 평가가 목적이면 아래 네 세션을 대신 사용할 수 있다. 같은 프로젝트 폴더(Checkout)에서 공용 Knowledge를 동시에 갱신하는 세션을 두 개 만들지는 않는다. 단, Worktree 모드를 시작하면 접수와 통합은 항상 별도의 `main` Work 세션이 담당한다.
+엄격한 역할 분리나 워크플로우 평가가 목적이면 아래 네 세션을 대신 사용할 수 있다. 같은 프로젝트 폴더에서 공용 Knowledge를 동시에 갱신하는 세션을 두 개 만들지는 않는다. 단, Worktree 모드를 시작하면 접수와 통합은 항상 별도의 `main` Work 세션이 담당한다.
 
 <details>
 <summary>엄격한 4세션 Prompt</summary>
@@ -87,7 +113,7 @@ Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=strict, user_lan
 
 | 용어 | 뜻 |
 |---|---|
-| Lane | 독립된 작업 흐름. 평소에는 `main` 하나만 사용한다. |
+| Lane | 작업 소유 범위·상태·산출물을 분리하는 논리적 작업 흐름이다. 평소에는 `main` 하나만 사용하며, 병렬 개발 시 별도 Worktree·Branch와 연결될 수 있다. |
 | Task | AI가 한 번에 구현·검증할 수 있게 나눈 작은 작업 단위다. |
 | Build Result | Builder가 남기는 변경 경로·검증·위험 근거다. 코드 자체를 대신하지 않는다. |
 | Knowledge | 채팅 기억이 아니라 파일에 저장된 프로젝트 사실·위치·출처 색인이다. |
@@ -151,11 +177,23 @@ Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=strict, user_lan
 
 Worktree는 같은 Git 저장소의 다른 Branch를 별도 폴더에서 동시에 여는 기능이다. 평소에는 `main` Lane만 사용한다. 서로 겹치지 않는 기능을 실제로 동시에 개발할 때만 경계 설계를 요청하며, 기본 구성에서는 기존 `main` Work에, 엄격한 4세션 구성에서는 `main` Architect에 말한다.
 
-Worktree 모드에서 `main` Work는 항상 **접수처(Front Desk)**다. 새 작업을 받아 Lane별 시작 카드를 발급하고, Worktree에서 돌아온 상태를 인수해 통합하거나 다음 세션 카드를 발급한다. 기존 `main` Work 세션이 살아 있으면 그대로 접수처가 되며, 교체하고 싶거나 문맥이 길어졌다면 처음 설치의 고정 main Work Prompt로 새 세션을 열어 파일 상태에서 같은 역할을 복원한다. 엄격한 구성으로 경계를 설계했더라도 실제 Lane 구현과 리뷰는 각 Worktree 세션에서 수행한다.
+Worktree 모드에서 `main` Work는 항상 **접수처(Front Desk)**다. 새 작업을 받아 Lane별 시작 카드를 발급하고, Worktree에서 돌아온 상태를 인수해 통합하거나 다음 세션 카드를 발급한다. 기존 `main` Work 세션이 살아 있으면 그대로 접수처가 되며, 교체하고 싶거나 문맥이 길어졌다면 `30초 시작`의 고정 main Work Prompt로 새 세션을 열어 파일 상태에서 같은 역할을 복원한다. 엄격한 구성으로 경계를 설계했더라도 실제 Lane 구현과 리뷰는 각 Worktree 세션에서 수행한다.
 
-```text
-main 접수처 → NEXT_SESSION → Worktree 작업 → RETURN_TO_MAIN → main 접수처
+```mermaid
+flowchart LR
+    Main["main Work<br/>접수처"] --> Cards["PARALLEL_START<br/>NEXT_SESSION"]
+    Cards --> LaneA["Worktree Lane A<br/>Work + Reviewer"]
+    Cards --> LaneB["Worktree Lane B<br/>Work + Reviewer"]
+    LaneA --> Return["RETURN_TO_MAIN"]
+    LaneB --> Return
+    Return --> Main
+    Main --> Integrate["승인 순서대로<br/>후보 하나 통합"]
+    Integrate --> MainReview["main Reviewer<br/>통합 검증"]
+    MainReview -->|PASS| Main
 ```
+
+> [!WARNING]
+> 세션은 Bootstrap 뒤 하나의 Worktree·Lane에 고정된다. `NEXT_SESSION`을 받으면 표시된 대상 폴더를 열어 **새 세션**을 만들고 Prompt를 붙인다. 기존 세션에 다른 Lane Prompt를 넣어 재사용하지 않는다.
 
 ```text
 캐릭터와 UI를 별도 Worktree에서 병렬 개발할 거야.
@@ -164,7 +202,7 @@ main 접수처 → NEXT_SESSION → Worktree 작업 → RETURN_TO_MAIN → main 
 
 경계를 승인하고 안내된 기준 파일을 Git에 커밋한 뒤 요청을 시작한 같은 세션에 `병렬 기준 커밋했어.`라고 답한다. 기본적으로 각 Lane은 토큰과 세션 부담이 적은 Work+Reviewer 2세션으로 구성된다. 처음에는 main 접수처 Prompt와 Worktree 생성 명령까지 포함한 `PARALLEL_START`, 이후에는 필요한 새 세션만 담은 `NEXT_SESSION`이 나오므로 순서대로 복붙하며 `lane=main`을 직접 수정하지 않는다.
 
-각 Lane은 안내된 Worktree 폴더를 AI 도구에서 따로 열고 **새 Work·Reviewer 세션**을 만든다. 기존 `main`이나 다른 Lane 세션에 새 초기화문을 넣어 Lane을 바꾸지 않는다. 별도 Lane도 엄격한 4세션으로 운영하려면 최초 요청 끝에 `각 Lane도 엄격한 4세션으로 만들어줘.`를 붙인다.
+각 Lane은 기본적으로 안내된 Worktree 폴더의 새 Work·Reviewer 세션으로 운영한다. 별도 Lane도 엄격한 4세션으로 운영하려면 최초 요청 끝에 `각 Lane도 엄격한 4세션으로 만들어줘.`를 붙인다.
 
 ### 병렬 작업 통합
 
@@ -189,13 +227,11 @@ main Reviewer의 통합 검증이 PASS하면 Review와 통합 Queue 정보만 �
 | 같은 Worktree·같은 Lane에서 현재 세션 계속 사용 | 종료하지 않고 그대로 계속한다. |
 | 같은 Lane의 이미 열린 Work↔Reviewer 이동 | 표시된 `DO_NEXT`를 해당 세션에 바로 붙인다. main을 거치지 않는다. |
 | 비-main 세션 종료·교체·Lane 이탈 | `마무리하고 main으로 복귀해.` → 나온 `DO_NEXT`를 main Work에 붙인다. |
-| main 접수처 세션 자체 교체 | `처음 설치`의 고정 main Prompt로 새 main 세션을 만든다. |
+| main 접수처 세션 자체 교체 | `30초 시작`의 고정 main Prompt로 새 main 세션을 만든다. |
 
 비-main 종료 결과에는 현재 Worktree·Lane·역할·세션 구성·Branch, 검토/봉인 revision, 변경 종류별 dirty 경로, Observation과 main 경로가 담긴 `RETURN_TO_MAIN`이 나온다.
 
 main은 이 카드가 가리키는 파일과 Git을 직접 확인하고 다음 행동 하나를 선택한다. 새 세션이 필요하면 정확한 폴더·역할 Prompt·첫 요청까지 채운 `NEXT_SESSION`을 주므로 사용자는 과거 Prompt나 대화를 보관할 필요가 없다.
-
-세션은 Bootstrap 뒤 하나의 Worktree·Lane에 고정된다. main이 `NEXT_SESSION`을 주면 대상 폴더를 열어 **새 세션**을 만들고 Prompt를 붙인다. 기존 세션에 다른 Lane Prompt를 넣어 재사용하지 않는다.
 
 종료 시 Workflow 불편사항의 자동 기록 조건도 한 번 확인하지만, 근거가 분명한 문제만 `OBS-*.yaml`로 저장한다. 반드시 남기고 싶다면 빠른 표의 기록 후 복귀 문장을 사용한다.
 
@@ -227,8 +263,8 @@ Read `.ai/reference/OPERATIONS.md` and handle this issue:
 | 취합 기록 검토 | 배포 저장소 세션 | `취합된 Workflow 개선 기록을 검토하고 업데이트 후보를 정리해줘.` |
 | 프로젝트 업데이트 확인 | 프로젝트 세션 | `Workflow 업데이트 확인해줘. source=<GitHub URL 또는 로컬 경로>` |
 | 확인된 업데이트 적용 | 같은 프로젝트 세션 | `확인된 Workflow 업데이트 적용해줘.` |
-| GitHub용 `.ai` 갱신 | 배포 저장소의 새 세션 | `Read .ai/maintenance/MAINTAIN.md and run BUILD_RELEASE_COPY. sources: <경로들>` |
-| 소스 커밋 후 릴리스 Eval 확정 | 같은 배포 저장소 세션 | `Read .ai/maintenance/MAINTAIN.md and run FINALIZE_RELEASE_EVAL for HEAD.` |
+| 배포용 `.ai` 갱신 | 배포 저장소의 새 세션 | `Read maintenance/RELEASE.md and run BUILD_RELEASE_COPY. sources: <경로들>` |
+| 소스 커밋 후 릴리스 Eval 확정 | 같은 배포 저장소 세션 | `Read maintenance/RELEASE.md and run FINALIZE_RELEASE_EVAL for HEAD.` |
 
 사용 중 놓치고 싶지 않은 문제가 있으면 어느 세션에서든 위의 불편사항 기록 문장을 입력한다.
 
@@ -266,7 +302,7 @@ AI-Dev-Workflow/.ai     → 공통 Workflow만 담은 별도 배포용 복사본
 공통 개선을 배포용 복사본에 반영하려면 별도 **AI Dev Workflow 배포 저장소**를 새 AI 세션으로 열고 다음 한 번만 보낸다.
 
 ```text
-Read `.ai/maintenance/MAINTAIN.md` and run BUILD_RELEASE_COPY.
+Read `maintenance/RELEASE.md` and run BUILD_RELEASE_COPY.
 sources:
 - <개발 프로젝트 또는 Worktree 경로>
 user_language=ko
@@ -279,7 +315,7 @@ user_language=ko
 `BUILD_RELEASE_COPY RESULT=source_commit_required`이면 변경 내용을 확인해 **소스 변경만 먼저 커밋**한다. 그다음 같은 배포 저장소 세션에 아래 문장을 보낸다.
 
 ```text
-Read `.ai/maintenance/MAINTAIN.md` and run FINALIZE_RELEASE_EVAL for HEAD.
+Read `maintenance/RELEASE.md` and run FINALIZE_RELEASE_EVAL for HEAD.
 ```
 
 이 단계는 방금 만든 소스 커밋의 revision/tree를 대상으로 Eval을 실행하고, 완료된 Eval 파일 하나만 stage한 뒤 릴리스 검증을 수행한다. `FINALIZE_RELEASE_EVAL RESULT=eval_commit_required`이면 staged Eval을 확인해 두 번째 커밋을 만들고 Push한다. `no_change`이면 올릴 새 공통 변경이 없고, `blocked` 또는 `failed`이면 함께 나온 원인을 먼저 해결한다.
@@ -303,12 +339,18 @@ Read `.ai/maintenance/MAINTAIN.md` and run FINALIZE_RELEASE_EVAL for HEAD.
 
 각 개발 프로젝트에서는 위 유지보수용 표의 두 문장을 사용해 배포 출처 확인과 업데이트 적용을 나눠 실행한다.
 
-업데이트 후에는 업데이트가 적용된 Checkout을 사용하는 모든 기존 세션을 종료하고 같은 Lane·역할의 Bootstrap Prompt로 다시 만든다. 여기에는 모든 병렬 Lane과, 엄격한 구성이라면 네 역할 세션 전부가 포함된다.
+업데이트 후에는 업데이트가 적용된 프로젝트 폴더를 사용하는 모든 기존 세션을 종료하고 같은 Lane·역할의 Bootstrap Prompt로 다시 만든다. 여기에는 모든 병렬 Lane과, 엄격한 구성이라면 네 역할 세션 전부가 포함된다.
 
 </details>
 
 <details>
 <summary><strong>Workflow 구조와 원리</strong> — 역할·학습·Knowledge·Context·Lane·배포</summary>
+
+### 설계 원칙
+
+Workflow를 변경할 때 사용하는 철학의 단일 기준은 [Design Principles](.ai/WORKFLOW.md#design-principles)다. README는 사용자용 요약이고, BOOTSTRAP과 역할 계약은 원칙을 실행하며, Eval은 실제 품질·비용 효과를 측정한다. 일반 사용 중에는 이 내부 문서를 따로 읽을 필요가 없다.
+
+여기서 `model-agnostic`은 같은 파일 계약을 여러 AI 도구에서 사용할 수 있다는 뜻이지, 모델별 결과가 동등하다는 뜻이 아니다. Context·재작업 절감과 자연스러운 학습은 Workflow가 지원하도록 설계한 목표이며, 비교 측정이나 장기 관찰 없이 보장된 성과로 주장하지 않는다.
 
 ### 역할과 Gate
 
@@ -380,7 +422,7 @@ Reviewer PASS 후 사용자는 `RETURN_TO_MAIN`의 복붙 문장만 main Work에
 
 ### 배포 저장소와 프로젝트 설치본
 
-AI Dev Workflow 저장소는 공통 Workflow를 보관하고 배포한다. 저장소 자체의 Git 이력, `tools/`, `.github/`는 배포본 유지보수와 게시 전 검증에만 사용한다. 실제 프로젝트는 복사된 `.ai`와 그 프로젝트 자신의 Git을 사용하며, 배포 저장소의 `.git`을 복사하거나 공유하지 않는다.
+AI Dev Workflow 저장소는 공통 Workflow를 보관하고 배포한다. 저장소 자체의 Git 이력과 루트 `tools/`, `.github/`, `evals/`, `maintenance/`는 배포본 유지보수·감사·게시 전 검증에만 사용한다. 실제 프로젝트는 복사된 `.ai`와 그 프로젝트 자신의 Git을 사용하며, 배포 저장소의 나머지 루트 항목을 복사하거나 공유하지 않는다.
 
 현재 Workflow 버전의 유일한 기준은 `.ai/maintenance/release.yaml`이다. Scorecard 템플릿은 버전을 고정하지 않고, 실제 Eval 기록을 만들 때 해당 값을 복사한다. 이미 완료된 과거 Eval의 버전은 변경하지 않는다. 설치본의 공통 개선을 별도 배포용 복사본에 반영할 때는 위의 `BUILD_RELEASE_COPY`를 사용하며 `.ai` 전체를 역복사하거나 개발 프로젝트를 정리하지 않는다.
 
@@ -398,11 +440,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\tools\validate-workflow.ps
 pwsh -NoProfile -ExecutionPolicy Bypass -File ./tools/validate-workflow.ps1 -RequireReleaseEvidence
 ```
 
-릴리스 Eval을 만들기 전 소스 수정 중간 검사에서는 같은 명령의 `-RequireReleaseEvidence`만 생략한다. 게시 전 검사는 이 옵션을 유지해야 하며, 완료·PASS·quality-floor·Git revision/tree·추적 상태가 유효한 현재 버전 Eval이 없으면 실패한다.
+릴리스 Eval을 만들기 전 소스 수정 중간 검사에서는 같은 명령의 `-RequireReleaseEvidence`만 생략한다. 이 중간 상태에서 옵션을 유지한 검사가 실패하는 것은 정상이다. 소스 확정 후 `FINALIZE_RELEASE_EVAL`까지 완료한 게시 전 검사에서는 반드시 이 옵션을 유지해야 하며, 완료·PASS·quality-floor·Git revision/tree·추적 상태가 유효한 현재 버전 Eval이 없으면 실패한다.
 
 검사는 배포 inventory와 초기 scaffold/schema, managed/preserved 경계, 현재 버전과 CHANGELOG 최신순, Eval 구조·Git 근거, 내부 파일 참조, Markdown 링크와 코드 펜스 균형을 확인한다.
 
-GitHub에 Push하거나 Pull Request를 만들면 `.github/workflows/validate.yml`이 같은 검사를 실행하도록 구성되어 있다. 최초 게시 후에는 GitHub Actions 결과까지 PASS인지 확인해야 하며, 로컬 PASS만으로 원격 CI 성공을 주장하지 않는다.
+GitHub에서는 `.github/workflows/validate.yml`이 모든 Push·Pull Request의 구조와 회귀 fixture를 검사한다. `.github/workflows/release-evidence.yml`은 `main`, tag, 수동 실행, 또는 릴리스 메타데이터/Eval이 바뀐 Pull Request에서 전체 Git 이력을 가져와 `-RequireReleaseEvidence`까지 검사한다. 최초 게시 후에는 GitHub Actions 결과까지 PASS인지 확인해야 하며, 로컬 PASS만으로 원격 CI 성공을 주장하지 않는다.
 
 이 도구는 프로젝트 작업이나 AI 세션을 자동화하지 않으며 설치 대상에 복사할 필요가 없다.
 
@@ -417,6 +459,11 @@ GitHub에 Push하거나 Pull Request를 만들면 `.github/workflows/validate.ym
 - 권위·상태: [ARTIFACT_AUTHORITY](.ai/contracts/ARTIFACT_AUTHORITY.md), [STATE](.ai/contracts/STATE.md)
 - 구현·검증 결과: [BUILD_RESULT](.ai/contracts/BUILD_RESULT.md), [REVIEW_RESULT](.ai/contracts/REVIEW_RESULT.md)
 - 예외·병렬 통합: [OPERATIONS](.ai/reference/OPERATIONS.md), [MAIN_DESK](.ai/contracts/MAIN_DESK.md)
-- 업데이트·배포 관리: [UPDATE](.ai/maintenance/UPDATE.md), [MAINTAIN](.ai/maintenance/MAINTAIN.md)
+- 프로젝트 Observation·업데이트: [MAINTAIN](.ai/maintenance/MAINTAIN.md), [UPDATE](.ai/maintenance/UPDATE.md)
+- 배포 저장소 릴리스 관리: [RELEASE](maintenance/RELEASE.md)
 
 </details>
+
+## License
+
+이 프로젝트는 [MIT License](LICENSE)로 배포됩니다. Copyright (c) 2026 yeomin-yoon.

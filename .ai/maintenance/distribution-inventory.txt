@@ -18,6 +18,7 @@
 .ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md
 .ai/evals/README.md
 .ai/evals/SCORECARD.md
+.ai/evals/runs/.gitkeep
 .ai/integration/README.md
 .ai/integration/queue.yaml
 .ai/integration/requests/README.md

@@ -1,0 +1,39 @@
+name: Validate workflow release evidence
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '**'
+  pull_request:
+    paths:
+      - '.ai/maintenance/release.yaml'
+      - 'evals/runs/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate_release_evidence:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Check out full source history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Validate release evidence (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\tools\validate-workflow.ps1 -RequireReleaseEvidence
+
+      - name: Validate release evidence (Ubuntu PowerShell 7)
+        if: runner.os == 'Linux'
+        shell: pwsh
+        run: ./tools/validate-workflow.ps1 -RequireReleaseEvidence

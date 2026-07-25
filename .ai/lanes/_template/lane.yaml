@@ -1,4 +1,4 @@
-schema_version: 2
+schema_version: 3
 id: <lane-id>
 display_name: <Lane Name>
 status: uninitialized # uninitialized | active | retired
@@ -19,14 +19,7 @@ artifacts:
   knowledge_delta: .ai/lanes/<lane-id>/knowledge-delta
 
 dependencies:
-  upstream_lanes: []
-  downstream_lanes: []
-  shared_contracts: []
-
-verification:
-  build: []
-  tests: []
-  runtime: []
+  upstream_lanes: [] # projection of approved System Architecture / Integration Requests
+  shared_contracts: [] # projection only; the approved source remains authoritative
 
 source_revision: null
-last_validated: null

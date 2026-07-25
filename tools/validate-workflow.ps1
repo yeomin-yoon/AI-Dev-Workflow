@@ -24,6 +24,36 @@ function Get-RepositoryPath {
     return Join-Path $RepositoryRoot ($RelativePath -replace '/', [System.IO.Path]::DirectorySeparatorChar)
 }
 
+function Get-RepositoryRelativePath {
+    param([string]$Path)
+
+    $fullPath = [System.IO.Path]::GetFullPath($Path)
+    $fullRoot = [System.IO.Path]::GetFullPath($RepositoryRoot)
+    $comparison = if ([System.IO.Path]::DirectorySeparatorChar -eq [char]92) {
+        [System.StringComparison]::OrdinalIgnoreCase
+    }
+    else {
+        [System.StringComparison]::Ordinal
+    }
+
+    if ($fullPath.Equals($fullRoot, $comparison)) {
+        return '.'
+    }
+
+    $rootPrefix = $fullRoot
+    if (-not $rootPrefix.EndsWith([string][System.IO.Path]::DirectorySeparatorChar) -and
+        -not $rootPrefix.EndsWith([string][System.IO.Path]::AltDirectorySeparatorChar)) {
+        $rootPrefix += [System.IO.Path]::DirectorySeparatorChar
+    }
+
+    if (-not $fullPath.StartsWith($rootPrefix, $comparison)) {
+        Add-Failure "Path is outside the repository root: $fullPath"
+        return ($fullPath -replace '\\', '/')
+    }
+
+    return ($fullPath.Substring($rootPrefix.Length) -replace '\\', '/')
+}
+
 function Read-Utf8Text {
     param([string]$Path)
     return [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8)
@@ -369,36 +399,60 @@ function Test-LocalReference {
     }
 
     if (-not (Test-Path -LiteralPath $resolved)) {
-        $displaySource = $SourcePath.Substring($RepositoryRoot.Length).TrimStart('\', '/')
+        $displaySource = Get-RepositoryRelativePath $SourcePath
         Add-Failure "Broken $Kind reference in ${displaySource}: $Reference"
     }
 }
 
-$requiredPaths = @(
+$sourceRequiredPaths = @(
     'README.md',
-    '.ai/BOOTSTRAP.md',
-    '.ai/WORKFLOW.md',
-    '.ai/contracts/ARTIFACT_AUTHORITY.md',
-    '.ai/evals/README.md',
-    '.ai/evals/SCORECARD.md',
-    '.ai/maintenance/CHANGELOG.md',
-    '.ai/maintenance/distribution-inventory.txt',
-    '.ai/maintenance/release.yaml',
-    '.ai/maintenance/update-state.yaml',
-    '.ai/maintenance/managed-paths.yaml',
-    '.ai/shared/PROJECT.md',
-    '.ai/shared/SYSTEM_ARCHITECTURE.md',
-    '.ai/shared/knowledge/manifest.yaml',
-    '.ai/integration/queue.yaml',
+    'LICENSE',
     '.gitignore',
+    '.gitattributes',
     'tools/validate-workflow.ps1',
     'tools/test-validation.ps1',
-    '.github/workflows/validate.yml'
+    '.github/workflows/validate.yml',
+    '.github/workflows/release-evidence.yml',
+    'maintenance/RELEASE.md',
+    'evals/README.md',
+    'evals/runs/.gitkeep'
 )
 
-foreach ($relativePath in $requiredPaths) {
+foreach ($relativePath in $sourceRequiredPaths) {
     if (-not (Test-Path -LiteralPath (Get-RepositoryPath $relativePath))) {
-        Add-Failure "Missing required path: $relativePath"
+        Add-Failure "Missing source-only repository path: $relativePath"
+    }
+}
+
+$ciWorkflowContracts = @(
+    @{
+        Path = '.github/workflows/validate.yml'
+        Required = @('fetch-depth: 0')
+        Forbidden = @('-RequireReleaseEvidence')
+    },
+    @{
+        Path = '.github/workflows/release-evidence.yml'
+        Required = @('fetch-depth: 0', '-RequireReleaseEvidence')
+        Forbidden = @()
+    }
+)
+
+foreach ($contract in $ciWorkflowContracts) {
+    $workflowPath = Get-RepositoryPath $contract.Path
+    if (-not (Test-Path -LiteralPath $workflowPath -PathType Leaf)) {
+        continue
+    }
+
+    $workflowText = Read-Utf8Text $workflowPath
+    foreach ($token in $contract.Required) {
+        if (-not $workflowText.Contains($token)) {
+            Add-Failure "CI workflow is missing required token: path=$($contract.Path) token=$token"
+        }
+    }
+    foreach ($token in $contract.Forbidden) {
+        if ($workflowText.Contains($token)) {
+            Add-Failure "CI workflow contains forbidden token: path=$($contract.Path) token=$token"
+        }
     }
 }
 
@@ -429,6 +483,9 @@ if (Test-Path -LiteralPath $inventoryPath -PathType Leaf) {
     if ($distributionInventory.Count -eq 0) {
         Add-Failure 'Distribution inventory contains no required files'
     }
+}
+else {
+    Add-Failure "Missing distribution inventory: $inventoryRelativePath"
 }
 
 $workflowPath = Get-RepositoryPath '.ai/WORKFLOW.md'
@@ -503,6 +560,8 @@ foreach ($rolePath in $roleTransitionRequirements.Keys) {
     }
 }
 
+# These string checks are only lightweight smoke tests. Prefer structured
+# schema/FSM validation whenever a contract can be parsed deterministically.
 $contractTokenRequirements = @{
     '.ai/reference/OPERATIONS.md' = @('Knowledge required/checkpoint', 'single-main defer/none', 'non-main')
     '.ai/contracts/BUILD_RESULT.md' = @('candidate_fingerprint', 'canonical UTF-8/LF manifest')
@@ -539,8 +598,8 @@ Assert-YamlScalar '.ai/maintenance/release.yaml' 'schema_version' '1'
 Assert-YamlScalar '.ai/maintenance/update-state.yaml' 'schema_version' '1'
 Assert-YamlScalar '.ai/maintenance/managed-paths.yaml' 'schema_version' '1'
 Assert-YamlScalar '.ai/integration/queue.yaml' 'schema_version' '1'
-Assert-YamlScalar '.ai/lanes/_template/lane.yaml' 'schema_version' '2'
-Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'schema_version' '2'
+Assert-YamlScalar '.ai/lanes/_template/lane.yaml' 'schema_version' '3'
+Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'schema_version' '3'
 foreach ($knowledgeFile in @(
         '.ai/shared/knowledge/manifest.yaml',
         '.ai/shared/knowledge/project.yaml',
@@ -549,11 +608,11 @@ foreach ($knowledgeFile in @(
     Assert-YamlScalar $knowledgeFile 'schema_version' '2'
     Assert-YamlScalar $knowledgeFile 'status' 'uninitialized'
 }
-Assert-YamlScalar '.ai/maintenance/release.yaml' 'lane_schema' '[2]' -AnyIndent
-Assert-YamlScalar '.ai/maintenance/release.yaml' 'lane_state_schema' '[2]' -AnyIndent
+Assert-YamlScalar '.ai/maintenance/release.yaml' 'lane_schema' '[3]' -AnyIndent
+Assert-YamlScalar '.ai/maintenance/release.yaml' 'lane_state_schema' '[3]' -AnyIndent
 Assert-YamlScalar '.ai/maintenance/release.yaml' 'knowledge_schema' '[2]' -AnyIndent
 Assert-YamlScalar '.ai/maintenance/release.yaml' 'maintenance_schema' '[1]' -AnyIndent
-Assert-YamlScalar '.ai/maintenance/release.yaml' 'eval_schema' '[1,2]' -AnyIndent
+Assert-YamlScalar '.ai/maintenance/release.yaml' 'eval_schema' '[2]' -AnyIndent
 Assert-YamlScalar '.ai/lanes/_template/lane.yaml' 'status' 'uninitialized'
 Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'phase' 'uninitialized'
 Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'status' 'idle'
@@ -564,12 +623,27 @@ Assert-YamlScalar '.ai/shared/knowledge/glossary.yaml' 'terms' '[]'
 $templateStatePath = Get-RepositoryPath '.ai/lanes/_template/state.yaml'
 if (Test-Path -LiteralPath $templateStatePath -PathType Leaf) {
     $templateStateText = Read-Utf8Text $templateStatePath
+    foreach ($legacyStateKey in @('active_feature', 'active_task', 'open_risks')) {
+        if ([regex]::IsMatch($templateStateText, '(?m)^' + [regex]::Escape($legacyStateKey) + ':')) {
+            Add-Failure "Canonical template state contains removed schema-2 key: $legacyStateKey"
+        }
+    }
     foreach ($requiredStatePattern in @(
             '(?ms)^next:\s*\r?\n\s+role:\s*knowledge_maintainer\b',
             '(?ms)^knowledge_sync:\s*\r?\n\s+status:\s*clean\b\s*(?:#.*)?\r?\n\s+pending_reviews:\s*\[\]'
         )) {
         if (-not [regex]::IsMatch($templateStateText, $requiredStatePattern)) {
             Add-Failure "Canonical template state is missing required initial structure: $requiredStatePattern"
+        }
+    }
+}
+
+$templateLanePath = Get-RepositoryPath '.ai/lanes/_template/lane.yaml'
+if (Test-Path -LiteralPath $templateLanePath -PathType Leaf) {
+    $templateLaneText = Read-Utf8Text $templateLanePath
+    foreach ($legacyLaneKey in @('downstream_lanes', 'verification', 'last_validated')) {
+        if ([regex]::IsMatch($templateLaneText, '(?m)^\s*' + [regex]::Escape($legacyLaneKey) + ':')) {
+            Add-Failure "Canonical template Lane contains removed schema-2 key: $legacyLaneKey"
         }
     }
 }
@@ -633,7 +707,7 @@ if ($managedPatterns.Count -eq 0 -or $preservedPatterns.Count -eq 0) {
 else {
     $aiRoot = Get-RepositoryPath '.ai'
     foreach ($sourceFile in @(Get-ChildItem -LiteralPath $aiRoot -Recurse -File -Force)) {
-        $relativeSourceFile = $sourceFile.FullName.Substring($RepositoryRoot.Length).TrimStart('\', '/') -replace '\\', '/'
+        $relativeSourceFile = Get-RepositoryRelativePath $sourceFile.FullName
         $managedMatch = $false
         foreach ($pattern in $managedPatterns) {
             if (Test-PathPattern $relativeSourceFile $pattern) {
@@ -668,8 +742,30 @@ foreach ($runtimeKnowledgeDirectory in @(
     $runtimeKnowledgeRoot = Get-RepositoryPath $runtimeKnowledgeDirectory
     if (Test-Path -LiteralPath $runtimeKnowledgeRoot -PathType Container) {
         foreach ($runtimeKnowledgeFile in @(Get-ChildItem -LiteralPath $runtimeKnowledgeRoot -Recurse -File -Force)) {
-            $relativeRuntimeKnowledge = $runtimeKnowledgeFile.FullName.Substring($RepositoryRoot.Length).TrimStart('\', '/') -replace '\\', '/'
+            $relativeRuntimeKnowledge = Get-RepositoryRelativePath $runtimeKnowledgeFile.FullName
             Add-Failure "Canonical distribution contains project Knowledge content: $relativeRuntimeKnowledge"
+        }
+    }
+}
+
+$installedEvalRoot = Get-RepositoryPath '.ai/evals/runs'
+if (Test-Path -LiteralPath $installedEvalRoot -PathType Container) {
+    foreach ($installedEval in @(Get-ChildItem -LiteralPath $installedEvalRoot -File -Filter '*.md')) {
+        Add-Failure "Installable .ai contains a canonical/source Eval record: .ai/evals/runs/$($installedEval.Name)"
+    }
+}
+
+$installedMaintainPath = Get-RepositoryPath '.ai/maintenance/MAINTAIN.md'
+if (Test-Path -LiteralPath $installedMaintainPath -PathType Leaf) {
+    $installedMaintainText = Read-Utf8Text $installedMaintainPath
+    foreach ($sourceOnlyHeading in @(
+            '## Collect from installed copies',
+            '## BUILD_RELEASE_COPY',
+            '## FINALIZE_RELEASE_EVAL',
+            '## Triage and release'
+        )) {
+        if ($installedMaintainText.Contains($sourceOnlyHeading)) {
+            Add-Failure "Installable MAINTAIN.md contains source-only release procedure: $sourceOnlyHeading"
         }
     }
 }
@@ -677,8 +773,24 @@ foreach ($runtimeKnowledgeDirectory in @(
 $releasePath = Get-RepositoryPath '.ai/maintenance/release.yaml'
 if (Test-Path -LiteralPath $releasePath -PathType Leaf) {
     $releaseText = Read-Utf8Text $releasePath
-    foreach ($migrationMatch in [regex]::Matches($releaseText, '(?m)^\s+path:\s*(?<path>\.ai/[^\s#]+)\s*$')) {
+    $migrationEntryCount = [regex]::Matches($releaseText, '(?m)^\s+-\s+from:\s*[^\s#]+\s*$').Count
+    $migrationMatches = [regex]::Matches(
+        $releaseText,
+        '(?ms)^\s+-\s+from:\s*(?<from>[^\s#]+)\s*\r?\n\s+to:\s*(?<to>[^\s#]+)\s*\r?\n\s+required:\s*(?<required>true|false)\s*\r?\n\s+path:\s*(?<path>\.ai/[^\s#]+)\s*$'
+    )
+    if ($migrationEntryCount -ne $migrationMatches.Count) {
+        Add-Failure 'release.yaml migration entries must declare from, to, required, and path in that order'
+    }
+
+    $declaredMigrationPaths = @{}
+    foreach ($migrationMatch in $migrationMatches) {
         $migrationPath = $migrationMatch.Groups['path'].Value
+        if ($declaredMigrationPaths.ContainsKey($migrationPath)) {
+            Add-Failure "release.yaml declares a duplicate migration path: $migrationPath"
+        }
+        else {
+            $declaredMigrationPaths[$migrationPath] = $true
+        }
         if (-not (Test-Path -LiteralPath (Get-RepositoryPath $migrationPath) -PathType Leaf)) {
             Add-Failure "Declared migration file is missing: $migrationPath"
         }
@@ -824,9 +936,9 @@ if (Test-Path -LiteralPath $evalReadmePath -PathType Leaf) {
 }
 
 $currentReleaseEligibleEvalCount = 0
-$evalRunsRoot = Get-RepositoryPath '.ai/evals/runs'
+$evalRunsRoot = Get-RepositoryPath 'evals/runs'
 if (-not (Test-Path -LiteralPath $evalRunsRoot -PathType Container)) {
-    Add-Failure 'Missing required Eval run directory: .ai/evals/runs'
+    Add-Failure 'Missing source-only Eval run directory: evals/runs'
 }
 else {
     $evalRunFiles = @(Get-ChildItem -LiteralPath $evalRunsRoot -File -Filter '*.md')
@@ -834,7 +946,7 @@ else {
     $legacyEvalPattern = '^(?<id>EVAL-\d+)-(?<version>manual-v\d+\.\d+)-[a-z0-9]+(?:-[a-z0-9]+)*$'
 
     foreach ($evalRunFile in $evalRunFiles) {
-        $relativeEvalPath = $evalRunFile.FullName.Substring($RepositoryRoot.Length).TrimStart('\', '/') -replace '\\', '/'
+        $relativeEvalPath = Get-RepositoryRelativePath $evalRunFile.FullName
         $evalText = Read-Utf8Text $evalRunFile.FullName
         $evalStem = [System.IO.Path]::GetFileNameWithoutExtension($evalRunFile.Name)
         $filenameMatch = [regex]::Match($evalStem, $timestampEvalPattern)
@@ -873,7 +985,7 @@ else {
         }
 
         $catalogRequired = $null -ne $runVersion -and
-            (Test-ManualVersionAtLeast $runVersion 'manual-v1.24')
+            (Test-ManualVersionAtLeast $runVersion 'manual-v1.0')
         $seenRunCases = @{}
         foreach ($runCase in $runCases) {
             if ($runCase -notmatch '^[a-z0-9]+(?:-[a-z0-9]+)*$') {
@@ -984,7 +1096,7 @@ else {
                         $recordValid = $false
                     }
 
-                    $allowedPostSourcePattern = '^\.ai/evals/runs/[^/]+\.md$'
+                    $allowedPostSourcePattern = '^evals/runs/[^/]+\.md$'
                     $committedAfterSource = Get-GitText @('diff', '--name-only', "${sourceRevision}..HEAD", '--')
                     $stagedAfterSource = Get-GitText @('diff', '--cached', '--name-only', '--')
                     foreach ($changedPathSet in @($committedAfterSource, $stagedAfterSource)) {
@@ -1102,7 +1214,7 @@ foreach ($file in $markdownFiles) {
     $text = Read-Utf8Text $file.FullName
     $fenceCount = [regex]::Matches($text, '(?m)^[ \t]*```').Count
     if (($fenceCount % 2) -ne 0) {
-        $displayPath = $file.FullName.Substring($RepositoryRoot.Length).TrimStart('\', '/')
+        $displayPath = Get-RepositoryRelativePath $file.FullName
         Add-Failure "Unbalanced Markdown code fences: $displayPath"
     }
 

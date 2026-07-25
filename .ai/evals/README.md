@@ -6,7 +6,11 @@ Eval coordination is an explicit on-demand procedure, not a project role. Normal
 
 Files under `.ai/evals/runs/` are completed records, not drafts. A new record uses `schema_version: 2`, `status: completed`, `result: pass | fail`, a UTC `completed_at`, the exact committed Workflow `source_revision` and `source_tree`, and `quality_floor: pass | fail`. Failed Evals remain valid history but never satisfy release evidence.
 
+Installed-project runs are local evidence only and are never copied into the canonical distribution. Canonical audit/release records live outside the installable `.ai` under source-only `evals/runs/` and follow `maintenance/RELEASE.md` in the distribution checkout.
+
 Do not call a Workflow version optimal or model-parity proven without completed scorecards. Optimize in this order: quality floor → total tokens to accepted result → elapsed time and human actions. A cheap rejected result is not a saving.
+
+Comparative baseline/A/B runs are optional and are required only for comparative quality, token, speed, or model-parity claims. Normal project use and a source-bound release regression Eval do not require a comparison run; without one, describe efficiency and learning as design goals rather than measured outcomes.
 
 Compare the same seed and revision:
 
@@ -34,7 +38,7 @@ Check quality floor/gap, route correctness, decision transparency without unnece
 
 ## Regression catalog
 
-Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a run-local label. Catalog enforcement begins at `manual-v1.24`; completed older runs remain immutable.
+Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a run-local label. Catalog enforcement applies from the first public release, `manual-v1.0`.
 
 - `direct-fix`: direct fix
 - `ambiguous-guided-feature`: ambiguous guided feature
@@ -130,28 +134,7 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 
 ## Legacy case aliases
 
-Aliases preserve known renamed labels without editing completed runs. New runs at `manual-v1.24` or later must use canonical IDs above. Unregistered labels in older completed runs remain grandfathered historical evidence, not valid IDs for new runs.
-
-- `role-and-artifact-authority` -> `artifact-authority-single-source`
-- `role-and-issue-routing` -> `issue-routing-single-source`
-- `clean-release-command-discovery` -> `release-copy-command-discovery`
-- `canonical-release-ownership` -> `release-copy-ownership`
-- `release-copy-ownership-language` -> `release-copy-ownership`
-- `installed-source-read-only` -> `supplied-project-losslessness`
-- `project-state-exclusion` -> `distribution-state-exclusion`
-- `source-hygiene-validation` -> `source-validation`
-- `source-validation-command` -> `source-validation`
-- `github-validation-wiring` -> `source-validation`
-- `source-git-baseline` -> `source-install-boundary`
-- `installation-smoke` -> `source-install-boundary`
-- `version-language-and-reference-contract` -> `source-validation`
-- `maintenance-and-migration-contract` -> `migration-rollback`
-- `update-preserves-project-state` -> `safe-update`
-- `update-session-restart-scope` -> `safe-update`
-- `parallel-topology-default-and-opt-in` -> `parallel-topology`
-- `git-observation-retirement-safety` -> `safe-worktree-retirement`
-- `main-review-and-knowledge-checkpoints` -> `main-integration-checkpoints`
-- `front-desk-main-work-only` -> `main-front-desk-cycle`
+No aliases exist in `manual-v1.0`. Add an alias only when a future release renames a canonical case ID; never rewrite a completed Eval record.
 
 ## Quality floor
 
@@ -185,6 +168,6 @@ Aliases preserve known renamed labels without editing completed runs. New runs a
 
 Treat low-cost and strong-model runs as practically equivalent only when both meet the floor on the same cases, the low-cost run adds no critical/scope failure, and its median review-cycle gap is at most one. Report human corrections and token/time differences; do not hide failed cases in averages.
 
-Copy `SCORECARD.md` for each run to `.ai/evals/runs/EVAL-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug>.md` using a filename-safe UTC timestamp. In the copied run, replace the template's `workflow_version: null` with the exact current value from `.ai/maintenance/release.yaml`; a completed run with a null version is invalid. Use only canonical IDs from the Regression catalog in new runs; aliases exist only to resolve renamed historical labels. Historical run versions are immutable. Legacy sequential IDs remain valid, but never allocate a new branch-local sequence because separately created runs can collide when records are collected.
+Copy `SCORECARD.md` for each run to `.ai/evals/runs/EVAL-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug>.md` using a filename-safe UTC timestamp. In the copied run, replace the template's `workflow_version: null` with the exact current value from `.ai/maintenance/release.yaml`; a completed run with a null version is invalid. Use only canonical IDs from the Regression catalog. Future aliases may resolve renamed historical labels, but completed run versions and evidence remain immutable. Never allocate a branch-local sequence because separately created runs can collide when records are collected.
 
-For a Workflow release, first commit the versioned source changes. Run the affected Eval cases against that immutable commit, set `source_revision` to its full commit ID and `source_tree` to its Git tree, then stage the completed Eval and run `tools/validate-workflow.ps1 -RequireReleaseEvidence`. Commit the Eval record only after that check passes. Never point an Eval at the previous release, use an untracked or unstaged-mutated Eval as release evidence, or inherit an earlier Eval after any non-Eval source drift.
+For a canonical Workflow release, first commit the versioned source changes. Run the affected Eval cases against that immutable commit, set `source_revision` to its full commit ID and `source_tree` to its Git tree, write the completed source record under `evals/runs/`, then stage it and run `tools/validate-workflow.ps1 -RequireReleaseEvidence`. Commit the Eval record only after that check passes. Never point an Eval at the previous release, use an untracked or unstaged-mutated Eval as release evidence, or inherit an earlier Eval after any non-Eval source drift.

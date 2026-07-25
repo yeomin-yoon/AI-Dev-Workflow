@@ -46,7 +46,7 @@ For an explicit Integration Gate start or continuation, only the `main` Work ses
 
 For an actual cross-session handoff or user-owned external/manual action, read `.ai/contracts/ACTION_CARDS.md`. For an explicit close/replacement/return, read `.ai/contracts/SESSION_CLOSE.md`, then `MAIN_DESK.md` only when non-`main` or handling its return.
 
-For an explicit Workflow observation capture, collection, release-copy build, triage, update-check, or update-apply request, read only the matching `.ai/maintenance/MAINTAIN.md` or `.ai/maintenance/UPDATE.md`. This maintenance action may run from any valid session without activating its project role or changing lane state.
+For explicit Workflow observation capture, read only `.ai/maintenance/MAINTAIN.md`. For update check/apply, read only `.ai/maintenance/UPDATE.md`. Observation collection, release-copy build, release triage, and release Eval finalization are canonical-distribution actions: read source-only `maintenance/RELEASE.md` only when that file exists in the opened repository; an installed project must route the user to the separate distribution checkout instead. Maintenance never activates a project role or changes lane state.
 
 ## Readiness vs activation
 
@@ -57,7 +57,7 @@ A Bootstrap request restores identity/readiness; it does not execute the current
 - An explicit main Work Front Desk return intake/session-card request follows `MAIN_DESK.md` even when normal main project work is waiting for another role. It preserves that route unless it legitimately activates the approved Integration Gate or Architect boundary work.
 - If `next.action` awaits a feature seed or other user input not present in the current message, return `READY` (plus any already-required brief/card) rather than executing an empty action or creating a blocker.
 - `state.next.role` always names the AI role responsible for consuming the next input and transition. A pending user decision/evidence stays assigned to that role through `next.action`; `user` and `integration` are owners/procedures, not session roles.
-- Draft Architecture, `active_task: null`, or absent Build/Review Results are expected before their gates and are not blockers for an inactive role.
+- Draft Architecture, `artifacts.task: null`, or absent Build/Review Results are expected before their gates and are not blockers for an inactive role.
 - Apply role execution preconditions only when state selects this role, Operations routes the issue here, or the user supplies new input that legitimately routes this role. A premature request for a future role remains `READY`/waiting rather than manufacturing a missing-input blocker.
 - Return `BLOCKED` only for invalid/missing/conflicting durable state, or when the current selected role owns a persisted blocker or lacks its required current input. An inactive role stays `READY`/waiting; never create a blocker merely because another role must act first.
 - When the selected role is waiting for a user response, reconstruct the applicable Decision Brief/question or User Action Card from durable artifacts. Do not advance or return only a route enum.

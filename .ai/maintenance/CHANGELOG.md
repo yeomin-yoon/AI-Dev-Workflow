@@ -1,118 +1,12 @@
 # Workflow Changelog
 
-## manual-v1.24 — 2026-07-25
+## manual-v1.0 — 2026-07-25
 
-- Made `.ai/reference/OPERATIONS.md` the single issue-routing authority; lane State now records route effects without duplicating finding owners.
-- Made `.ai/contracts/STATE.md` the single phase/transition authority, linked the Architecture contract from its owning role, and removed the duplicate Workflow state diagram.
-- Made `.ai/contracts/ARTIFACT_AUTHORITY.md` the single fact-ownership/conflict-action authority and identified Workflow, Operations, and State as the gate, role-route, and phase/status lifecycle views.
-- Added explicit Changelog validation for malformed or duplicate releases, strict newest-first order, and current-release alignment.
-- Added guarded front-matter reads and Eval validation for filename/front-matter ID/version, canonical case IDs, declared legacy aliases, release-history consistency, and current-release evidence while preserving completed historical records.
-- Split valid Eval history from release eligibility: modern release evidence now requires completed PASS/quality-floor results, non-empty case rows, a tracked record without unstaged mutation, and an exact source commit/tree whose `release.yaml` carries the evaluated version. Later non-Eval source drift invalidates eligibility. Documented the source-commit then Eval-record-commit sequence and removed the provisional v1.24 record that pointed at v1.23.
-- Completed the Lane finite-state transitions for discovery, design, build, and Review; kept Integration progress in its queue; and made Operations branch accepted changes by Knowledge-sync policy and Lane topology.
-- Bound Git-backed single-main working-tree Review to a canonical Task-path fingerprint that Reviewer and downstream Knowledge/state consumers recheck.
-- Added an exact distribution inventory, initial scaffold/schema and managed/preserved classification checks, project-Knowledge leak detection, Windows PowerShell 5.1 plus Ubuntu PowerShell 7 CI, and destructive-fixture-isolated negative validation tests.
-- Defined migration metadata as sparse: omitted transitions are safe only when every preserved installed schema is explicitly compatible with the candidate release.
-- Clarified that strict four-session first setup initializes Knowledge Maintainer before the other three sessions, whose creation order is otherwise irrelevant.
-- Added a compact public overview and `.ai`-only installation callout, an at-a-glance command reference grouped by development, project/session work, and Workflow maintenance, and explicit existing/new main Front Desk session behavior; collapsed advanced usage and concepts and removed repeated commands from their details.
-- Corrected README routing for public-boundary versus artifact-contract findings, unified parallel Knowledge checkpoint timing, and made update preservation conditional on the documented procedure and validation. Added a tool-capability check, first-initialization success example, compact terminology guide, progressively disclosed maintenance commands, and clickable maintainer references.
-
-## manual-v1.23 — 2026-07-25
-
-- Standardized user-facing terms around the AI Dev Workflow distribution repository, installed project state, shared Knowledge, commits, and Integration order to remove source/copy ambiguity.
-- Labeled Windows PowerShell 5.1 as the default Windows validation path and PowerShell 7 as the optional `pwsh` path.
-- Clarified that GitHub Actions is configured but remote CI success must be confirmed after the first Push; a local PASS is not remote-run evidence.
-
-## manual-v1.22 — 2026-07-25
-
-- Renamed `CLEAN_RELEASE` to `BUILD_RELEASE_COPY` so the command states that it updates a separate GitHub distribution copy rather than cleaning an installed project in place.
-- Added a user-facing two-copy guide and explicit preservation matrix: complete project state remains in each development repository while only generic Workflow improvements reach the distribution copy.
-- Requires supplied project roots to remain read-only/lossless and reports whether their revision/status stayed unchanged before publication is considered ready.
-
-## manual-v1.21 — 2026-07-25
-
-- Added one explicit `CLEAN_RELEASE` command that turns supplied installed-project evidence into the latest clean canonical `.ai` without reverse-copying project state.
-- Treats installed common-file differences as untrusted candidates, rebuilds accepted changes against the latest canonical Core, and keeps release metadata and sanitized Evals source-owned.
-- Keeps publication human-controlled: the command validates a ready-to-publish source but never commits, pushes, changes remotes, or edits supplied projects.
-
-## manual-v1.20 — 2026-07-25
-
-- Made `release.yaml` the single current-version authority and changed the reusable Scorecard to an unversioned template while preserving historical Eval versions.
-- Added a source-only, read-only validation command and GitHub check for version consistency, required files, local references, and Markdown fence balance.
-- Clarified that installation copies only `.ai`; source Git/CI/tools stay in the GitHub repository and installed projects use their own Git history.
-
-## manual-v1.19 — 2026-07-25
-
-- Clarified that Bootstrap prompts are pasted as the first user message in a newly created AI session, not as a System Prompt or terminal command.
-- Added host-native text-search fallback order so a missing POSIX or preferred executable never becomes a false blocker.
-- Reduced the copied `RETURN_TO_MAIN` instruction to minimum reconstruction locators and added deterministic path → committed Git → unique-state → User Action recovery.
-- Made Main Front Desk preserve and checkpoint deferred `pending_reviews` without forcing Knowledge sync after every Lane.
-
-## manual-v1.18 — 2026-07-25
-
-- Made compact `main` Work the sole worktree Front Desk and Integration executor, including when worker Lanes use strict fixed-role topology.
-- Added sealed candidate identity: one Task-scoped code commit, exact base/candidate/tree Review, and one metadata-only Lane handoff commit.
-- Split Task, workflow, unrelated, and Observation dirt so exact committed candidates can integrate without declaring a dirty worktree removable.
-- Added return-card topology/language/tool reconstruction metadata and moved handoff/User Action/close schemas into on-demand contracts.
-- Added Lane-only `PREPARE_DELTA`, per-merge main before/after provenance, exact Integration review ranges, and golden lifecycle coverage.
-- Added metadata-only main Review and canonical Knowledge checkpoints so sequential integrations never stack on dirty tracking state.
-- Removed default session-title mutation and reduced duplicated Bootstrap instructions.
-- Kept preserved schemas compatible: older Reviews remain history, but a pre-v1.18 non-main candidate without commit/tree/handoff evidence must be re-reviewed and sealed before Integration.
-
-## manual-v1.17 — 2026-07-25
-
-- Made the existing main Work/Architect session the worktree-mode Front Desk without introducing another role or autonomous orchestrator.
-- Added concrete `RETURN_TO_MAIN` and `NEXT_SESSION` cards so every closed non-main session returns through main and users no longer retain or reconstruct Lane prompts.
-- Kept direct handoffs between already-open Work/Reviewer sessions inside one Lane while centralizing actual session replacement and cross-worktree movement.
-- Folded a Review-PASS return into the bounded one-candidate Integration authorization and added Git/Observation/worktree-removal safety checks at Front Desk intake.
-
-## manual-v1.16 — 2026-07-25
-
-- Pinned every bootstrapped session to one checkout and Lane; moving to another worktree/Lane now requires a new session and a target-specific prompt.
-- Made multi-Lane handoffs identify the target Lane and absolute worktree instead of relying on ambiguous session labels.
-- Defined session close as a durable checkpoint, separated conditional/manual Observation capture from close itself, and documented what close never performs implicitly.
-- Turned approved integration order into an explicit one-candidate main Work loop with independent main Review, actionable Git fallbacks, and no repeated approval when the boundary is unchanged.
-
-## manual-v1.15 — 2026-07-25
-
-- Fixed replacement-session guidance so non-main Lanes reuse their own Parallel Start prompts instead of accidentally bootstrapping `main`.
-- Made compact Work+Reviewer the explicit default for new parallel Lanes and added strict four-role cards only on explicit request.
-- Reused the already approved integration order and removed a redundant approval; a new decision is requested only when evidence changes the order/boundary.
-- Clarified that all sessions attached to an updated checkout must restart, defined Worktree for new users, removed provider-specific title wording, and reduced duplicated public guidance.
-
-## manual-v1.14 — 2026-07-25
-
-- Added an explicit Architect-owned `PARALLEL_START` contract for requested multi-worktree development.
-- Made main generate concrete per-Lane worktree commands, Work/Reviewer Bootstrap prompts, and first requests so users never hand-edit `lane=main`.
-- Required one approved committed partition before worktree creation and added actionable recovery when that baseline is not ready.
-- Made additional Lane initialization reuse the pinned canonical Knowledge and validate only its approved boundary instead of triggering redundant broad rebuilds.
-
-## manual-v1.13 — 2026-07-25
-
-- Made `main` the explicit standard lane across copy-paste prompts, providers, sessions, and ordinary worktrees; non-main lanes now require a deliberate user opt-in.
-- Added a hidden-by-default user guide for bootstrapping an optional additional lane without turning it into normal setup work.
-- Added explicit, source-scoped collection of Workflow observations from multiple installed projects/worktrees.
-- Made collection rerunnable through source-record provenance, exact-fingerprint grouping, evidence deduplication, and conflict reporting without importing project state or changing Core.
-- Replaced new branch-local Eval sequence IDs with collision-resistant UTC/provider/slug IDs; legacy Eval records remain valid.
-
-## manual-v1.12 — 2026-07-25
-
-- Made `role × lane` the only session identity, restored the active Task from durable state, and prevented Bootstrap-only session replacement from auto-executing it.
-- Kept pending user decisions/evidence assigned to the responsible Architect or Reviewer instead of inventing `user`/`integration` roles.
-- Removed redundant same-session handoffs while retaining exact cross-session instructions and actionable user gates.
-- Made Task and Integration Request status approval-only, materialized future Tasks just in time, and kept execution in state/Build/Review.
-- Fixed Builder false blockers for approved structural work and made Review/Knowledge routing evidence-dependent.
-- Separated production lane path rules from role-owned `.ai` artifacts and defined the System Architecture writer.
-- Standardized Knowledge revision keys, narrowed canonical writer scope, and added a preserving migration.
-- Added a compact pre-write dirty baseline so Review can distinguish user changes from the current Task.
-- Reduced Eval ceremony by separating a core scorecard from targeted regression cases.
-
-## manual-v1.11 — 2026-07-25
-
-- Added evidence-gated automatic and always-available manual Workflow observation capture.
-- Added deduplication and noise exclusions for ordinary project defects and corrected one-off model slips.
-- Added managed/preserved path separation, version metadata, safe update checks, backups, migrations, validation, and rollback.
-- Added Eval coverage for observation precision and project-state-preserving updates.
-
-## manual-v1.10 — 2026-07-25
-
-- Added a simplicity ladder, sourced project glossary, task-local skill boundaries, and evidence-bounded current research.
+- First public release of the file-backed, model-agnostic AI development Workflow.
+- Added durable project Knowledge, Architecture, Task, Build, Review, State, and Integration contracts so sessions remain replaceable workers instead of memory stores.
+- Added a compact default of one Work session plus one independent Reviewer, with strict four-role sessions available on demand.
+- Added small-Task planning, bounded context loading, evidence-based Review, actionable user gates, and risk-scaled explanations.
+- Added optional Lane/Worktree parallel development with a `main` Front Desk, sealed candidates, exact Integration review, and safe session replacement.
+- Added project-safe Workflow updates, manual and evidence-gated automatic Observation capture, and source/install separation.
+- Added reusable Eval contracts, release-evidence validation, cross-platform CI, negative fixtures, and distribution-integrity checks.
+- Defined efficiency, model parity, and natural learning as measurable goals rather than guaranteed outcomes.
