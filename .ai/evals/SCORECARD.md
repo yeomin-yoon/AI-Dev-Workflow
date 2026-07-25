@@ -1,7 +1,13 @@
 ---
+schema_version: 2
 id: EVAL-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug>
 date: null
-project_revision: null
+status: draft
+result: pending
+completed_at: null
+source_revision: null
+source_tree: null
+quality_floor: pending
 seed: ""
 lane: null
 provider: null

@@ -35,6 +35,8 @@ Do not make the Front Desk a second implementation context. It may route an exis
 
 Run this only after an explicit user request in the existing `main` Work session. Verify the approved order, a committed Review-PASS candidate, expected base, clean integration checkout, and project Git rules. Apply at most the next eligible non-conflicting candidate, without editing its content, reordering candidates, resolving conflicts, or expanding its boundary. Then stop and hand the integrated result to the independent `main` Reviewer using the Lane/worktree-qualified `DO_NEXT` form.
 
+After applying the candidate and recording the exact main before/after range, transition the main Lane to `integration/active`, set `next.role: reviewer`, and point its inputs at the Integration Request, queue item, and applied range. The phase is only a pointer; Integration progress remains authoritative in `.ai/integration/queue.yaml` and its Review artifacts.
+
 Integrate only a sealed candidate: exact committed Review range and tree, metadata-only handoff revision, expected dependency/base, and a clean main checkout. Source-worktree Observation or unrelated dirty paths do not change the sealed revision, but they keep that worktree unsafe to remove. If the candidate is unsealed, Task-dirty, inaccessible, conflicting, or the approved boundary/order may need to change, do not guess. Preserve the queue/state and return an actionable route or User Action Card. Knowledge promotion occurs only after integrated Review PASS.
 
 ## Continuous route

@@ -18,6 +18,8 @@ Require:
 
 Otherwise stop with the correct blocker type.
 
+After preflight succeeds and before production writes, transition `ready_to_build/active → building/active`, keep `next.role: builder`, and set `next.action: continue_build`. On replacement, compare the baseline, current Task paths, and Git before resuming; do not restart or overwrite unexplained work.
+
 ## Context
 
 Read the task manifest first, then only its referenced architecture section, symbols, tests, and prior review findings for this attempt. Use search/diff to expand. Record why if the soft budget in `BOOTSTRAP.md` is exceeded.
@@ -45,7 +47,7 @@ Stop as `architecture` or `integration` only when implementation requires one of
 
 ## Verify
 
-Before finalizing, compare current status/diff with the recorded baseline and account for every Task-attributed path. Then run low-cost deterministic checks first: targeted static check/lint → focused tests → relevant build → integration/runtime checks when required. Store commands, results, and concise evidence. Mark unavailable checks honestly; link full logs rather than copying them.
+Before finalizing, compare current status/diff with the recorded baseline and account for every Task-attributed path. For a Git-backed single-main working tree, calculate the canonical `candidate_fingerprint` defined by `BUILD_RESULT.md` after all Task writes and checks. Then run low-cost deterministic checks first: targeted static check/lint → focused tests → relevant build → integration/runtime checks when required. Store commands, results, and concise evidence. Mark unavailable checks honestly; link full logs rather than copying them.
 
 An unavailable user-observed or desktop-only verification step is not by itself an implementation blocker after the approved implementation and all available checks are complete. Record it as `not_run/unavailable`, finish a `ready_to_review` Build Result, and route Reviewer. Reviewer independently decides whether the mandatory gate is already covered, must be observed by the user, or exposes an implementation failure.
 
@@ -79,7 +81,7 @@ Do not redefine requirements, approve your work, update canonical knowledge, or 
 RESULT=<ready_to_review|implementation_blocked|architecture_issue|context_issue|integration_issue>
 task=<id> changed=<paths> artifact=<path>
 verification=<summary> unverified=<items|none>
-candidate=<commit+tree|working-tree-unsealed>
+candidate=<commit+tree|working-tree+fingerprint|unsealed-no-git>
 next=<role>
 ```
 

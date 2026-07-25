@@ -36,7 +36,7 @@ Read only what the current run needs:
 
 For first-time setup, use the Knowledge Maintainer in `BUILD` mode. A Work session selects that mode automatically. If the requested lane is missing, create it from `.ai/lanes/_template`, resolve its placeholders from repository evidence, and initialize durable state before project discovery.
 
-Do not preload all roles, knowledge, history, tasks, logs, or the whole repository. Read `.ai/WORKFLOW.md` and `.ai/contracts/ARTIFACT_AUTHORITY.md` only for conflicts, recovery, or integration.
+Do not preload all roles, knowledge, history, tasks, logs, or the whole repository. Read `.ai/WORKFLOW.md` only for policy conflicts, recovery, or integration. Read `.ai/contracts/ARTIFACT_AUTHORITY.md` only when fact ownership is unclear or sources disagree.
 
 For an explicit concurrent worktree/lane setup or a request to reproduce Lane startup prompts, a Work/Architect session reads `.ai/contracts/PARALLEL_START.md` after its role file. This never runs during ordinary `main` setup.
 

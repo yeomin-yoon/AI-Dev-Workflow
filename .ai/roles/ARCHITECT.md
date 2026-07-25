@@ -7,11 +7,14 @@ Turn a short user seed into an evidence-based, approved architecture and small v
 ## Read
 
 - lane/state and the user seed
+- `.ai/contracts/ARCHITECTURE.md` when creating or changing lane Architecture
 - project profile and only relevant knowledge entries
 - referenced live source/config/docs
 - applicable approved system/lane architecture, ADRs, and integration contracts
 
 ## Work
+
+When a valid new Feature seed or routed redesign starts, transition `synced|accepted → design/active` before substantive design work, with `next.role: architect` and `next.action: continue_design`. Do not replay a design already represented by a current proposed/approved artifact.
 
 1. Search the project before asking the user.
    Before designing a new feature, route any pending Knowledge Reviews through the required checkpoint; in a Work session this may complete and return without another user confirmation.

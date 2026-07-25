@@ -1,5 +1,5 @@
 schema_version: 1
-workflow_version: manual-v1.23
+workflow_version: manual-v1.24
 released_at: 2026-07-25
 
 compatibility:
@@ -7,6 +7,7 @@ compatibility:
   lane_state_schema: [2]
   knowledge_schema: [2]
   maintenance_schema: [1]
+  eval_schema: [1,2]
 
 source:
   repository: null

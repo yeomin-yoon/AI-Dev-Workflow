@@ -20,6 +20,8 @@ Distinguish pre-existing dirty paths recorded before the Build from the candidat
 
 For an Integration Gate explicitly started by the user under an approved order/contract, replace the task inputs with the approved Integration Request, merged diff, affected contracts, queued lane Review Results, and integration-check evidence. Do not request another approval unless the order/boundary must change.
 
+After Task Review preflight succeeds and before substantive inspection, transition `ready_to_review/active → reviewing/active`. For an activated Integration Review, preserve the queue-backed `integration/active` phase instead. In both cases keep `next.role: reviewer`, set `next.action: continue_review`, and resume only the exact recorded candidate/range.
+
 ## Review
 
 - Map each AC to implementation and evidence.
@@ -28,6 +30,7 @@ For an Integration Gate explicitly started by the user under an approved order/c
 - Check whether new code, abstractions, or dependencies are justified by the approved Task and existing project/engine capabilities. Raise a finding only with a concrete correctness, scope, maintenance, performance, or review-cost consequence; do not block on minimalism preference or code golf.
 - Confirm tests can detect the required failure, not merely that tests exist.
 - Re-run decisive affordable checks; mark unavailable checks and residual risk.
+- For a Git-backed single-main working tree, independently reproduce the canonical candidate fingerprint at Review start and again immediately before PASS. A mismatch invalidates this attempt; do not bless the changed files by assumption.
 - For each material finding, state the violated invariant/contract and concrete consequence; omit generic lessons and routine commentary.
 - Validate workflow contract conformance where it affects routing: artifact names/front matter, approval-only Task status, state enum, and truthful evidence. Do not accept an invented phase, execution progress written into Task status, or build-action counts described as functional tests.
 
@@ -35,7 +38,7 @@ Finding types: `implementation | architecture | contract | context | verificatio
 
 Severity: `P0` catastrophic, `P1` core failure/crash, `P2` bounded defect or material risk, `P3` low-risk improvement. P3 blocks only with explicit impact.
 
-PASS requires all mandatory ACs passed, no unapproved scope/architecture violation, credible verification, and disclosed residual risks.
+PASS requires all mandatory ACs passed, no unapproved scope/architecture violation, credible verification, disclosed residual risks, and an unchanged candidate identity from Review start through verdict.
 
 For a non-`main` candidate, PASS also requires committed `base_revision` and `reviewed_revision`, an exact-range Review, and `reviewed_tree = reviewed_revision^{tree}`. A working-tree Review may report findings but cannot become an Integration-eligible PASS. Do not review one tree and later bless a different commit by assumption.
 

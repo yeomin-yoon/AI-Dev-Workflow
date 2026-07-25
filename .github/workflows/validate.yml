@@ -10,10 +10,31 @@ permissions:
 
 jobs:
   validate:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check out source
         uses: actions/checkout@v4
-      - name: Validate workflow
+
+      - name: Validate release source (Windows PowerShell 5.1)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: .\tools\validate-workflow.ps1 -RequireReleaseEvidence
+
+      - name: Run negative fixtures (Windows PowerShell 5.1)
+        if: always() && runner.os == 'Windows'
+        shell: powershell
+        run: .\tools\test-validation.ps1
+
+      - name: Validate release source (Ubuntu PowerShell 7)
+        if: runner.os == 'Linux'
         shell: pwsh
-        run: ./tools/validate-workflow.ps1
+        run: ./tools/validate-workflow.ps1 -RequireReleaseEvidence
+
+      - name: Run negative fixtures (Ubuntu PowerShell 7)
+        if: always() && runner.os == 'Linux'
+        shell: pwsh
+        run: ./tools/test-validation.ps1

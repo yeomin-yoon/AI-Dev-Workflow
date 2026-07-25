@@ -11,6 +11,7 @@ verdict: pending
 base_revision: <commit|working-tree>
 reviewed_revision: <commit|working-tree>
 reviewed_tree: <git-tree-hash|unsealed>
+reviewed_fingerprint: <git-tree:hash|sha256:hash|unsealed>
 reviewer: <session-id|unknown>
 independence: <independent_session|reduced_assurance>
 knowledge_sync: <required|defer|none>
@@ -58,7 +59,9 @@ Use verdict `pass | fail | blocked | pending`.
 
 PASS requires mandatory ACs passed, credible evidence, architecture/lane compliance, no unapproved scope, disclosed residual risk, and independent-session Review unless the user explicitly accepted reduced assurance. A PASS Review includes a risk-scaled Change Brief; use `none` for a purely mechanical change and do not duplicate the diff. Omit the Change Brief for `fail` or `blocked`; findings provide the needed failure context. The brief is revision-scoped orientation, not authority. Every FAIL finding needs type, severity, location, impact, evidence, reproduction, and route. Do not fail on preference alone or send architecture issues to Builder.
 
-For a commit candidate, Reviewer inspects the exact `base_revision..reviewed_revision` range and records `reviewed_tree = reviewed_revision^{tree}`. A non-`main` Integration candidate may PASS only against committed revisions; a `working-tree` Review may guide repair but must be repeated against the final commit before sealing. The later metadata-only handoff commit is not the reviewed production revision and must contain only the current Lane workflow artifacts allowed by `MAIN_DESK.md`.
+For a commit candidate, Reviewer inspects the exact `base_revision..reviewed_revision` range and records `reviewed_tree = reviewed_revision^{tree}` plus `reviewed_fingerprint: git-tree:<reviewed_tree>`. A non-`main` Integration candidate may PASS only against committed revisions. The later metadata-only handoff commit is not the reviewed production revision and must contain only the current Lane workflow artifacts allowed by `MAIN_DESK.md`.
+
+For a Git-backed single-main working tree, Reviewer independently recalculates the Build Result's canonical fingerprint before inspection and immediately before PASS, then records it as `reviewed_fingerprint`. Any mismatch means the candidate changed and cannot inherit the verdict; route a new Build/Review attempt. A no-Git `unsealed` Review may PASS only with its reduced attribution assurance disclosed and can never become Integration evidence.
 
 For a mandatory user-observed verification gate, complete all other review work, use verdict `blocked`, record the exact gate/procedure and available evidence, and show the User Action Card in chat. After evidence arrives, create/resume the appropriate Review attempt and issue the final verdict.
 

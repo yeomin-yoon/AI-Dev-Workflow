@@ -16,6 +16,7 @@ managed:
   - .ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md
   - .ai/shared/knowledge/README.md
   - .ai/maintenance/release.yaml
+  - .ai/maintenance/distribution-inventory.txt
   - .ai/maintenance/managed-paths.yaml
   - .ai/maintenance/.gitignore
   - .ai/maintenance/MAINTAIN.md

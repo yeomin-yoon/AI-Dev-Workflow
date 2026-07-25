@@ -6,20 +6,29 @@ Read only for exceptions, integration, recovery, or session replacement.
 
 ```text
 seed → Architect → approved architecture/task → Builder
-→ build result → Reviewer → accepted change
-→ Knowledge (single lane) | Integration → Knowledge (multiple lanes)
+→ build result → Reviewer
+  ├─ FAIL/BLOCKED → resolved issue owner
+  └─ PASS → accepted change
+       ├─ Knowledge required/checkpoint → Knowledge Maintainer
+       ├─ single-main defer/none → Architect/next Task
+       └─ non-main → optional PREPARE_DELTA when required → Integration
+            → main Reviewer → canonical Knowledge checkpoint when required
 ```
+
+Knowledge is not an unconditional PASS handoff. Reviewer owns `required | defer | none`; Lane topology and pending checkpoints determine the concrete next role/procedure. `.ai/roles/REVIEWER.md` defines the classification criteria, while this route is the authoritative role/procedure outcome.
 
 ## Issue route
 
+This is the single authoritative issue-routing table.
+
 | Type | Owner |
 |---|---|
-| implementation | Builder |
-| architecture | Architect |
-| contract | owning artifact/contract role; Architect + user only for requirement/public-boundary changes |
-| context | Knowledge Maintainer for stale discovery; otherwise owner of the missing authoritative input |
-| verification | Reviewer + user when needed |
-| integration | user-coordinated Integration Gate |
+| `implementation` | Builder |
+| `architecture` | Architect |
+| `contract` | owning artifact/contract role; Architect + user only for approved requirement or public-boundary changes |
+| `context` | Knowledge Maintainer for stale discovery; otherwise the role/user owning the missing authoritative input |
+| `verification` | Reviewer + user when needed; Builder supplies available evidence |
+| `integration` | user-coordinated Integration Gate |
 
 Repair only the responsible artifact; do not restart the whole workflow.
 

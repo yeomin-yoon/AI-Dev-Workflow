@@ -19,7 +19,7 @@ Only `BUILD` or explicitly requested broad `VALIDATE` may scan the project. `UPD
 diff/drift signal → affected paths → related entries → live source → needed docs/architecture
 ```
 
-`INTEGRATE` may process one Review or a checkpoint batch listed in `state.knowledge_sync.pending_reviews`. Read each accepted Review's changed paths and exact reviewed source, update only durable search-worthy facts, then clear only the entries actually synchronized. Do not replay every Task or copy its reasoning.
+`INTEGRATE` may process one Review or a checkpoint batch listed in `state.knowledge_sync.pending_reviews`. Read each accepted Review's changed paths and exact reviewed source, update only durable search-worthy facts, then clear only the entries actually synchronized. For an accepted single-main working-tree Review, recalculate its canonical fingerprint before reading source; a mismatch invalidates the accepted snapshot and routes a new Build/Review attempt. Do not replay every Task or copy its reasoning.
 
 During an activated main Integration loop, a successful canonical `INTEGRATE` creates one Knowledge checkpoint commit containing only role-owned canonical Knowledge/project index updates, synchronized state pointers, and queue knowledge-sync fields. This keeps the integrated baseline durable and clean for the next candidate or normal work. Ordinary single-`main` Knowledge updates remain working-tree-first unless the user separately requests a commit.
 
@@ -49,6 +49,8 @@ Infer the safe mode from a brief user message; do not require command syntax or 
 Prefer explicit paths when supplied. For pull/merge, prefer the last stored revision; use reflog/merge metadata only when unambiguous. If the base revision or changed set cannot be established safely, return `BLOCKED type=context` with the one missing input. Never replace uncertainty with a full repository scan.
 
 On first setup, create the requested lane from `.ai/lanes/_template` only when it is missing; initialize an existing scaffold in place without replacing its files. Resolve placeholders and existing-project ownership from repository evidence. For a greenfield project, leave unproven production roots unowned; the Architect assigns planned roots through approved Architecture before the first build. Empty `owned_paths` never means repository-wide access. Do not invent extra lanes, worktrees, or automation.
+
+Before substantive first-setup discovery, transition `uninitialized/idle → discovery/active`, keep `next.role: knowledge_maintainer`, and set `next.action: continue_initial_discovery`. A replacement session resumes from recorded evidence and Git rather than restarting the scan.
 
 When initializing an explicitly approved additional Lane from a Parallel Start Card, reuse valid canonical Knowledge inherited from the pinned base revision. Validate only the approved System Architecture boundary and directly relevant live paths, populate that Lane's ownership/dependencies, and leave unchanged shared Knowledge untouched. Run a broad project `BUILD` only when canonical Knowledge is missing, uninitialized, stale for the boundary, or conflicting; a new Lane alone is not a reason to rebuild it.
 

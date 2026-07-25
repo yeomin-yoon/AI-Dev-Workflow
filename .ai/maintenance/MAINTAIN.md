@@ -116,7 +116,7 @@ destination=<canonical observations path> next=<triage|resolve_conflicts|none>
 
 ## BUILD_RELEASE_COPY: update the separate distributable `.ai`
 
-Run only when the user explicitly requests `BUILD_RELEASE_COPY` from the separate canonical AI Dev Workflow distribution checkout and supplies every installed project/worktree root. The supplied installations retain their complete project state; the canonical checkout is the independent GitHub distribution copy. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, directly affected Eval work, and distribution validation. It does not authorize a Git commit, push, remote change, supplied-project edit/cleanup/deletion, or full installed `.ai` copy.
+Run only when the user explicitly requests `BUILD_RELEASE_COPY` from the separate canonical AI Dev Workflow distribution checkout and supplies every installed project/worktree root. The supplied installations retain their complete project state; the canonical checkout is the independent GitHub distribution copy. This single request authorizes bounded observation collection, candidate comparison, triage, accepted generic Core edits, one release-version/Changelog update, provisional affected-case checks, and development-mode distribution validation. It does not authorize a Git commit, completed release Eval, push, remote change, supplied-project edit/cleanup/deletion, or full installed `.ai` copy.
 
 The canonical distribution checkout's `.ai` is the output copy. Do not create a nested repository, sanitize an installation in place, or treat an installed project as the release destination. A third generated copy is unnecessary and would add another drift boundary. Before writing, verify the canonical checkout and inventory its existing changes. Stop on unrelated or unexplained Core dirt instead of mixing releases.
 
@@ -142,17 +142,35 @@ For one accepted release batch:
 2. apply the smallest generic change without weakening correctness, safety, explanation, or verification;
 3. add/update directly affected regression cases;
 4. bump the canonical version exactly once and update Changelog; do not rewrite historical Eval versions;
-5. create a sanitized Eval record with no project-specific content;
-6. run `tools/validate-workflow.ps1` from the distribution root and require PASS; and
-7. leave all changes uncommitted for human review and GitHub publication.
+5. run affected cases provisionally without creating a completed Eval record;
+6. run `tools/validate-workflow.ps1` without `-RequireReleaseEvidence` from the distribution root; and
+7. leave all source changes uncommitted for human review and report that an immutable source commit is required before final Eval.
 
 If no candidate is accepted, do not bump the version or create release artifacts. Report exactly:
 
 ```text
-BUILD_RELEASE_COPY RESULT=<ready_to_publish|no_change|blocked> version=<version>
+BUILD_RELEASE_COPY RESULT=<source_commit_required|no_change|blocked> version=<version>
 sources=<n> observations=<n> common_candidates=<n> accepted=<n>
 source_projects_unchanged=<yes|no|unknown> excluded_project_state=<yes> validation=<pass|not_run|failed>
-artifacts=<paths|none> next=<review_and_commit|none|resolve_conflict|user_decision>
+artifacts=<paths|none> next=<review_and_commit_source|none|resolve_conflict|user_decision>
+```
+
+## FINALIZE_RELEASE_EVAL: bind evidence to the source commit
+
+Run only after the user explicitly says the reviewed versioned source changes were committed and asks to finalize that release Eval. This request authorizes affected-case execution, one sanitized completed Eval record, and staging only that Eval record so validation can prove it will be tracked. It still does not authorize a source rewrite, commit, Push, tag, or remote mutation.
+
+1. Require a clean source tree before the Eval record is created and verify `HEAD` contains the intended `release.yaml` version and Changelog entry.
+2. Record full `source_revision=HEAD` and `source_tree=HEAD^{tree}`. The source commit must not already contain the new Eval record.
+3. Run the affected canonical regression cases and complete every Core Result and Targeted Regressions row with evidence.
+4. Set `status: completed`, truthful `result`, UTC `completed_at`, and `quality_floor`; failed results remain records but cannot release.
+5. Stage only the new Eval record, inspect the staged path/diff, and run `tools/validate-workflow.ps1 -RequireReleaseEvidence` plus `tools/test-validation.ps1`.
+6. Leave the Eval staged for human review and its separate record commit.
+
+```text
+FINALIZE_RELEASE_EVAL RESULT=<eval_commit_required|failed|blocked> version=<version>
+source_revision=<commit> source_tree=<tree> result=<pass|fail|none>
+eval=<staged path|none> validation=<pass|failed|not_run>
+next=<review_and_commit_eval|repair_source|none>
 ```
 
 ## Triage and release

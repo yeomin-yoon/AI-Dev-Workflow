@@ -1,5 +1,21 @@
 # Workflow Changelog
 
+## manual-v1.24 — 2026-07-25
+
+- Made `.ai/reference/OPERATIONS.md` the single issue-routing authority; lane State now records route effects without duplicating finding owners.
+- Made `.ai/contracts/STATE.md` the single phase/transition authority, linked the Architecture contract from its owning role, and removed the duplicate Workflow state diagram.
+- Made `.ai/contracts/ARTIFACT_AUTHORITY.md` the single fact-ownership/conflict-action authority and identified Workflow, Operations, and State as the gate, role-route, and phase/status lifecycle views.
+- Added explicit Changelog validation for malformed or duplicate releases, strict newest-first order, and current-release alignment.
+- Added guarded front-matter reads and Eval validation for filename/front-matter ID/version, canonical case IDs, declared legacy aliases, release-history consistency, and current-release evidence while preserving completed historical records.
+- Split valid Eval history from release eligibility: modern release evidence now requires completed PASS/quality-floor results, non-empty case rows, a tracked record without unstaged mutation, and an exact source commit/tree whose `release.yaml` carries the evaluated version. Later non-Eval source drift invalidates eligibility. Documented the source-commit then Eval-record-commit sequence and removed the provisional v1.24 record that pointed at v1.23.
+- Completed the Lane finite-state transitions for discovery, design, build, and Review; kept Integration progress in its queue; and made Operations branch accepted changes by Knowledge-sync policy and Lane topology.
+- Bound Git-backed single-main working-tree Review to a canonical Task-path fingerprint that Reviewer and downstream Knowledge/state consumers recheck.
+- Added an exact distribution inventory, initial scaffold/schema and managed/preserved classification checks, project-Knowledge leak detection, Windows PowerShell 5.1 plus Ubuntu PowerShell 7 CI, and destructive-fixture-isolated negative validation tests.
+- Defined migration metadata as sparse: omitted transitions are safe only when every preserved installed schema is explicitly compatible with the candidate release.
+- Clarified that strict four-session first setup initializes Knowledge Maintainer before the other three sessions, whose creation order is otherwise irrelevant.
+- Added a compact public overview and `.ai`-only installation callout, an at-a-glance command reference grouped by development, project/session work, and Workflow maintenance, and explicit existing/new main Front Desk session behavior; collapsed advanced usage and concepts and removed repeated commands from their details.
+- Corrected README routing for public-boundary versus artifact-contract findings, unified parallel Knowledge checkpoint timing, and made update preservation conditional on the documented procedure and validation. Added a tool-capability check, first-initialization success example, compact terminology guide, progressively disclosed maintenance commands, and clickable maintainer references.
+
 ## manual-v1.23 — 2026-07-25
 
 - Standardized user-facing terms around the AI Dev Workflow distribution repository, installed project state, shared Knowledge, commits, and Integration order to remove source/copy ambiguity.

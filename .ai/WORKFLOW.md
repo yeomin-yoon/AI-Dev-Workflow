@@ -4,23 +4,7 @@ Read this only for policy conflicts, recovery, or integration. Normal runs use `
 
 ## Authority
 
-| Fact | Authority |
-|---|---|
-| goal and requirements | latest approved spec |
-| scope and success | approved task |
-| intended structure | approved architecture/ADR |
-| current implementation | live source/config/assets |
-| observed behavior | build/test/runtime evidence |
-| workflow position | lane `state.yaml` |
-| discovery | sourced knowledge index |
-| history | Git |
-
-When sources disagree, do not silently choose:
-
-- knowledge vs source → use source; mark knowledge stale
-- architecture vs source → report architecture drift
-- task vs architecture → stop; route to Architect
-- test vs requirement → treat as verification issue
+`.ai/contracts/ARTIFACT_AUTHORITY.md` is the single authority for fact ownership and conflict actions. Load it only when the authoritative artifact is unclear or sources disagree.
 
 ## Lifecycle
 
@@ -36,6 +20,8 @@ seed
 ```
 
 Agent output is not canonical until its gate passes.
+
+This diagram is the gate-level view. `.ai/reference/OPERATIONS.md` owns the role-route view, and `.ai/contracts/STATE.md` owns the phase/status view.
 
 The recommended manual runtime uses a Work session for Knowledge/Architect/Builder and a separate Reviewer session. Strict four-session operation remains valid inside a Lane. Same-session self-review is reduced assurance and is never silently treated as independent. In explicit worktree mode, `role=work, lane=main` is always the user-operated Front Desk for issuing sessions, receiving returns, and executing approved Integration; strict worker-Lane topology does not transfer that authority to main Architect.
 
@@ -119,29 +105,11 @@ observed friction → local Observation → explicit canonical collection
 
 ## Issue routing
 
-| Type | Owner |
-|---|---|
-| `implementation` | Builder |
-| `architecture` | Architect |
-| `contract` | owning artifact/contract role; Architect + user only for approved requirement or public-boundary changes |
-| `context` | Knowledge Maintainer for stale discovery; otherwise the role/user owning the missing authoritative input |
-| `verification` | Reviewer + user when needed; Builder supplies available evidence |
-| `integration` | user-coordinated Integration Gate |
+`.ai/reference/OPERATIONS.md` is the single authority for issue classification and owner routing. Read its Issue route only when an exception must be classified or routed.
 
 ## State flow
 
-```text
-uninitialized → discovery → synced/idle
-new feature → design → ready_to_build → building
-→ ready_to_review → reviewing → accepted
-  ├─→ next task (Knowledge pending or not needed)
-  ├─→ Knowledge checkpoint → synced (single lane)
-  └─→ integration → synced (multiple lanes)
-```
-
-When blocked, preserve `phase`, set `status: blocked`, and fill the `blocked` record. Every transition records its evidence artifact and next role in `state.yaml`.
-
-`state.next.role` always remains the responsible AI role. User decisions/evidence are represented by `next.action` plus `blocked.owner` when blocked; `user` and `integration` are never stored as roles.
+`.ai/contracts/STATE.md` is the single authority for lane phases, statuses, blocker fields, and transitions. Issue-owner classification remains in `.ai/reference/OPERATIONS.md`; do not restate either table here.
 
 ## Integration Gate
 
