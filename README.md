@@ -1,5 +1,8 @@
 # AI Dev Workflow
 
+[![Structure](https://github.com/yeomin-yoon/AI-Dev-Workflow/actions/workflows/validate.yml/badge.svg)](https://github.com/yeomin-yoon/AI-Dev-Workflow/actions/workflows/validate.yml)
+[![Release Evidence](https://github.com/yeomin-yoon/AI-Dev-Workflow/actions/workflows/release-evidence.yml/badge.svg)](https://github.com/yeomin-yoon/AI-Dev-Workflow/actions/workflows/release-evidence.yml)
+
 *A file-backed, model-agnostic workflow for small implementation steps and independent review.*
 
 **세션과 모델이 바뀌어도 파일에서 작업을 복원하고, 작은 구현과 독립 검증으로 불필요한 Context와 재작업을 줄이도록 설계됐다.**
