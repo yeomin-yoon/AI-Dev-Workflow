@@ -1206,7 +1206,7 @@ else {
     }
 }
 
-$markdownFiles = @(Get-ChildItem -LiteralPath $RepositoryRoot -Recurse -File -Filter '*.md' |
+$markdownFiles = @(Get-ChildItem -LiteralPath $RepositoryRoot -Recurse -File -Force -Filter '*.md' |
     Where-Object { $_.FullName -notmatch '[\\/]\.git[\\/]' })
 $referenceCount = 0
 

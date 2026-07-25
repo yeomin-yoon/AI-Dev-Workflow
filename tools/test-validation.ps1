@@ -389,3 +389,8 @@ finally {
         Remove-Item -LiteralPath $runRoot -Recurse -Force
     }
 }
+
+# Expected negative fixtures leave their child process exit code in
+# LASTEXITCODE. GitHub Actions appends an exit check after dot-sourcing this
+# script, so reset it only after every assertion and cleanup completed.
+$global:LASTEXITCODE = 0
