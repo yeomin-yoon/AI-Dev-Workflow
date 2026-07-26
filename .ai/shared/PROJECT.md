@@ -24,10 +24,12 @@ Use profile status `uninitialized | partial | verified | stale | conflict`.
 | Purpose | Command/procedure | Working dir | Verified |
 |---|---|---|---|
 
-## Rules
+## Rule Index
 
-| Rule | Source |
-|---|---|
+Rule content lives only in `.ai/shared/knowledge/rules/**`; this table is a compact projection.
+
+| Rule ref | Scope | Status | Source |
+|---|---|---|---|
 
 ## Critical Boundaries
 

@@ -13,6 +13,8 @@ Build and maintain a compact, sourced index that helps workers locate authoritat
 - `INTEGRATE`: after Review PASS, compare the accepted source with affected knowledge and update canonical knowledge. Multi-lane candidates must be merged first.
 - `QUERY`: answer factual project location/state/source questions from the index plus targeted live evidence. Do not design, implement, or review.
 
+Read `.ai/contracts/KNOWLEDGE.md` before any mode that creates, changes, validates, or answers from Knowledge. During first `BUILD`, instruction-file conflict, sensitive configuration discovery, or repository-command discovery, also apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`.
+
 Only `BUILD` or explicitly requested broad `VALIDATE` may scan the project. `UPDATE`, narrow `VALIDATE`, `PREPARE_DELTA`, and `INTEGRATE` follow:
 
 ```text
@@ -54,13 +56,13 @@ Before substantive first-setup discovery, transition `uninitialized/idle → dis
 
 When initializing an explicitly approved additional Lane from a Parallel Start Card, reuse valid canonical Knowledge inherited from the pinned base revision. Validate only the approved System Architecture boundary and directly relevant live paths, populate that Lane's ownership/dependencies, and leave unchanged shared Knowledge untouched. Run a broad project `BUILD` only when canonical Knowledge is missing, uninitialized, stale for the boundary, or conflicting; a new Lane alone is not a reason to rebuild it.
 
-After a successful first `BUILD`, set lane status `active` and the resting lane state to `phase: synced`, `status: idle`, `next.role: architect`, `next.action: await_feature_seed`; keep active Feature/Task plus current Task/Build/Review pointers null and retain the lane Architecture pointer. This is readiness, not an invented initial feature.
+After a successful first `BUILD`, set lane status `active` and the resting lane state to `phase: synced`, `status: idle`, `next.role: architect`, `next.action: await_feature_seed`; keep current Task/Build/Review pointers null and retain the lane Architecture pointer. This is readiness, not an invented initial feature.
 
 Use one active canonical Knowledge writer per checkout and one writer per lane state/delta. Two sessions pointed at the same canonical index or `state.yaml` must not update it concurrently. Separate model-evaluation worktrees are separate checkouts, so each may safely have its own `main` Knowledge Maintainer.
 
 For `BUILD`, discover in stages:
 
-1. inventory names and metadata first: ignore rules, top-level tree, build/project manifests, docs index, project-specific terminology, and version-control revision
+1. inventory names and metadata first: ignore rules, top-level tree, build/project manifests, docs index, project-specific terminology, version-control revision, and repository-local team instructions such as contribution/coding documents, host-recognized AI instruction files, formatter/linter/editor settings, CI checks, asset/LFS rules, and build/test commands; record instruction path/scope/status before reading only applicable files
 2. exclude generated, vendor, cache, binary, and asset payloads unless evidence requires them
 3. inspect only representative entry points and public boundaries needed for the project map, commands, and lane ownership
 4. leave uncertain details `unknown`; expand them on demand for a real feature
@@ -70,6 +72,8 @@ Do not build an exhaustive class/file catalog.
 ## Entry rules
 
 - Store stable responsibility, relationships, public surfaces, commands, search hints, and exact `path + symbol/section + revision` sources.
+- For a project rule, record its exact scope, source, enforcement mechanism when present, and verification status. Explicit approved documents and repository configuration are rules within their scope; a dominant live-source convention may be indexed only as `inferred`. Never promote generic advice, an isolated example, or personal preference into a team rule.
+- Store only the existence, scope, and safe invocation of sensitive configuration or repository commands. Never open/index secret payloads or run scripts/hooks merely to discover them; inspect and execute only when a legitimate Task and active role require it.
 - Store a glossary term only when it is project-specific, repeatedly used, or differs from ordinary meaning. Record its concise meaning, aliases, and source; do not invent jargon merely to shorten prompts.
 - Do not copy source, full documents, private-function catalogs, chat reasoning, logs, or Git history.
 - Use `verified | inferred | stale | unknown | conflict`; never upgrade without evidence.

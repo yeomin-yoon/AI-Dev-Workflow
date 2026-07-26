@@ -21,6 +21,7 @@ Collection rules:
 - The same source-record ID with changed content but no monotonic timestamp/count evidence is `conflicts`; do not silently choose a copy.
 - A source-record ID associated with another fingerprint is `conflicts`; never overwrite or guess.
 - Different source-record IDs with the same open fingerprint merge into the existing canonical record. If none exists, copy the first valid record as canonical.
+- New records use the four-part `stage | symptom_class | provider_scope | contract_or_route` fingerprint. A legacy three-part record uses `contract_or_route=unknown` and does not merge with a four-part record unless triage proves the same root contract/route.
 - Deduplicate evidence by the exact tuple `kind | ref | note`. Set canonical `occurrences` to the sum of its unique `source_records` counts and retain every source-record entry.
 - Do not copy a redundant same-fingerprint file after its data is merged. If duplicate canonical files already exist, consolidate them only after the merged record validates; leave every supplied source untouched.
 - Different fingerprints remain separate observations. Collection never triages, changes Core, creates a release, or changes project/lane state.
@@ -61,8 +62,10 @@ For one accepted release batch:
 3. add/update directly affected regression cases;
 4. bump the canonical version exactly once and update Changelog; do not rewrite historical Eval versions;
 5. run affected cases provisionally without creating a completed Eval record;
-6. run `tools/validate-workflow.ps1` without `-RequireReleaseEvidence` from the distribution root; and
-7. leave all source changes uncommitted for human review and report that an immutable source commit is required before final Eval.
+6. run `tools/validate-workflow.ps1` without `-RequireReleaseEvidence` from the distribution root;
+7. leave all source changes uncommitted for human review and report that an immutable source commit plus an independent post-commit Workflow Review are required before final Eval.
+
+Do not let this authoring session self-approve the release. A provisional contract trace may guide development, but only the fresh-session clean-HEAD Workflow Review embedded by `FINALIZE_RELEASE_EVAL` is release evidence.
 
 If no candidate is accepted, do not bump the version or create release artifacts. Report exactly:
 
@@ -70,23 +73,27 @@ If no candidate is accepted, do not bump the version or create release artifacts
 BUILD_RELEASE_COPY RESULT=<source_commit_required|no_change|blocked> version=<version>
 sources=<n> observations=<n> common_candidates=<n> accepted=<n>
 source_projects_unchanged=<yes|no|unknown> excluded_project_state=<yes> validation=<pass|not_run|failed>
+workflow_review=<required_after_source_commit|not_run>
 artifacts=<paths|none> next=<review_and_commit_source|none|resolve_conflict|user_decision>
 ```
 
 ## FINALIZE_RELEASE_EVAL: bind evidence to the source commit
 
-Run only after the user explicitly says the reviewed versioned source changes were committed and asks to finalize that release Eval. This request authorizes affected-case execution, one sanitized completed Eval record under source-only `evals/runs/`, and staging only that Eval record so validation can prove it will be tracked. It still does not authorize a source rewrite, commit, Push, tag, or remote mutation.
+Run only in a fresh session after the user explicitly says the versioned source changes were committed and asks to finalize that release Eval. The finalizing session must not have authored those source changes. This request authorizes one independent clean-HEAD Workflow Review, affected-case execution, one sanitized completed Eval record under source-only `evals/runs/` containing that review, and staging only that Eval record so validation can prove it will be tracked. It still does not authorize a source rewrite, commit, Push, tag, or remote mutation.
 
 1. Require a clean source tree before the Eval record is created and verify `HEAD` contains the intended `release.yaml` version and Changelog entry.
-2. Record full `source_revision=HEAD` and `source_tree=HEAD^{tree}`. The source commit must not already contain the new Eval record.
-3. Run the affected canonical regression cases and complete every Core Result and Targeted Regressions row with evidence.
-4. Set `status: completed`, truthful `result`, UTC `completed_at`, and `quality_floor`; failed results remain records but cannot release.
-5. Write the record to `evals/runs/`, stage only that record, inspect the staged path/diff, and run `tools/validate-workflow.ps1 -RequireReleaseEvidence` plus `tools/test-validation.ps1`.
-6. Leave the Eval staged for human review and its separate record commit.
+2. Read `maintenance/WORKFLOW_REVIEW.md` and run `mode=changed` against that immutable `HEAD` in this independent session. Stop without creating an Eval if the review is blocked, has any P1/applicable FAIL, or cannot justify a deferred P2. A Workflow PASS may still report release `not_ready` solely because the Eval record has not been created yet.
+3. Record full `source_revision=HEAD` and `source_tree=HEAD^{tree}`. The source commit must not already contain the new Eval record.
+4. Set `eval_type: source_regression`, run the affected canonical regression cases, and complete every Core Result and Targeted Regressions row with evidence. Do not run or imply baseline/A/B, token, speed, or model-parity comparison.
+5. Copy the complete ten-lens review, findings, and bounded self-check into the Eval's `## Workflow Review` section. Set front matter `workflow_review_result: pass`, `workflow_review_mode: changed`, `workflow_review_independence: independent_session`, and truthful `workflow_review_self_check: pass | corrected`; do not summarize away corrections or deferred P2 evidence.
+6. Set `status: completed`, truthful `result`, UTC `completed_at`, and `quality_floor`; failed results remain records but cannot release.
+7. Write the record to `evals/runs/`, stage only that record, inspect the staged path/diff, and run `tools/validate-workflow.ps1 -RequireReleaseEvidence` plus `tools/test-validation.ps1`.
+8. Leave the Eval staged for human review and its separate record commit.
 
 ```text
 FINALIZE_RELEASE_EVAL RESULT=<eval_commit_required|failed|blocked> version=<version>
 source_revision=<commit> source_tree=<tree> result=<pass|fail|none>
+workflow_review=<pass|changes_required|blocked|not_run> independence=<independent_session|reduced_assurance|unknown>
 eval=<staged source-only path|none> validation=<pass|failed|not_run>
 next=<review_and_commit_eval|repair_source|none>
 ```

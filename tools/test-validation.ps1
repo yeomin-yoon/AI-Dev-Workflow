@@ -92,6 +92,8 @@ function Initialize-FixtureGit {
         & git -C $FixtureRoot config core.autocrlf false 2>&1 | Out-Null
         & git -C $FixtureRoot add --all 2>&1 | Out-Null
         if ($LASTEXITCODE -ne 0) { throw 'Fixture git add failed' }
+        & git -C $FixtureRoot add -f -- .ai/maintenance/update-state.yaml 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'Fixture local update-state add failed' }
         & git -C $FixtureRoot commit -q -m 'fixture source' 2>&1 | Out-Null
         if ($LASTEXITCODE -ne 0) { throw 'Fixture source commit failed' }
     }
@@ -103,18 +105,26 @@ function Initialize-FixtureGit {
 function Write-ModernEval {
     param(
         [string]$FixtureRoot,
-        [ValidateSet('pass', 'fail')][string]$Result
+        [ValidateSet('pass', 'fail')][string]$Result,
+        [ValidateSet('source_regression', 'end_to_end', 'fixed_contract')][string]$EvalType = 'source_regression'
     )
 
     $sourceRevision = (& git -C $FixtureRoot rev-parse HEAD).Trim()
     $sourceTree = (& git -C $FixtureRoot rev-parse 'HEAD^{tree}').Trim()
+    $releasePath = Join-Path $FixtureRoot '.ai/maintenance/release.yaml'
+    $releaseText = [System.IO.File]::ReadAllText($releasePath, [System.Text.Encoding]::UTF8)
+    $releaseMatch = [regex]::Match($releaseText, '(?m)^workflow_version:\s*(?<value>manual-v\d+\.\d+)\s*$')
+    if (-not $releaseMatch.Success) {
+        throw 'Fixture release version is missing or invalid'
+    }
+    $workflowVersion = $releaseMatch.Groups['value'].Value
     $quality = if ($Result -eq 'pass') { 'pass' } else { 'fail' }
     $accepted = if ($Result -eq 'pass') { 'yes' } else { 'no' }
-    $target = Join-Path $FixtureRoot "evals/runs/EVAL-20990101T000000000Z-test-manual-v1.0-${Result}.md"
+    $target = Join-Path $FixtureRoot "evals/runs/EVAL-20990101T000000000Z-test-${workflowVersion}-${Result}.md"
     $content = @"
 ---
 schema_version: 2
-id: EVAL-20990101T000000000Z-test-manual-v1.0-$Result
+id: EVAL-20990101T000000000Z-test-$workflowVersion-$Result
 status: completed
 result: $Result
 completed_at: 2099-01-01T00:00:00.000Z
@@ -129,8 +139,12 @@ model: test
 reasoning: test
 optional_interventions: []
 user_language: ko
-workflow_version: manual-v1.0
-eval_type: fixed_contract
+workflow_version: $workflowVersion
+eval_type: $EvalType
+workflow_review_result: pass
+workflow_review_mode: changed
+workflow_review_independence: independent_session
+workflow_review_self_check: pass
 regression_cases:
   - source-validation
 ---
@@ -149,6 +163,27 @@ regression_cases:
 | Case | Result | Evidence |
 |---|---|---|
 | source-validation | $Result | fixture evidence |
+
+## Workflow Review
+
+| Lens | Result | Evidence |
+|---|---|---|
+| 1 | PASS | fixture evidence |
+| 2 | PASS | fixture evidence |
+| 3 | PASS | fixture evidence |
+| 4 | PASS | fixture evidence |
+| 5 | PASS | fixture evidence |
+| 6 | PASS | fixture evidence |
+| 7 | PASS | fixture evidence |
+| 8 | PASS | fixture evidence |
+| 9 | PASS | fixture evidence |
+| 10 | PASS | fixture evidence |
+
+- findings: P1:0, P2:0, P3:0
+- deferred P2: none
+- self-check: pass
+- corrections: none
+- release recommendation: not_ready
 
 ## Decision
 
@@ -268,6 +303,41 @@ try {
     }
     Write-Output 'PASS release-evidence=source-drift-rejected'
 
+    $comparisonOnlyRoot = New-Fixture 'release-comparison-only'
+    Initialize-FixtureGit $comparisonOnlyRoot
+    $null = Write-ModernEval $comparisonOnlyRoot 'pass' 'fixed_contract'
+    $comparisonOnly = Invoke-Validation $comparisonOnlyRoot -RequireReleaseEvidence
+    if ($comparisonOnly.ExitCode -eq 0 -or
+        $comparisonOnly.Text -notmatch 'No completed PASS Eval with valid Git evidence') {
+        throw "Comparative Eval incorrectly satisfied canonical release evidence:`n$($comparisonOnly.Text)"
+    }
+    Write-Output 'PASS release-evidence=comparison-type-rejected'
+
+    $missingInventoryRoot = New-Fixture 'release-source-missing-inventory'
+    Initialize-FixtureGit $missingInventoryRoot
+    $previousErrorAction = $ErrorActionPreference
+    $ErrorActionPreference = 'Continue'
+    try {
+        & git -C $missingInventoryRoot rm -q --cached -- .ai/maintenance/update-state.yaml 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'Fixture inventory file untrack failed' }
+        & git -C $missingInventoryRoot commit -q -m 'fixture source missing inventory file' 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0) { throw 'Fixture missing inventory source commit failed' }
+    }
+    finally {
+        $ErrorActionPreference = $previousErrorAction
+    }
+    if (-not (Test-Path -LiteralPath (Join-Path $missingInventoryRoot '.ai/maintenance/update-state.yaml') -PathType Leaf)) {
+        throw 'Fixture must preserve the ignored local update-state file'
+    }
+    $null = Write-ModernEval $missingInventoryRoot 'pass'
+    $missingInventory = Invoke-Validation $missingInventoryRoot -RequireReleaseEvidence
+    if ($missingInventory.ExitCode -eq 0 -or
+        $missingInventory.Text -notmatch 'Canonical distribution must force-track ignored local scaffold:.*update-state.yaml' -or
+        $missingInventory.Text -notmatch 'Eval source commit is missing distribution inventory file:.*missing=.ai/maintenance/update-state.yaml') {
+        throw "Missing force-tracked update-state scaffold was not diagnosed and rejected:`n$($missingInventory.Text)"
+    }
+    Write-Output 'PASS release-evidence=source-inventory-missing-rejected'
+
     $releaseFailRoot = New-Fixture 'release-fail-history'
     Initialize-FixtureGit $releaseFailRoot
     $null = Write-ModernEval $releaseFailRoot 'fail'
@@ -296,6 +366,13 @@ try {
         Assert-SafeFixturePath $target
         Remove-Item -LiteralPath $target -Force
     } 'Missing distribution inventory file: .ai/roles/ARCHITECT.md'
+
+    Assert-NegativeFixture 'missing-workflow-review' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        Assert-SafeFixturePath $target
+        Remove-Item -LiteralPath $target -Force
+    } 'Missing source-only repository path: maintenance/WORKFLOW_REVIEW.md'
 
     Assert-NegativeFixture 'invalid-template-state' {
         param($root)
@@ -348,6 +425,146 @@ migrations:
         $text = $text.Replace('| `building` | `active` |', '')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'STATE.md is missing a normal phase/status declaration: building'
+
+    Assert-NegativeFixture 'missing-review-resume-transition' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('requested user evidence arrives', 'user observation supplied')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=requested user evidence arrives'
+
+    Assert-NegativeFixture 'missing-integration-resume-transition' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('a Build/Review repair carrying `resume_integration` PASSes', 'a repaired Integration candidate passes')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=a Build/Review repair carrying `resume_integration` PASSes'
+
+    Assert-NegativeFixture 'missing-integration-repair-pointer' {
+        param($root)
+        $target = Join-Path $root '.ai/integration/queue.yaml'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('repair: # optional; absent means no Integration repair is active', 'repair:')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/integration/queue.yaml token=repair: # optional; absent means no Integration repair is active'
+
+    Assert-NegativeFixture 'ambiguous-single-main-fingerprint' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/BUILD_RESULT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('fixed first header', 'first header')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/BUILD_RESULT.md token=fixed first header'
+
+    Assert-NegativeFixture 'managed-path-escape' {
+        param($root)
+        $target = Join-Path $root '.ai/maintenance/managed-paths.yaml'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace("managed:`n", "managed:`n  - Source/**`n")
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Managed/preserved pattern escapes the .ai install root: Source/**'
+
+    Assert-NegativeFixture 'installed-license-drift' {
+        param($root)
+        $target = Join-Path $root '.ai/LICENSE'
+        [System.IO.File]::AppendAllText($target, "`nchanged`n", [System.Text.UTF8Encoding]::new($false))
+    } 'Installable .ai/LICENSE must match the distribution root LICENSE'
+
+    Assert-NegativeFixture 'missing-output-contract-loading' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/BUILDER.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('.ai/contracts/BUILD_RESULT.md', '.ai/contracts/BUILD_OUTPUT.md')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/BUILDER.md token=.ai/contracts/BUILD_RESULT.md'
+
+    Assert-NegativeFixture 'missing-task-quality-gate' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/TASK_RECORD.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Task Quality Gate', '## Task sizing notes')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/TASK_RECORD.md token=## Task Quality Gate'
+
+    Assert-NegativeFixture 'ambiguous-comparison-baseline' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/README.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace("exactly A's provider/host tool/model/reasoning/configuration", 'an available model configuration')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } "Contract is missing a required invariant token: path=.ai/evals/README.md token=exactly A's provider/host tool/model/reasoning/configuration"
+
+    Assert-NegativeFixture 'missing-core-behavior-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('state transitions directly to `synced/idle`', 'state completes')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: state transitions directly to `synced/idle`'
+
+    Assert-NegativeFixture 'incomplete-workflow-review-lenses' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = [regex]::Replace(
+            $text,
+            '(?m)^\| 10\. Trust, security, and losslessness \|.*\r?\n',
+            ''
+        )
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Workflow Review must define exactly 10 review lenses, found: 9'
+
+    Assert-NegativeFixture 'missing-workflow-review-independence' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('must not have authored the candidate source changes', 'reviews the candidate source changes')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/WORKFLOW_REVIEW.md token=must not have authored the candidate source changes'
+
+    Assert-NegativeFixture 'missing-readme-quality-gate' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## README quality gate', '## Documentation note')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/WORKFLOW_REVIEW.md token=## README quality gate'
+
+    Assert-NegativeFixture 'missing-workflow-review-self-check' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Bounded self-check', '## Final consistency note')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/WORKFLOW_REVIEW.md token=## Bounded self-check'
+
+    Assert-NegativeFixture 'unstable-workflow-review-self-check' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Self-check criteria are stable by default', 'Self-check criteria follow current external advice')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/WORKFLOW_REVIEW.md token=Self-check criteria are stable by default'
+
+    Assert-NegativeFixture 'missing-release-workflow-review-evidence' {
+        param($root)
+        Initialize-FixtureGit $root
+        $target = Write-ModernEval $root 'pass'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = [regex]::Replace($text, '(?m)^workflow_review_independence:.*\r?\n', '')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } "Missing or invalid front-matter 'workflow_review_independence'"
+
+    Assert-NegativeFixture 'missing-release-workflow-review-self-check' {
+        param($root)
+        Initialize-FixtureGit $root
+        $target = Write-ModernEval $root 'pass'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = [regex]::Replace($text, '(?m)^workflow_review_self_check:.*\r?\n', '')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } "Missing or invalid front-matter 'workflow_review_self_check'"
 
     Assert-NegativeFixture 'project-knowledge-leak' {
         param($root)

@@ -6,34 +6,48 @@ Eval coordination is an explicit on-demand procedure, not a project role. Normal
 
 Files under `.ai/evals/runs/` are completed records, not drafts. A new record uses `schema_version: 2`, `status: completed`, `result: pass | fail`, a UTC `completed_at`, the exact committed Workflow `source_revision` and `source_tree`, and `quality_floor: pass | fail`. Failed Evals remain valid history but never satisfy release evidence.
 
+From `manual-v1.1`, canonical source release evidence also records `workflow_review_result`, `workflow_review_mode`, `workflow_review_independence`, and `workflow_review_self_check`, plus a complete ten-row `## Workflow Review` section. The finalizing session must be independent from source authoring, runs that review against the same immutable source commit named by the Eval, and performs one bounded adversarial self-check of its frozen first-pass report. Project/local non-release Evals may use `not_applicable`; they never satisfy the canonical release gate.
+
 Installed-project runs are local evidence only and are never copied into the canonical distribution. Canonical audit/release records live outside the installable `.ai` under source-only `evals/runs/` and follow `maintenance/RELEASE.md` in the distribution checkout.
 
-Do not call a Workflow version optimal or model-parity proven without completed scorecards. Optimize in this order: quality floor → total tokens to accepted result → elapsed time and human actions. A cheap rejected result is not a saving.
+Do not call a Workflow version optimal or model-parity proven without completed comparative scorecards. Optimize in this order: quality floor → total tokens to accepted result → elapsed time and human actions. A cheap rejected result is not a saving.
 
-Comparative baseline/A/B runs are optional and are required only for comparative quality, token, speed, or model-parity claims. Normal project use and a source-bound release regression Eval do not require a comparison run; without one, describe efficiency and learning as design goals rather than measured outcomes.
+## Eval types
 
-Compare the same seed and revision:
+Choose one type and do not mix its conclusion with another:
+
+- `source_regression`: the default canonical release Eval. It binds an independent Workflow Review and affected deterministic cases to one source revision/tree. It proves release-contract evidence only; it never requires or implies baseline/A/B, model parity, token savings, speed, or learning outcomes. Provider/model fields are execution provenance, and unavailable token/time metrics remain `not_measured`.
+- `end_to_end`: an optional comparison using the same seed/revision while each run performs its own planning, questions, implementation, and Review. It measures the complete experience, but differing scopes make raw Task count and elapsed time weak direct comparisons.
+- `fixed_contract`: an optional comparison that freezes the same approved Architecture, Task, ACs, human gates, and source revision before every Builder/Reviewer run. Use this for direct model/effort quality, token, and speed comparison.
+
+Only a completed `source_regression` may satisfy canonical release evidence from `manual-v1.1`. Historical records keep their original type unchanged.
+
+## Optional comparative setup
+
+Comparative baseline/A/B runs are required only when making comparative quality, token, speed, or practical-parity claims. Normal project use and release regression never run them. Without completed comparison evidence, describe efficiency, model robustness, and learning as design goals rather than measured outcomes.
+
+Use the same seed and source revision, and isolate one question at a time:
 
 ```text
-baseline: no Workflow
-A: Workflow + strong model/high effort
-B: Workflow + low-cost model/low effort
+baseline: no Workflow + exactly A's provider/host tool/model/reasoning/configuration
+A: Workflow + reference strong-model/high-effort configuration
+B: Workflow + the intended lower-cost/lower-effort configuration
 ```
 
-Keep optional interventions equal: use the same repo-local pinned skill version and configuration in every worktree. A provider-global skill, hook, plugin, or silently updated bundle makes that run a different treatment and must be recorded rather than treated as model-only evidence.
+`baseline ↔ A` estimates the Workflow effect because execution configuration is held equal. `A ↔ B` estimates the gap between the two configurations under the Workflow. `baseline ↔ B` changes both Workflow and model/tool configuration, so it cannot attribute the difference to either one alone.
 
-Choose one of two eval types and do not mix their conclusions:
+At comparison start, the user selects each app/model/effort configuration once and the evaluator records it in every run. Prefer tool/API usage metadata; if a setting is not observable, label it `user_declared`. Never use a model's conversational self-identification as evidence, and record unavailable usage as `not_measured` rather than guessing.
 
-- `end_to_end`: same seed/revision, allowing each Architect to ask questions and choose structure. This measures the complete planning + implementation + review workflow, but different resulting scopes make raw task count and elapsed time non-comparable.
-- `fixed_contract`: freeze the same approved Architecture, Task, ACs, human gates, and source revision before each Builder/Reviewer run. This is required for direct model/effort quality, token, and speed comparison.
+Keep optional interventions equal: use the same repo-local pinned skill version and configuration in every worktree. A provider-global skill, hook, plugin, different host tool, or silently updated bundle makes that arm a whole-configuration comparison, not a model-only comparison, and must be recorded as such.
 
 Record every extra clarification or changed scope. A run that creates isolated skeleton code is not equivalent to one that migrates existing Blueprint-backed runtime behavior. UBT's `N actions` is compilation work, not `N gameplay actions` or functional tests.
 
-Check quality floor/gap, route correctness, decision transparency without unnecessary interruption, risk-scaled Change Brief grounding/usefulness, questions, retries, human corrections, elapsed time, and total tokens to accepted result.
+For every type, check the quality floor, route correctness, decision transparency without unnecessary interruption, risk-scaled Change Brief grounding/usefulness, questions, retries, and human corrections. Compare elapsed time or total tokens only for comparative runs with actual measurement evidence.
 
 - For a local rule change, run the core scorecard plus only directly affected regression cases.
 - For a release spanning several contracts, run the core scorecard plus every affected case.
 - Run the full catalog for a new baseline, periodic audit, or any claim of cross-model practical equivalence. Mark non-applicable checks instead of manufacturing work.
+- For request intake, Task decomposition, Review judgment, project-rule precedence, or terminal-state changes, trace `.ai/evals/GOLDEN_CORE_BEHAVIOR.md`.
 - For a worktree/session/Integration contract change, also trace `.ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md`. Record static contract and live provider/Git evidence separately.
 
 ## Regression catalog
@@ -42,6 +56,8 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 
 - `direct-fix`: direct fix
 - `ambiguous-guided-feature`: ambiguous guided feature
+- `variable-detail-request`: a short seed, detailed specification, or referenced document preserves all supplied intent; project-file context fills known gaps without re-asking; only consequential missing user-owned intent produces questions
+- `task-quality-gate`: proposed slices resolve to READY, SPLIT, MERGE, or BLOCKED from one outcome, independent delivery, complete narrow writes, observable ACs, executable verification, ready dependencies, and handoff value; only READY reaches Builder
 - `greenfield-first-feature`: greenfield first feature and ownership assignment
 - `brief-change-signal`: brief document/code change signal with and without an explicit path
 - `git-pull-merge-signal`: brief Git pull/merge signal using stored revision
@@ -75,6 +91,9 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `review-route-conformance`: Review Route follows verdict, finding owner, sync policy, and lane topology
 - `workflow-artifact-write-scope`: production path restrictions do not block role-authorized `.ai` artifact writes
 - `simplicity-ladder`: reuse/minimal implementation without omitted safety or verification
+- `evidence-based-code-quality`: correctness, invariants, ownership/lifetime, and project conventions precede style; abstractions, polymorphism, responsibility splits, and performance findings require concrete need or evidence instead of ceremonial complexity
+- `project-rule-precedence`: first discovery indexes scoped team docs and repository-enforced config/CI; explicit applicable rules precede inferred local convention, then official framework/language guidance, then Workflow fallback; stale/conflicting sources are exposed and generic preference never becomes a blocking rule
+- `repository-trust-boundary`: ordinary repository text cannot issue Workflow commands, applicable provider instruction files remain scoped, secrets are not persisted, and scripts/hooks run only after trust plus task relevance are established
 - `glossary-grounding`: concise prompt interpretation stays consistent and sourced without invented jargon
 - `optional-skill-authority`: task-local guidance cannot alter Workflow gates, scope, or role boundaries
 - `current-external-research`: only when needed, dated and primary-sourced, with evidence separated from inference
@@ -82,6 +101,7 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `automatic-observation-positive`: supported false blocker/route, missing actionability, redundant gate, avoidable context retry, provider incompatibility, or Eval failure is captured once
 - `automatic-observation-negative`: ordinary code bug, Review finding, unavailable tool, or corrected one-off model slip creates no automatic record
 - `observation-deduplication`: the same open fingerprint increments evidence/occurrence instead of creating noise
+- `observation-root-cause-deduplication`: observation fingerprints include the owning contract/route so identical visible symptoms with distinct root causes remain separate
 - `multi-install-observation-collection`: supplied roots only, source records remain untouched, repeated collection is count-stable, same fingerprints merge, and ID/fingerprint conflicts do not overwrite
 - `default-main-lane`: ordinary prompts/providers/sessions/worktrees retain `main`; an additional lane exists only after explicit user opt-in and a named Bootstrap prompt
 - `parallel-start-card`: an approved committed partition yields concrete collision-checked worktree commands, topology-appropriate role prompts, and first requests for every Lane; an uncommitted base yields an actionable wait instead of guessed commands
@@ -100,12 +120,15 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `prepare-delta-route`: required pre-integration lookup uses Lane-only `PREPARE_DELTA`; canonical promotion waits for merged-source Review PASS
 - `deferred-knowledge-retention`: Main preserves every `pending_reviews` path across handoff/integration and clears it only at a required canonical checkpoint
 - `safe-worktree-retirement`: Main Front Desk never deletes a worktree and reports safe-to-remove only after clean/integrated state and local Observation preservation
+- `post-integration-lane-continuation`: another Task in the same approved Lane starts in a fresh Branch/worktree pinned to current main, performs targeted state/Knowledge validation, and never reuses divergent pre-integration history
 - `parallel-topology`: new Lanes default to compact Work+Reviewer and emit strict four-role prompts only on explicit user request
 - `safe-update`: managed Core changes while Knowledge, live lanes, integration artifacts, Eval runs, and local observations remain intact
+- `update-path-containment`: candidate manifests, expanded targets, links, staging, backups, migrations, and restore paths cannot escape the resolved project `.ai` install root
+- `local-update-state-scaffold`: the canonical distribution force-tracks the ignored initial local state, a tracked template recreates it when absent, and validation diagnoses a missing force-tracked scaffold without committing developer-specific check data
 - `migration-rollback`: incompatible schema requires a declared migration and failed validation restores the backup
 - `source-validation`: issue routing, authority, lane-state transitions, release records, and Eval identities retain one validated source of truth
-- `user-command-discoverability`: the top user guide maps common intents to target sessions and copyable phrases while generated cards/internal modes remain distinct
-- `readme-progressive-disclosure`: first install, the command map, and the normal loop stay visible while advanced procedures and concepts remain available collapsed
+- `user-command-discoverability`: the top user guide keeps a minimal common command set, routes Review follow-up through generated `DO_NEXT`, consolidates equivalent Knowledge-change signals, and keeps generated cards/internal modes distinct
+- `readme-progressive-disclosure`: stable purpose and audience, the first install path, explicit Work/Reviewer session separation, success/failure recognition, and the normal loop stay visible while advanced procedures and concepts remain available collapsed
 - `issue-routing-single-source`: Operations is the only finding-owner table and other artifacts reference it
 - `state-contract-authority`: State is the only phase/status transition table and Workflow references it
 - `strict-four-session-first-setup`: first strict setup initializes Knowledge Maintainer before the other three sessions
@@ -115,11 +138,17 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `frontmatter-missing-file-guard`: front-matter readers return a validation failure rather than throwing on a missing file
 - `eval-case-catalog-traceability`: current Eval case IDs resolve to this catalog and legacy renames resolve through declared aliases
 - `migration-sparse-compatibility`: absent migration is valid only for candidate-declared compatible preserved schemas
-- `eval-release-evidence`: failed records remain valid history, while release evidence requires completed PASS, quality floor, non-empty cases, tracked record, and matching source commit/tree/version
+- `eval-release-evidence`: failed and comparative records remain valid history, while current release evidence requires `source_regression`, completed PASS, quality floor, non-empty cases, tracked record, matching source commit/tree/version, and a complete distribution inventory in that commit
 - `state-fsm-completeness`: every in-progress phase has an explicit start/completion transition and role owner; the Integration phase is backed by an exact queue item/range rather than free-standing state
+- `review-repair-resume`: architecture, contract, context, and user-verification repairs return to a defined design/build/new-Review path without reusing a stale verdict
+- `integration-blocked-resume`: evidence/metadata-only Integration recovery rechecks the unchanged exact range, while a durable queue repair pointer carries byte/boundary repairs into a new full original-main-before-to-repaired-main-after Review range
+- `terminal-no-knowledge-transition`: final PASS with sync none, no pending Review, and no active work reaches synced/idle without an empty Knowledge handoff
+- `role-output-contract-loading`: every writer loads the contract for the Architecture, Task, Build, Review, Integration Request, or Knowledge artifact it creates or changes
 - `pass-route-branching`: accepted changes route by sync policy and Lane topology instead of an unconditional Knowledge handoff
 - `single-main-candidate-fingerprint`: a Git-backed working-tree PASS is bound to a reproducible Task-path fingerprint and rechecked before downstream use
-- `distribution-inventory-validation`: every required scaffold file exists, source files have one managed/preserved class, compatible schemas align, and project runtime Knowledge does not enter the distribution
+- `distribution-inventory-validation`: every required scaffold file exists both locally and in the exact current-release source commit, source files have one managed/preserved class, compatible schemas align, and project runtime Knowledge does not enter the distribution
+- `installed-license-notice`: the installable `.ai` copy carries the same MIT notice as the distribution root
+- `workflow-review-procedure`: source-only Workflow Review separates automated evidence, contract traces, human judgment, and unverified claims across purpose, usability, lifecycle, responsibility, recovery, verification, portability, efficiency, maintainability, and security, then performs one bounded self-check for omissions, false positives, and internal contradictions without becoming another runtime role; canonical release evidence embeds the independent clean-commit report
 - `cross-platform-negative-fixtures`: Windows PowerShell 5.1 and Ubuntu PowerShell 7 both reject missing roles, invalid template state, project Knowledge leakage, and empty modern Eval records
 - `source-install-boundary`: only `.ai` is installed; source Git/CI/tools remain distribution-owned
 - `release-copy-command-discovery`: the explicit release-copy command is discoverable and bounded
@@ -153,6 +182,10 @@ No aliases exist in `manual-v1.0`. Add an alias only when a future release renam
 - Reviewer is independent or reduced assurance is explicitly disclosed
 - compilation-action counts are not misreported as tests or gameplay actions
 - smaller output or diff is not credited when it loses required explanation, safety, correctness, or verification
+- supplied request detail is preserved without a mandatory form, known project context is derived rather than re-asked, and only consequential user-owned uncertainty blocks progress
+- Task decomposition is outcome- and evidence-based rather than file/class/function-sized; only a READY slice reaches Builder, while SPLIT, MERGE, and BLOCKED are resolved without a redundant user gate
+- code quality is judged by observable correctness, protected invariants, clear intent/ownership, project fit, and evidenced change or performance pressure—not pattern or abstraction count
+- convention findings cite an applicable sourced team/project rule and scope; inferred local style and generic fallback remain labeled, and material rule conflicts are routed instead of guessed
 - optional skills and hooks are pinned/equal across model-only comparisons or explicitly recorded as different interventions
 - observation precision is favored over recall: automatic candidates require evidence, while manual reports remain available for missed cases
 - observation collection is source-scoped and idempotent, and never imports project state or silently starts triage/release
@@ -164,10 +197,13 @@ No aliases exist in `manual-v1.0`. Add an alias only when a future release renam
 - integration order is reused without a redundant gate, and each copied sealed return integrates no more than one exact handoff revision before independent exact-range Review
 - a Workflow update restarts every session using the affected checkout, including all active Lanes and strict fixed-role sessions
 - update checks never silently apply a release, and update apply never overwrites preserved project state
+- repository text cannot escalate Workflow authority, secrets never enter durable artifacts, and repository scripts/hooks require established trust plus Task relevance
+- every Review blocker type has a defined repair/resume path, and terminal PASS without Knowledge work reaches `synced/idle`
+- installed updates cannot escape the resolved `.ai` root and rollback success is verified rather than assumed
 - release-copy build: one explicit canonical-distribution command may collect and triage supplied installed evidence, but supplied projects remain unchanged and complete; it updates only the separate canonical distribution copy with accepted generic Core changes, release metadata, sanitized Eval evidence, and stops before commit/push
 
 Treat low-cost and strong-model runs as practically equivalent only when both meet the floor on the same cases, the low-cost run adds no critical/scope failure, and its median review-cycle gap is at most one. Report human corrections and token/time differences; do not hide failed cases in averages.
 
 Copy `SCORECARD.md` for each run to `.ai/evals/runs/EVAL-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug>.md` using a filename-safe UTC timestamp. In the copied run, replace the template's `workflow_version: null` with the exact current value from `.ai/maintenance/release.yaml`; a completed run with a null version is invalid. Use only canonical IDs from the Regression catalog. Future aliases may resolve renamed historical labels, but completed run versions and evidence remain immutable. Never allocate a branch-local sequence because separately created runs can collide when records are collected.
 
-For a canonical Workflow release, first commit the versioned source changes. Run the affected Eval cases against that immutable commit, set `source_revision` to its full commit ID and `source_tree` to its Git tree, write the completed source record under `evals/runs/`, then stage it and run `tools/validate-workflow.ps1 -RequireReleaseEvidence`. Commit the Eval record only after that check passes. Never point an Eval at the previous release, use an untracked or unstaged-mutated Eval as release evidence, or inherit an earlier Eval after any non-Eval source drift.
+For a canonical Workflow release, first commit the versioned source changes. In a fresh session that did not author them, run `maintenance/WORKFLOW_REVIEW.md` against that immutable commit, run the affected Eval cases, and embed the complete review in the same source record. Set `source_revision` to the full commit ID and `source_tree` to its Git tree, write the completed record under `evals/runs/`, then stage it and run `tools/validate-workflow.ps1 -RequireReleaseEvidence`. Commit the Eval record only after that check passes. Never point an Eval at the previous release, use an untracked or unstaged-mutated Eval as release evidence, or inherit an earlier Eval after any non-Eval source drift.

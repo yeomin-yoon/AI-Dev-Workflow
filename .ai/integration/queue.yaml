@@ -17,6 +17,12 @@ items: []
 #   integration_review: null
 #   status: queued # queued | merging | merged | failed | verified
 #   depends_on: []
+#   repair: # optional; absent means no Integration repair is active
+#     status: none # none | required | building | review_pass | ready_for_integration_review
+#     original_main_before: null
+#     task: null
+#     build_result: null
+#     review_result: null
 
 integration_checks: []
 knowledge_sync_required: false

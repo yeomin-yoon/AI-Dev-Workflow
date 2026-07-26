@@ -31,7 +31,7 @@ When uncertain, do not auto-record. The manual path covers missed cases.
 
 ## Deduplicate
 
-Search only pending/accepted observation headers and `fingerprint`. A fingerprint is the stable tuple `stage | symptom_class | provider_scope`; it excludes wording, Task ID, and timestamps.
+Search only pending/accepted observation headers and `fingerprint`. A new fingerprint is the stable tuple `stage | symptom_class | provider_scope | contract_or_route`; it excludes wording, Task ID, and timestamps. `contract_or_route` is the owning contract/path or route name that distinguishes the same visible symptom from a different root cause.
 
 - Same open fingerprint + materially new evidence: append one evidence item, increment `occurrences`, update `updated_at`, and update the matching local `source_records` entry.
 - Same fingerprint without new evidence: do nothing.
@@ -52,7 +52,8 @@ provider: <codex|claude|gemini|other|unknown>
 role: <work|architect|builder|reviewer|knowledge_maintainer|operations|unknown>
 lane: <lane|unknown>
 trigger: <user_report|false_blocker|invalid_route_state|missing_actionability|redundant_gate|avoidable_context|workflow_correction|recurring_recovery|provider_contract|eval_floor>
-fingerprint: <stage | symptom_class | provider_scope>
+contract_or_route: <owning contract/path or route name|unknown>
+fingerprint: <stage | symptom_class | provider_scope | contract_or_route>
 summary: <one factual sentence>
 impact: <retry, delay, bad decision, token cost, quality risk, or unknown>
 evidence:
@@ -72,7 +73,7 @@ source_records:
     occurrences: 1
 ```
 
-`source_records` makes collection from several installed copies idempotent while retaining provider/version provenance. A legacy observation without it is valid; synthesize one source record from its top-level `id`, `provider`, `workflow_version`, `updated_at`, and `occurrences`.
+`source_records` makes collection from several installed copies idempotent while retaining provider/version provenance. A legacy three-part fingerprint remains readable and uses `contract_or_route=unknown`; do not merge it with a four-part record unless triage proves the root contract/route is the same. A legacy observation without `source_records` is valid; synthesize one source record from its top-level `id`, `provider`, `workflow_version`, `updated_at`, and `occurrences`.
 
 Never store secrets, full chat transcripts, full logs, or copied source. Capture does not edit Core, update state, create a blocker, or interrupt the current route.
 

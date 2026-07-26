@@ -50,8 +50,9 @@ Integration Gate is this procedure, not another role/session. A non-`main` sessi
 1. Read only current lane state, active artifacts, relevant diff, and minimum evidence.
 2. Classify the issue as `implementation | architecture | contract | context | verification | integration`.
 3. Resolve only when the active role owns the repair. Otherwise persist a route to the responsible AI role; record the user only as blocker owner when its decision/evidence is required.
-4. Record cause, evidence, changed artifacts, verification, residual risk, next role/action, and minimum input paths only in an artifact the active role may write and in state. Never edit another role's artifact.
-5. Return exactly one outcome: `resolved`, `routed`, or `blocked`. Do not restart the whole workflow or cross role boundaries.
+4. After repair, use the explicit architecture/contract/context/user-verification or Integration resume transition in `.ai/contracts/STATE.md`; never reuse a stale Review/range verdict or leave `reviewing/blocked`/`integration/blocked` without a return path.
+5. Record cause, evidence, changed artifacts, verification, residual risk, next role/action, and minimum input paths only in an artifact the active role may write and in state. Never edit another role's artifact.
+6. Return exactly one outcome: `resolved`, `routed`, or `blocked`. Do not restart the whole workflow or cross role boundaries.
 
 ```text
 OUTCOME=<resolved|routed|blocked> type=<type> owner=<role|user>

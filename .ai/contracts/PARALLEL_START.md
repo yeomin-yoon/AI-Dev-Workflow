@@ -132,3 +132,15 @@ If a branch/path already exists, do not print a knowingly failing command. Reuse
 - Integration reuses `integration_order`; request a new decision only if conflicts, shared-contract changes, added scope, or new evidence require it to change.
 - When a non-`main` session closes or a sealed candidate reaches Review PASS, use the concrete `RETURN_TO_MAIN` card from `MAIN_DESK.md`. Its main-targeted instruction authorizes only the bounded next approved step; the user never interprets the order or targets a virtual Integration session.
 - Card emission does not start implementation, create sessions, merge branches, or grant writes outside `owned_paths`.
+
+## Post-integration continuation
+
+This is the only exception to the new-boundary approval steps above. Use it when `MAIN_DESK.md` proves that one existing Lane will continue sequentially with unchanged purpose, ownership, shared contracts, and dependency order after its prior candidate was integrated and reviewed.
+
+1. Pin `base_revision` to the current clean main `HEAD`, never the old worker Branch.
+2. Keep the same Lane ID, but choose a new collision-free Branch and sibling worktree path. Never bind two active worktrees to the same Lane.
+3. Emit the normal topology-appropriate `WORKTREE_COMMAND`, Work/Reviewer prompts, and first request. The Work first request is to perform targeted Knowledge/state validation against the new base, update `source_revision`, and then resume Architect for the next seed/approved slice.
+4. Do not recreate the Lane scaffold, replay the completed Task, reuse the old Build/Review as a new candidate, or run broad Knowledge `BUILD`.
+5. If purpose, ownership, shared contracts, or dependency order changed, stop this shortcut and use the normal Architect-owned parallel boundary flow.
+
+Fresh continuation avoids duplicate diffs after merge/cherry-pick/squash and ensures the next candidate starts from integrated Knowledge and source.

@@ -25,19 +25,12 @@ An explicit Knowledge request never permits concurrent writes, self-review, or b
 
 An explicit parallel setup request changes project ownership and therefore never bypasses an active Build/Review gate. Finish, supersede, or safely checkpoint that gate through Architect before preparing new Lane cards.
 
-## Front Desk route
+## Optional Front Desk and Integration routes
 
-Run this only in the `main` Work session after the user pastes a concrete `RETURN_TO_MAIN` instruction or explicitly requests a new/replacement worktree session. Read `.ai/contracts/MAIN_DESK.md`, inspect only the referenced source state/current artifacts and Git/worktree evidence, and choose one bounded next outcome. Issue a complete `NEXT_SESSION` rather than asking the user to find or edit an old Lane prompt.
+- On a concrete non-`main` return or replacement request in `role=work, lane=main`, read and execute `.ai/contracts/MAIN_DESK.md`; do not implement in the Front Desk.
+- On an explicit eligible Integration start/continue in that same main Work session, also read and execute `.ai/integration/README.md`; apply at most its one sealed candidate and stop for independent main Review.
 
-Do not make the Front Desk a second implementation context. It may route an existing Lane, activate the approved one-candidate Integration procedure, or invoke Architect for a genuinely new boundary; production implementation remains in the target worktree. Keep direct handoffs between already-open Work and Reviewer sessions inside one Lane.
-
-## Integration route
-
-Run this only after an explicit user request in the existing `main` Work session. Verify the approved order, a committed Review-PASS candidate, expected base, clean integration checkout, and project Git rules. Apply at most the next eligible non-conflicting candidate, without editing its content, reordering candidates, resolving conflicts, or expanding its boundary. Then stop and hand the integrated result to the independent `main` Reviewer using the Lane/worktree-qualified `DO_NEXT` form.
-
-After applying the candidate and recording the exact main before/after range, transition the main Lane to `integration/active`, set `next.role: reviewer`, and point its inputs at the Integration Request, queue item, and applied range. The phase is only a pointer; Integration progress remains authoritative in `.ai/integration/queue.yaml` and its Review artifacts.
-
-Integrate only a sealed candidate: exact committed Review range and tree, metadata-only handoff revision, expected dependency/base, and a clean main checkout. Source-worktree Observation or unrelated dirty paths do not change the sealed revision, but they keep that worktree unsafe to remove. If the candidate is unsealed, Task-dirty, inaccessible, conflicting, or the approved boundary/order may need to change, do not guess. Preserve the queue/state and return an actionable route or User Action Card. Knowledge promotion occurs only after integrated Review PASS.
+Do not load either procedure during ordinary single-`main` development.
 
 ## Continuous route
 

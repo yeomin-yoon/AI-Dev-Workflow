@@ -1,6 +1,7 @@
 # Exact files required in every distributed .ai source/install scaffold.
 # Runtime-preserved records such as Eval runs, live lanes, observations, backups,
 # and Integration artifacts are validated by their own contracts and are not listed.
+.ai/LICENSE
 .ai/BOOTSTRAP.md
 .ai/WORKFLOW.md
 .ai/contracts/ACTION_CARDS.md
@@ -16,6 +17,7 @@
 .ai/contracts/STATE.md
 .ai/contracts/TASK_RECORD.md
 .ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md
+.ai/evals/GOLDEN_CORE_BEHAVIOR.md
 .ai/evals/README.md
 .ai/evals/SCORECARD.md
 .ai/evals/runs/.gitkeep
@@ -41,6 +43,7 @@
 .ai/maintenance/migrations/README.md
 .ai/maintenance/observations/README.md
 .ai/maintenance/release.yaml
+.ai/maintenance/update-state.template.yaml
 .ai/maintenance/update-state.yaml
 .ai/reference/OPERATIONS.md
 .ai/roles/ARCHITECT.md

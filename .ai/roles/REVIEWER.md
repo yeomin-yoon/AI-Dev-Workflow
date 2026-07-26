@@ -10,11 +10,12 @@ Normal PASS authority requires a Reviewer session separate from the Work/Builder
 
 This order is an execution precondition only when `state.next.role` is `reviewer` or an activated Integration Gate selects this Reviewer under an approved order/contract. Otherwise Bootstrap returns `READY` waiting and stops; a draft Architecture, null active task, or missing Build Result is not a Reviewer blocker yet.
 
-1. task ACs and allowed scope
+1. Task plus `.ai/contracts/TASK_RECORD.md` for ACs and allowed scope
 2. referenced architecture sections
-3. for a commit candidate, `git diff --stat <base>..<candidate>` and the same exact-range hunks; otherwise working-tree status, diff, and untracked Task paths
-4. Build Result and concise check output
-5. only source/tests needed to verify a finding
+3. Build Result plus `.ai/contracts/BUILD_RESULT.md`
+4. `.ai/contracts/REVIEW_RESULT.md` before creating/changing the Review Result
+5. for a commit candidate, `git diff --stat <base>..<candidate>` and the same exact-range hunks; otherwise working-tree status, diff, and untracked Task paths
+6. concise check output and only source/tests needed to verify a finding
 
 Distinguish pre-existing dirty paths recorded before the Build from the candidate's Task-scoped changes. Do not rely on Builder confidence or reasoning. Expand beyond the task manifest only when evidence requires it.
 
@@ -24,10 +25,17 @@ After Task Review preflight succeeds and before substantive inspection, transiti
 
 ## Review
 
+Review in this order: observable AC correctness; invariants, invalid states, and error paths; ownership/lifetime and relevant concurrency/network/persistence behavior; approved architecture and scope; API clarity and misuse resistance; maintainability under evidenced change pressure; then performance against a stated budget or measurement.
+
 - Map each AC to implementation and evidence.
+- Before reproducing a repository command/hook or interpreting repository-local AI instructions, apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`; never copy a secret into Review evidence.
 - Check lane/task scope and architecture compliance.
 - Check correctness, regression, boundaries, lifetime/ownership, error paths, concurrency/network/persistence where relevant.
 - Check whether new code, abstractions, or dependencies are justified by the approved Task and existing project/engine capabilities. Raise a finding only with a concrete correctness, scope, maintenance, performance, or review-cost consequence; do not block on minimalism preference or code golf.
+- For a convention finding, cite the exact rule/config source, applicable scope, and concrete consequence. A dominant local convention or official/framework fallback may guide consistency but is not an explicit team rule; do not turn generic preferences or arbitrary line-count thresholds into blocking findings. Route materially conflicting or stale rule sources as `context` or `contract` rather than blaming implementation.
+- Check whether names, types, ownership, mutability, and public entry points communicate the behavior and protect the applicable invariants under project/framework conventions.
+- Do not infer better responsibility separation from class/function count. An orchestrator may coordinate several collaborators; identify the actual independent reason to change and concrete coupling consequence before reporting an SRP-style finding.
+- Do not demand an interface, inheritance, virtual dispatch, smart pointer/reference form, pattern, or optimization from a generic rule alone. Require approved variation, invalid-use prevention, measured cost, or another project-specific consequence.
 - Confirm tests can detect the required failure, not merely that tests exist.
 - Re-run decisive affordable checks; mark unavailable checks and residual risk.
 - For a Git-backed single-main working tree, independently reproduce the canonical candidate fingerprint at Review start and again immediately before PASS. A mismatch invalidates this attempt; do not bless the changed files by assumption.
@@ -80,27 +88,12 @@ Force a Knowledge checkpoint before a new feature, external pull/merge, architec
 
 `none` never clears earlier pending Reviews. Set `knowledge_sync.status=clean` only when its list is empty; use `pending` when entries may be batched and `required` when synchronization must happen before continuing.
 
-## Worktree handoff seal
+## Optional worktree and Integration delivery
 
-For a non-`main` PASS with `knowledge_sync=defer|none`, create the metadata-only handoff commit defined by `MAIN_DESK.md` after writing the Review and state. Verify that:
+- For a non-`main` PASS, read `.ai/contracts/MAIN_DESK.md#worker-delivery-procedure` and follow the Reviewer/Knowledge-owned seal route.
+- For an activated main Integration Review, read `.ai/integration/README.md#checkpoint-ownership` and follow its exact-range checkpoint procedure.
 
-- the reviewed commit and recorded tree still match;
-- the staged paths are only current-Lane artifacts under `.ai/lanes/<lane>/**`;
-- the reviewed commit is an ancestor of the resulting handoff commit;
-- no Task-attributed production/test path remains dirty.
-
-Do not seal when `knowledge_sync=required`; route Knowledge Maintainer to `PREPARE_DELTA`, which becomes the last Lane step and creates the handoff commit. Do not include an Observation or another `.ai` area merely to make the checkout clean. If sealing cannot be completed safely, keep the PASS Review but report the candidate as unsealed with an actionable Integration prerequisite.
-
-## Main Integration checkpoint
-
-After an activated main Integration Review PASS:
-
-1. finish the Review Result and queue update using the recorded `main_before..main_after` range;
-2. stage only the Integration Review, `.ai/integration/queue.yaml`, and directly required main lane state pointers;
-3. create one metadata-only Review checkpoint commit so the next candidate does not inherit uncommitted Integration tracking;
-4. leave Observations and unrelated files unstaged and report them.
-
-This checkpoint is authorized by the user-started Integration loop. It never changes production, canonical Knowledge, Architecture, or another Lane. If it cannot be committed safely, stop before the next candidate with an actionable Integration prerequisite.
+Do not load either optional procedure during an ordinary single-`main` Review.
 
 ## Write
 
