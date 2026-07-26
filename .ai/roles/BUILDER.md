@@ -10,13 +10,15 @@ Apply this preflight only when `state.next.role` is `builder` or new user input 
 
 Require:
 
-- approved task and architecture
+- approved task and architecture whose completed fields satisfy `.ai/contracts/TASK_RECORD.md#task-quality-gate`; read that Task contract and `.ai/contracts/BUILD_RESULT.md` before creating/changing its Build Result
 - compatible source revision
 - observable acceptance criteria and verification
 - allowed writes inside lane `owned_paths`
 - approved dependencies/contracts
 
 Otherwise stop with the correct blocker type.
+
+Do not silently split, merge, enlarge, or reinterpret a Task that fails the Gate. Route malformed/missing Task evidence as `contract` and a substantive outcome or boundary problem as `architecture` to Architect, then wait for a replacement approved Task.
 
 After preflight succeeds and before production writes, transition `ready_to_build/active → building/active`, keep `next.role: builder`, and set `next.action: continue_build`. On replacement, compare the baseline, current Task paths, and Git before resuming; do not restart or overwrite unexplained work.
 
@@ -28,10 +30,16 @@ Read the task manifest first, then only its referenced architecture section, sym
 
 - Reproduce the failure or establish the oracle first when practical.
 - Before writes, inspect version-control status and relevant diff. If the checkout is already dirty, record the pre-existing paths/evidence in the Build Result so Review does not attribute them to this Task.
+- Before first execution of a repository script/hook or use of repository-local AI instructions, apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`; do not expose secrets through commands or evidence.
+- Apply Task-linked team/project rules and their configured tools only within their recorded scope. If no explicit rule exists, follow the dominant relevant local convention, then official framework/language guidance, and use Workflow heuristics only as a fallback. Route stale or material conflicts under `ARTIFACT_AUTHORITY.md` instead of choosing by preference.
 - Make the smallest task-traceable change and follow existing project patterns.
 - Preserve unrelated user changes and avoid unrelated cleanup.
 - Remove only temporary/dead code created by this task.
 - Record a non-obvious implementation choice only as `evidence → choice → consequence`; do not narrate routine steps or teach generic theory.
+- Express real domain intent through names and cohesive entry points. Use types and the project's framework conventions to make ownership, lifetime, mutability, and invalid states clear; do not apply a language idiom mechanically when the framework owns those semantics.
+- Keep a unit focused on one reason to change, while allowing an orchestration unit to coordinate collaborators without absorbing their mechanisms. More functions or classes are not automatically better separation.
+- Make invalid use difficult at the narrowest useful boundary. Add a helper or abstraction only when it enforces policy/invariants, clarifies a real boundary, or serves evidenced variation—not merely to rename one statement.
+- Add an interface, inheritance point, manager/service, generic layer, or alternate data structure only when required by approved architecture or current change pressure. Prefer the clearest finite implementation over speculative extensibility.
 
 Before adding code, an abstraction, or a dependency, stop at the first sufficient rung:
 
@@ -41,7 +49,7 @@ Before adding code, an abstraction, or a dependency, stop at the first sufficien
 4. use an already-approved installed dependency
 5. add the minimum new implementation that satisfies the ACs
 
-This is a private preflight, not a required chat checklist. Never reduce validation, error/data-loss handling, security, accessibility, ownership/lifetime safety, or required verification to make the diff smaller. Optimize further only with need and measurement.
+This is a private preflight, not a required chat checklist. Never reduce validation, error/data-loss handling, security, accessibility, ownership/lifetime safety, or required verification to make the diff smaller. Optimize only against a stated budget, measured hot path, or established project constraint; record the evidence and preserve correctness.
 
 Stop as `architecture` or `integration` only when implementation requires one of these changes beyond the approved Architecture/Task: new ownership, manager/service/module, public contract, lifecycle/storage/network behavior, or another lane's files. Implement an explicitly approved structural change; its mere presence is not a blocker.
 
@@ -53,19 +61,9 @@ An unavailable user-observed or desktop-only verification step is not by itself 
 
 Use `implementation_blocked` only when missing evidence/access prevents implementation or prevents producing a truthful Build candidate, not merely because Builder cannot click an editor UI. If a genuine user-owned block remains, reuse the Task's procedure when available or create an evidence-grounded User Action Card rather than returning only `need=evidence`.
 
-## Worktree candidate commit
+## Optional worktree delivery
 
-For a non-`main` Lane created by the approved worktree workflow, produce one exact Task candidate commit before `ready_to_review`:
-
-1. verify the recorded `base_revision` and pre-existing dirty baseline;
-2. stage only Task-attributed production/config/asset/test paths;
-3. inspect the staged diff and confirm every path maps to the Task/AC;
-4. commit with the Task ID, then record the commit as `result_revision` and its Git tree as `result_tree`;
-5. leave the Build Result, lane state, and other `.ai` artifacts for the later metadata-only handoff commit.
-
-The approved worktree workflow authorizes this isolated candidate commit; do not create an extra confirmation gate. Never include unrelated user changes, canonical/shared Knowledge, Integration state, or Workflow maintenance files. If Task changes cannot be separated from pre-existing edits in the same path, or Git credentials/hooks/signing/permissions prevent a truthful commit, keep the result unsealed and provide one actionable prerequisite. A `working-tree` result may still receive diagnostic Review, but it must be committed and reviewed again before Integration.
-
-Ordinary single-`main` work remains working-tree-first unless the user separately requests a commit.
+For an explicitly approved non-`main` worktree Lane, read `.ai/contracts/MAIN_DESK.md#worker-delivery-procedure` and produce its exact Task candidate commit before `ready_to_review`. Ordinary single-`main` work remains working-tree-first unless the user separately requests a commit. Do not load the worktree delivery contract during ordinary `main` work.
 
 ## Write
 

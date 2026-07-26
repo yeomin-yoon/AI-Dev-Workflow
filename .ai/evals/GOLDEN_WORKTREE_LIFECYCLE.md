@@ -110,9 +110,32 @@ Expected:
 - A bare close never commits, merges, collects Observations, deletes a worktree, or changes Lane identity.
 - Already-open Work and Reviewer sessions in the same Lane still hand off directly.
 
+## Case 8 — Post-integration Lane continuation
+
+Given the `character` candidate is integrated and independently accepted, and another Task remains inside the same approved Lane boundary:
+
+Expected:
+
+- Main Front Desk chooses `continue` only after required source-Lane/canonical Knowledge checkpoints are satisfied.
+- The old worker worktree/Branch is never used as the next baseline, regardless of merge, cherry-pick, or squash strategy.
+- A fresh collision-free Branch/worktree is pinned to current clean main while retaining `lane=character`; no second active worktree uses that Lane identity.
+- The new Work session performs targeted Knowledge/state validation, updates Lane `source_revision`, and resumes Architect without replaying the completed Task or broad-scanning the repository.
+- A changed purpose, ownership, shared contract, or dependency order routes Architect through a new boundary decision.
+- No remaining work leaves the Lane at `synced/idle`; `retired` and worktree removal remain separate explicit decisions.
+
+## Case 9 — Integration blocker repair and resume
+
+Given main records `main_before=M0`, applies one sealed candidate to `M1`, and Integration Review becomes blocked:
+
+- If only missing verification/context arrives or the owning role fixes malformed metadata, while `M0..M1`, candidate bytes, and approved intent remain unchanged, state returns from `integration/blocked` to `integration/active` and a new independent Integration Review attempt checks the same range.
+- If an implementation repair changes bytes, the old queue attempt becomes `failed`; its optional `repair` mapping preserves `original_main_before=M0` plus the current repair Task/Build/Review pointers while state routes normal Builder/Reviewer attempts, and the old verdict is invalidated.
+- After that repair PASS, Main Front Desk records a committed repaired revision `M2` and the new full Integration Review range `M0..M2`; only a new independent Review over that range may accept it.
+- If architecture, a material contract, ownership, scope, or dependency order changes, the same repair mapping retains `M0`; Architect supersedes the affected boundary/Task and obtains any consequential approval before another candidate is built.
+- A conflict/partial checkout never becomes a baseline. If it cannot be recovered with a project-safe non-lossy action, the user receives an actionable Git recovery card and Integration remains blocked.
+
 ## Acceptance
 
-All seven cases must agree across:
+All nine cases must agree across:
 
 - `.ai/BOOTSTRAP.md`
 - `.ai/contracts/MAIN_DESK.md`

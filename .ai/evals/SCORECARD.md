@@ -17,11 +17,17 @@ reasoning: null
 optional_interventions: []
 user_language: ko
 workflow_version: null
-eval_type: <end_to_end|fixed_contract>
+eval_type: <source_regression|end_to_end|fixed_contract>
+workflow_review_result: <pass|not_applicable>
+workflow_review_mode: <changed|full|not_applicable>
+workflow_review_independence: <independent_session|reduced_assurance|not_applicable>
+workflow_review_self_check: <pass|corrected|blocked|not_applicable>
 regression_cases: []
 ---
 
 # Workflow Eval
+
+Use `source_regression` for canonical release evidence. For that type, provider/model fields record execution provenance and unavailable token/time metrics are `not_measured`; they are not comparative claims. Use `end_to_end` or `fixed_contract` only for an explicitly planned comparison under `.ai/evals/README.md`.
 
 ## Oracle
 
@@ -60,6 +66,29 @@ List only the regression cases named in front matter; use `not_applicable` rathe
 
 | Case | Result | Evidence |
 |---|---|---|
+
+## Workflow Review
+
+Required for canonical release evidence from `manual-v1.1` onward. For non-release/project Evals, record `not_applicable` and explain why.
+
+| Lens | Result | Evidence |
+|---|---|---|
+| 1 | | |
+| 2 | | |
+| 3 | | |
+| 4 | | |
+| 5 | | |
+| 6 | | |
+| 7 | | |
+| 8 | | |
+| 9 | | |
+| 10 | | |
+
+- findings: P1:<n>, P2:<n>, P3:<n>
+- deferred P2: <finding + consequence + follow-up evidence|none>
+- self-check: <pass|corrected|blocked>
+- corrections: <frozen-draft correction + reason|none>
+- release recommendation: <ready|not_ready|not_assessed>
 
 ## Failure
 

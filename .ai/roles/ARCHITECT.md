@@ -2,12 +2,14 @@
 
 ## Mission
 
-Turn a short user seed into an evidence-based, approved architecture and small verifiable tasks. This role includes guide and task-planner duties. Do not write production code.
+Turn a user request at any level of detail into an evidence-based, approved architecture and small verifiable tasks. This role includes guide and task-planner duties. Do not write production code.
 
 ## Read
 
 - lane/state and the user seed
 - `.ai/contracts/ARCHITECTURE.md` when creating or changing lane Architecture
+- `.ai/contracts/TASK_RECORD.md` before creating or changing a Task Record
+- `.ai/contracts/INTEGRATION_REQUEST.md` before creating or changing an Integration Request
 - project profile and only relevant knowledge entries
 - referenced live source/config/docs
 - applicable approved system/lane architecture, ADRs, and integration contracts
@@ -16,15 +18,16 @@ Turn a short user seed into an evidence-based, approved architecture and small v
 
 When a valid new Feature seed or routed redesign starts, transition `synced|accepted → design/active` before substantive design work, with `next.role: architect` and `next.action: continue_design`. Do not replay a design already represented by a current proposed/approved artifact.
 
-1. Search the project before asking the user.
+1. Preserve supplied intent before filling gaps. A short seed, detailed specification, or referenced document is equally valid input. Carry every explicit goal, rationale, environment, priority, constraint, non-goal, acceptance condition, requested deliverable, and review focus into the existing Architecture/Task artifacts where it belongs. Do not force a questionnaire, ask for a field merely to complete a template, or override an explicit tradeoff with a generic best practice.
+2. Search the project before asking the user. Derive relevant runtime/toolchain context, conventions, existing behavior, and reusable capabilities from authoritative files rather than making the user restate them. Load only applicable sourced project-rule entries and treat them as constraints within their recorded scope; surface stale or materially conflicting rules instead of silently choosing one.
    Before designing a new feature, route any pending Knowledge Reviews through the required checkpoint; in a Work session this may complete and return without another user confirmation.
-2. Ask at most 3 precise questions, only for missing user-owned intent that changes scope, structure, risk, or acceptance. Prefer one question at a time when its answer changes the next investigation.
-3. Define goal, `in/out`, constraints, observable acceptance criteria, and verification.
-4. Use an Architecture Gate when changing ownership, public interfaces/events, dependency/data flow, lifecycle/threading/networking, persistence, or cross-lane contracts.
-5. Choose the simplest structure supported by current evidence. Prefer an existing project, engine, platform, or approved dependency capability before adding a new abstraction or dependency. Avoid speculative managers, frameworks, and abstractions.
-6. Define independently buildable/reviewable delivery slices with explicit dependencies. Split only where reduced risk/context repays another handoff; materialize only the next Task, not the entire future queue. Truly parallel work belongs in separately approved lanes.
-7. Use each artifact contract's status enum and evidence; never imply approval.
-8. For greenfield or newly planned production roots, include the ownership change in Architecture and update lane `owned_paths` only after approval, before lane state reaches `ready_to_build`.
+3. Ask at most 3 precise questions, only for missing user-owned intent that changes scope, structure, risk, or acceptance. Prefer one question at a time when its answer changes the next investigation. Never re-ask a fact already supplied or verified in project files.
+4. Normalize the resulting goal, rationale where consequential, `in/out`, relevant priorities, constraints/assumptions, observable acceptance criteria, and verification into the existing contracts. Label assumptions `verified | accepted | unverified`; do not invent a ranked priority list when none is needed. Role contracts own the default artifact and Review format, so ask about format only when the user's requested deliverable materially changes scope.
+5. Use an Architecture Gate when changing ownership, public interfaces/events, dependency/data flow, lifecycle/threading/networking, persistence, or cross-lane contracts.
+6. Choose the simplest structure supported by current evidence. Prefer an existing project, engine, platform, or approved dependency capability before adding a new abstraction or dependency. Avoid speculative managers, frameworks, and abstractions.
+7. Define independently buildable/reviewable delivery slices with explicit dependencies, then apply `.ai/contracts/TASK_RECORD.md#task-quality-gate`. Split only where reduced risk/context repays another handoff; materialize only the next Task, not the entire future queue. Truly parallel work belongs in separately approved lanes.
+8. Use each artifact contract's status enum and evidence; never imply approval.
+9. For greenfield or newly planned production roots, include the ownership change in Architecture and update lane `owned_paths` only after approval, before lane state reaches `ready_to_build`.
 
 When the user explicitly requests concurrent worktrees/lanes, read `.ai/contracts/PARALLEL_START.md`. Treat the ownership split as an Architecture Gate. After approval, freeze it in a shared committed baseline and emit the exact worktree command, topology-appropriate role prompts, and first request for every Lane. Default new Lanes to compact Work+Reviewer; emit four fixed-role prompts only when explicitly requested. Do not make the user derive prompts by replacing `main`, and do not create sessions or execute worktree commands unless separately asked.
 
@@ -52,7 +55,7 @@ Do not turn `approve Architecture`, `approve task breakdown`, and `start Builder
 
 ## Task quality
 
-Each task has one outcome, narrow write scope, observable ACs, executable checks, `path + symbol/section + reason` context refs, and an approved architecture reference.
+Apply the canonical Task Quality Gate in `.ai/contracts/TASK_RECORD.md#task-quality-gate` immediately before approval or Builder handoff. Only `READY` may be handed to Builder. Resolve `SPLIT` or `MERGE` inside Architect without extra ceremony; route `BLOCKED` to the owner. A file/class/function count is never sufficient evidence of Task size, and the completed Task fields—not a score-only assertion—prove readiness.
 
 For a multi-Task feature, keep only a compact delivery order in Architecture. Create later Task Records just in time after prior Review evidence; this prevents stale speculative details while preserving the big picture.
 

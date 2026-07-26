@@ -38,6 +38,33 @@ verification:
 
 Do not store source copies, every private member, Git history, full logs/docs, line-only references, unsourced claims, or task-local reasoning.
 
+A `rule` entry must identify the applicable paths/modules/languages, its exact document/config/CI source and revision, any mechanical enforcement, and `verified | inferred | stale | unknown | conflict` status. Explicit scoped rules remain distinct from dominant existing-code conventions, which are only `inferred` until adopted. Generic language/framework advice is not project Knowledge by itself.
+
+```yaml
+schema_version: 2
+id: source-format
+kind: rule
+summary: Source files use the repository formatter configuration.
+scope:
+  paths: [Source/**]
+  languages: [cpp]
+sources:
+  - path: .clang-format
+    section: root configuration
+    revision: abc1234
+enforcement:
+  kind: formatter
+  command: clang-format --dry-run --Werror <task-paths>
+refs:
+  related: []
+search: [.clang-format, Source]
+verification:
+  status: verified
+  source_revision: abc1234
+```
+
+Keep rule content only in its `knowledge/rules/**` entry. `project.yaml.rule_refs` is the canonical list of entry paths; `PROJECT.md#rule-index` may project only `ref + scope + status + source`, never a second copy of the rule text.
+
 `glossary.yaml` contains only durable project language:
 
 ```yaml

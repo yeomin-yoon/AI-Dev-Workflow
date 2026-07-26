@@ -34,6 +34,26 @@ Candidate and handoff commits are normal, explicitly defined worktree-mode deliv
 
 Historical or single-`main` Reviews may still reference `working-tree`, but an uncommitted or working-tree Review is never Integration-eligible. Commit it and perform a new exact-revision Review before sealing.
 
+## Worker delivery procedure
+
+Load this section only inside an explicitly approved non-`main` worktree Lane.
+
+Builder creates the immutable Task candidate:
+
+1. verify the recorded full-commit `base_revision` and pre-existing dirty baseline;
+2. stage only Task-attributed production/config/asset/test paths;
+3. inspect the staged diff and prove every path maps to the Task/AC;
+4. commit with the Task ID, then record the commit as `result_revision` and its tree as `result_tree`;
+5. leave Build Result, state, and other current-Lane `.ai` artifacts for the later metadata-only handoff commit.
+
+The approved worktree flow authorizes this isolated commit without another confirmation. Never include unrelated user changes, canonical/shared Knowledge, Integration state, Observations, or Workflow maintenance files. If attribution, hooks, signing, credentials, or permissions prevent a truthful commit, keep it unsealed and provide one actionable prerequisite.
+
+After exact-revision independent PASS:
+
+- With `knowledge_sync: defer | none`, Reviewer stages only current-Lane artifacts under `.ai/lanes/<lane>/**`, verifies the reviewed commit/tree and ancestry, confirms no Task production dirt remains, and creates the metadata-only `handoff_revision`.
+- With `knowledge_sync: required`, Reviewer does not seal. Knowledge Maintainer performs `PREPARE_DELTA`, stages only `.ai/lanes/<lane>/**`, repeats the same ancestry/dirty checks, and creates the handoff commit.
+- A failed seal does not erase a valid diagnostic PASS, but it leaves `candidate_status=unsealed` and requires an actionable Integration prerequisite.
+
 ## Return from a non-main session
 
 Before emitting a return:
@@ -114,6 +134,18 @@ first_request=<exact short instruction>
 The user opens a new session in `worktree`, pastes `prompt`, waits for `READY`, then pastes `first_request`. Never ask the user to edit `lane=main`, recover an old chat, or assemble a prompt. Use `Work` for Knowledge/Architect/Builder routes in compact topology and the fixed role in strict topology.
 
 If a new worktree/Lane is required, Main Front Desk routes Architect through `PARALLEL_START.md`; it does not fabricate a `NEXT_SESSION` before the boundary and committed base are approved. If the next candidate is sealed and dependency-eligible, follow `.ai/integration/README.md` and integrate one candidate ending at its exact `handoff_revision` before independent main Review; non-merge strategies must apply the complete sealed range, not the metadata commit alone.
+
+## Post-integration Lane disposition
+
+After a Lane candidate is integrated, independently reviewed, and any required canonical Knowledge checkpoint is complete, Main Front Desk chooses one explicit disposition:
+
+- `complete`: leave the Lane `active` and resting at `synced/idle`; `retired` requires a separate explicit user decision. Report whether the old worktree is safe to remove, but never delete it.
+- `continue`: reuse the same Lane ID and approved ownership only sequentially from the current clean main baseline. Do not continue in the old worker worktree/Branch: merge, cherry-pick, and squash can leave its history or Knowledge behind main even when its candidate was accepted.
+- `redesign`: route Architect before another worktree when ownership, shared contracts, dependency order, or purpose changes.
+
+For `continue`, verify that main contains the accepted Lane artifacts, no source-Lane `pending_reviews` needed by the next work remain unsynchronized, the prior candidate is integrated, and no second active worktree is bound to the same Lane. Then read `PARALLEL_START.md#post-integration-continuation` and emit its fresh worktree/Branch card pinned to current main. The new Work session performs targeted Knowledge/state validation, updates the Lane `source_revision`, and resumes Architect; it does not broad-scan or replay the integrated Task.
+
+If the user wants another Task but the old worktree is still dirty or holds an unpreserved Observation, that affects removal only. It never makes the old divergent checkout the baseline for continuation.
 
 When no session is required, return:
 

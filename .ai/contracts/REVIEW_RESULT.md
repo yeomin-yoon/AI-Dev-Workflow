@@ -8,8 +8,8 @@ task: <TASK-id|IR-id>
 lane: <lane|integration>
 attempt: 1
 verdict: pending
-base_revision: <commit|working-tree>
-reviewed_revision: <commit|working-tree>
+base_revision: <full-commit|no-git>
+reviewed_revision: <commit|working-tree|no-git>
 reviewed_tree: <git-tree-hash|unsealed>
 reviewed_fingerprint: <sha256:hash|null|unsealed>
 reviewer: <session-id|unknown>
@@ -61,7 +61,7 @@ PASS requires mandatory ACs passed, credible evidence, architecture/lane complia
 
 For a commit candidate, Reviewer inspects the exact `base_revision..reviewed_revision` range, records `reviewed_tree = reviewed_revision^{tree}`, and sets `reviewed_fingerprint: null`; the immutable Git tree already identifies the reviewed candidate. A non-`main` Integration candidate may PASS only against committed revisions. The later metadata-only handoff commit is not the reviewed production revision and must contain only the current Lane workflow artifacts allowed by `MAIN_DESK.md`. Historical committed Reviews that duplicated `git-tree:<reviewed_tree>` remain readable.
 
-For a Git-backed single-main working tree, Reviewer independently recalculates the Build Result's canonical fingerprint before inspection and immediately before PASS, then records it as `reviewed_fingerprint`. Any mismatch means the candidate changed and cannot inherit the verdict; route a new Build/Review attempt. A no-Git `unsealed` Review may PASS only with its reduced attribution assurance disclosed and can never become Integration evidence.
+For a Git-backed single-main working tree, Reviewer first reconciles the Build Result `Changes` table with the Task scope, baseline, status/diff, and untracked Task files. It then independently recalculates the Build Result's canonical fingerprint from that exact authoritative path set before inspection and immediately before PASS, and records it as `reviewed_fingerprint`. Any missing path or mismatch means the candidate is unsealed and cannot inherit the verdict; route a new Build/Review attempt. A no-Git `unsealed` Review may PASS only with its reduced attribution assurance disclosed and can never become Integration evidence.
 
 For a mandatory user-observed verification gate, complete all other review work, use verdict `blocked`, record the exact gate/procedure and available evidence, and show the User Action Card in chat. After evidence arrives, create/resume the appropriate Review attempt and issue the final verdict.
 

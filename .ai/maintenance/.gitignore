@@ -1,2 +1,4 @@
 backups/
 staging/
+observations/OBS-*.yaml
+update-state.yaml

@@ -1,6 +1,8 @@
 schema_version: 1
+install_root: .ai
 
 managed:
+  - .ai/LICENSE
   - .ai/BOOTSTRAP.md
   - .ai/WORKFLOW.md
   - .ai/roles/**
@@ -14,8 +16,10 @@ managed:
   - .ai/evals/README.md
   - .ai/evals/SCORECARD.md
   - .ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md
+  - .ai/evals/GOLDEN_CORE_BEHAVIOR.md
   - .ai/shared/knowledge/README.md
   - .ai/maintenance/release.yaml
+  - .ai/maintenance/update-state.template.yaml
   - .ai/maintenance/distribution-inventory.txt
   - .ai/maintenance/managed-paths.yaml
   - .ai/maintenance/.gitignore
@@ -47,4 +51,6 @@ preserved:
 
 precedence:
   - Managed documentation/template paths and preserved runtime paths do not overlap.
+  - Every declared and expanded path is relative to and contained by install_root.
+  - An installed preserved or unknown path cannot become managed without conflict resolution and explicit approval.
   - All other ambiguous or unknown paths are preserved and reported for review.
