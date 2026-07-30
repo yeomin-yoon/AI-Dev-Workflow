@@ -5,7 +5,7 @@ date: 2026-07-30
 status: completed
 result: pass
 completed_at: 2026-07-30T05:58:29.305Z
-source_revision: c52f2e3ccb55c4fb18eb9e611c92bc32e3899cf0
+source_revision: 8d20db127971840050710317880954308f93d468
 source_tree: 1d265606c866e9b8428a1fea0be454f99f60e563
 quality_floor: pass
 seed: "Finalize manual-v1.2 source release evidence for immutable HEAD with mode=full Workflow Review"
@@ -98,12 +98,12 @@ regression_cases:
 
 | Metric | Value | Evidence |
 |---|---|---|
-| accepted | yes | Clean `HEAD` `c52f2e3ccb55c4fb18eb9e611c92bc32e3899cf0` carries `manual-v1.2` in `.ai/maintenance/release.yaml` and its dated Changelog entry; the independent `full`-mode review found no P1 and no applicable FAIL, and every named affected case passed. |
+| accepted | yes | Clean `HEAD` `8d20db127971840050710317880954308f93d468` carries `manual-v1.2` in `.ai/maintenance/release.yaml` and its dated Changelog entry; the independent `full`-mode review found no P1 and no applicable FAIL, and every named affected case passed. |
 | quality floor passed | pass | `tools/validate-workflow.ps1` returned PASS and all 118 `tools/test-validation.ps1` fixtures passed; contract traces preserve required safety, routing, independent Review, truthful evidence, and user actionability. No P2 was deferred. |
 | scope/contract equivalent | pass | This is a `source_regression` audit of one immutable source commit across 29 changed paths; no comparative arm, parity claim, or outcome claim was introduced. |
 | integrated existing behavior vs isolated skeleton | not_applicable | The run evaluates the canonical distribution source and its deterministic fixtures, not a project implementation or isolated feature skeleton. |
 | route + artifact/state contract compliance | pass | `.ai/contracts/STATE.md`, `.ai/reference/OPERATIONS.md`, role write sections, 12 Golden Core fixtures, and 10 Golden Worktree cases agree on owners, transitions, candidate identity, repair/resume, and continuation. |
-| reviewer independence | pass | This finalizing session did not author `c52f2e3`; it opened on that already-committed clean tree and reviewed the immutable source commit. Front matter records `independent_session`. |
+| reviewer independence | pass | This finalizing session did not author `8d20db1`; it opened on that already-committed clean tree and reviewed the immutable source commit. Front matter records `independent_session`. |
 | decision clarity / unnecessary questions or gates | pass | Requirement baselines, program-shape pinning, and the batching rule are optional or bounded; `SPLIT`/`MERGE` stay private Architect revisions, recorded approvals are not re-asked, and the new reduced-assurance path is opt-in after explicit disclosure. |
 | user-language approval and blocker actionability | pass | `.ai/contracts/ACTION_CARDS.md` requires why/steps/pass/reply/fallback, and the new containment blocker in `ARTIFACT_AUTHORITY.md` routes `BLOCKED type=context owner=user` with a complete User Action Card and a named safe fallback. |
 | Change Brief level / grounded usefulness | pass | `.ai/roles/REVIEWER.md` scales brief depth, grounds it in approved intent plus the reviewed diff, and now states that independent AI Review supports rather than transfers human code ownership; `Change Brief` is defined in the public README glossary. |
@@ -182,7 +182,7 @@ regression_cases:
 ```text
 WORKFLOW_REVIEW RESULT=pass
 mode=full workflow_version=manual-v1.2
-source=c52f2e3ccb55c4fb18eb9e611c92bc32e3899cf0 reviewed=29_changed_paths_plus_full_core
+source=8d20db127971840050710317880954308f93d468 reviewed=29_changed_paths_plus_full_core
 automated=pass regression=pass
 findings=P1:0,P2:0,P3:1
 independence=independent_session
