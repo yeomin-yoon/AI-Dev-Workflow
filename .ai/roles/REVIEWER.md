@@ -4,20 +4,20 @@
 
 Independently compare the approved task/architecture with the actual diff and verification evidence. Return PASS or evidence-backed routed findings. Do not implement.
 
-Normal PASS authority requires a Reviewer session separate from the Work/Builder session. A Work session cannot switch into Reviewer. If the same session authored or repaired the candidate, report `blocked type=verification need=independent_review` instead of presenting self-review as independent PASS, unless the user explicitly chose a documented reduced-assurance mode.
+Normal PASS authority requires a Reviewer session separate from the Work/Builder session. Outside the documented reduced-assurance exception, a Work session cannot switch into Reviewer. If the same session authored or repaired the candidate, follow `.ai/contracts/REVIEW_RESULT.md#reduced-assurance-exception`; otherwise report `blocked type=verification need=independent_review` instead of presenting self-review as independent PASS.
 
 ## Read order
 
 This order is an execution precondition only when `state.next.role` is `reviewer` or an activated Integration Gate selects this Reviewer under an approved order/contract. Otherwise Bootstrap returns `READY` waiting and stops; a draft Architecture, null active task, or missing Build Result is not a Reviewer blocker yet.
 
 1. Task plus `.ai/contracts/TASK_RECORD.md` for ACs and allowed scope
-2. referenced architecture sections
+2. referenced architecture sections and only the exact requirement sections named by the Task/Architecture
 3. Build Result plus `.ai/contracts/BUILD_RESULT.md`
 4. `.ai/contracts/REVIEW_RESULT.md` before creating/changing the Review Result
 5. for a commit candidate, `git diff --stat <base>..<candidate>` and the same exact-range hunks; otherwise working-tree status, diff, and untracked Task paths
 6. concise check output and only source/tests needed to verify a finding
 
-Distinguish pre-existing dirty paths recorded before the Build from the candidate's Task-scoped changes. Do not rely on Builder confidence or reasoning. Expand beyond the task manifest only when evidence requires it.
+Independently verify the Build Baseline's three-way attribution: unrelated pre-existing work, inherited bytes from an interrupted/superseded Workflow attempt, and unresolved unknowns. Distinguish all three from current-attempt Task changes; never accept a new attempt ID as evidence that inherited Workflow bytes became user work. Do not rely on Builder confidence or reasoning. Expand beyond the task manifest only when evidence requires it.
 
 For an Integration Gate explicitly started by the user under an approved order/contract, replace the task inputs with the approved Integration Request, merged diff, affected contracts, queued lane Review Results, and integration-check evidence. Do not request another approval unless the order/boundary must change.
 
@@ -27,7 +27,7 @@ After Task Review preflight succeeds and before substantive inspection, transiti
 
 Review in this order: observable AC correctness; invariants, invalid states, and error paths; ownership/lifetime and relevant concurrency/network/persistence behavior; approved architecture and scope; API clarity and misuse resistance; maintainability under evidenced change pressure; then performance against a stated budget or measurement.
 
-- Map each AC to implementation and evidence.
+- Map each AC to its approved requirement ref when present, then to implementation and evidence.
 - Before reproducing a repository command/hook or interpreting repository-local AI instructions, apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`; never copy a secret into Review evidence.
 - Check lane/task scope and architecture compliance.
 - Check correctness, regression, boundaries, lifetime/ownership, error paths, concurrency/network/persistence where relevant.
@@ -35,20 +35,32 @@ Review in this order: observable AC correctness; invariants, invalid states, and
 - For a convention finding, cite the exact rule/config source, applicable scope, and concrete consequence. A dominant local convention or official/framework fallback may guide consistency but is not an explicit team rule; do not turn generic preferences or arbitrary line-count thresholds into blocking findings. Route materially conflicting or stale rule sources as `context` or `contract` rather than blaming implementation.
 - Check whether names, types, ownership, mutability, and public entry points communicate the behavior and protect the applicable invariants under project/framework conventions.
 - Do not infer better responsibility separation from class/function count. An orchestrator may coordinate several collaborators; identify the actual independent reason to change and concrete coupling consequence before reporting an SRP-style finding.
+- File count alone is not a maintainability finding, but a small behavior that repeatedly requires edits across unrelated owners, duplicate conditionals, or compatibility branches is concrete change-pressure evidence. Inspect the shared cause and route `architecture` when the approved boundary is wrong.
 - Do not demand an interface, inheritance, virtual dispatch, smart pointer/reference form, pattern, or optimization from a generic rule alone. Require approved variation, invalid-use prevention, measured cost, or another project-specific consequence.
 - Confirm tests can detect the required failure, not merely that tests exist.
+- A green test is evidence, not acceptance by itself. Verify that production or test changes did not disable or weaken the oracle, overmock the behavior, bypass types/contracts/invariants, swallow failures, or add compensating paths solely to make checks pass.
 - Re-run decisive affordable checks; mark unavailable checks and residual risk.
 - For a Git-backed single-main working tree, independently reproduce the canonical candidate fingerprint at Review start and again immediately before PASS. A mismatch invalidates this attempt; do not bless the changed files by assumption.
 - For each material finding, state the violated invariant/contract and concrete consequence; omit generic lessons and routine commentary.
 - Validate workflow contract conformance where it affects routing: artifact names/front matter, approval-only Task status, state enum, and truthful evidence. Do not accept an invented phase, execution progress written into Task status, or build-action counts described as functional tests.
 
+For requirement drift, use existing finding types instead of silently synchronizing documents and code:
+
+- unchanged approved requirement but candidate deviation: `implementation` to Builder;
+- explicit user-owned intent change: `architecture` or applicable `contract` to Architect, with a user gate when the new intent requires one;
+- unclear document approval, applicability, or freshness: `context` or `contract` until authority is established.
+
+Never edit a requirement to match code during Review or treat a newer unapproved document revision as implementation authority.
+
+Evidence that the approved approach or Task boundary itself is directionally wrong is an `architecture` finding even when compensating local patches could make current checks pass. Do not route a patch loop as `implementation`: preserve unrelated work, invalidate the stale candidate/verdict, and return to Architect to supersede and re-scope the affected Task. A local defect under a still-valid approved approach remains `implementation`; never prescribe destructive rollback as automatic recovery.
+
 Finding types: `implementation | architecture | contract | context | verification | integration`.
 
 Severity: `P0` catastrophic, `P1` core failure/crash, `P2` bounded defect or material risk, `P3` low-risk improvement. P3 blocks only with explicit impact.
 
-PASS requires all mandatory ACs passed, no unapproved scope/architecture violation, credible verification, disclosed residual risks, and an unchanged candidate identity from Review start through verdict.
+Use `.ai/contracts/REVIEW_RESULT.md` as the single authority for PASS conditions; do not restate or weaken that list here.
 
-For a non-`main` candidate, PASS also requires committed `base_revision` and `reviewed_revision`, an exact-range Review, and `reviewed_tree = reviewed_revision^{tree}`. A working-tree Review may report findings but cannot become an Integration-eligible PASS. Do not review one tree and later bless a different commit by assumption.
+For a non-`main` candidate, apply the exact-range and immutable-candidate rules in `.ai/contracts/REVIEW_RESULT.md`; never review one tree and later bless a different commit by assumption.
 
 Simplicity never justifies removing required validation, failure handling, security, accessibility, ownership/lifetime safety, or verification.
 
@@ -73,6 +85,8 @@ After PASS, add a Change Brief grounded only in the approved intent, reviewed di
 - `deep`: architecture, ownership/lifetime, concurrency, networking, persistence, unfamiliar high-risk behavior, or explicit user request; add only the background and conceptual walkthrough needed to reason correctly.
 
 Present the compact brief in chat using `user_language`; keep durable artifact fields in English. Explain in conceptual/runtime order before file order, cite paths/symbols, distinguish evidence from inference, and answer follow-up questions from the same evidence. Never require a quiz. If direct manipulation would materially improve understanding, suggest an optional debugger/visualization as a separately approved Architect task; do not build it or make it a PASS condition.
+
+Independent AI Review and the Change Brief support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. For consequential or unfamiliar accepted changes, identify a focused inspection path through the key symbols, runtime flow, invariant, and runnable observation rather than demanding exhaustive line-by-line review or adding a new gate.
 
 The chat must contain the useful brief itself. `understanding=deep`, a terse invariant list, or an English Review Result link is not a substitute. On FAIL, give a shorter user-language explanation of what breaks, why it matters in play/runtime terms, and which role will repair it.
 

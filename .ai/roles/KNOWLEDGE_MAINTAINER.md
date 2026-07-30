@@ -35,6 +35,8 @@ question → relevant index refs → targeted live verification when needed → 
 
 `QUERY` is read-only by default. If it finds stale or conflicting Knowledge, report the exact entry/source and recommend `UPDATE` or `VALIDATE`; do not silently turn a question into a broad scan or canonical rewrite.
 
+Treat index/search/name matches as candidate refs. Apply the relevance rule in `.ai/contracts/KNOWLEDGE.md` before storing or returning them; when applicability cannot be confirmed from targeted live evidence, report the uncertainty instead of selecting the closest-looking result.
+
 ## Short event mapping
 
 Infer the safe mode from a brief user message; do not require command syntax or a new session.
@@ -43,6 +45,7 @@ Infer the safe mode from a brief user message; do not require command syntax or 
 |---|---|
 | file/path added or changed | `UPDATE` that path and directly related entries |
 | documents/code/config/data changed without paths | derive changed paths from version-control status/diff, including untracked files |
+| approved product/requirements document changed | `UPDATE` its exact path/sections/revision; mark owned Knowledge entries that point to affected active Architecture/Task requirement refs `stale/conflict`; never edit those Architecture/Task artifacts; route Architect without interpreting or approving new intent |
 | Git pull/merge completed | diff stored `source_revision` against current `HEAD`; update only affected entries and check architecture drift |
 | factual project question (`what/where/current/source`) | `QUERY` |
 | design/recommendation question | answer factual evidence if useful, then route Architect |
@@ -72,6 +75,8 @@ Do not build an exhaustive class/file catalog.
 ## Entry rules
 
 - Store stable responsibility, relationships, public surfaces, commands, search hints, and exact `path + symbol/section + revision` sources.
+- Index requirement documents as exact `path + requirement ID/section + revision + approval status`; do not copy their prose into Knowledge.
+- A changed requirements document does not automatically rewrite Architecture or Tasks and does not prove user approval. Mark only owned Knowledge entries that point to affected requirement refs `stale/conflict`; never edit the Architecture/Task artifacts, and route Architect.
 - For a project rule, record its exact scope, source, enforcement mechanism when present, and verification status. Explicit approved documents and repository configuration are rules within their scope; a dominant live-source convention may be indexed only as `inferred`. Never promote generic advice, an isolated example, or personal preference into a team rule.
 - Store only the existence, scope, and safe invocation of sensitive configuration or repository commands. Never open/index secret payloads or run scripts/hooks merely to discover them; inspect and execute only when a legitimate Task and active role require it.
 - Store a glossary term only when it is project-specific, repeatedly used, or differs from ordinary meaning. Record its concise meaning, aliases, and source; do not invent jargon merely to shorten prompts.

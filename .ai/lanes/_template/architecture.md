@@ -4,6 +4,7 @@ lane: <lane-id>
 status: draft
 version: 0
 source_revision: null
+requirement_refs: []
 approved_by: null
 supersedes: null
 ---
@@ -11,6 +12,9 @@ supersedes: null
 # <Lane Name> Architecture
 
 ## Goal
+
+## Requirement Baseline
+<!-- Optional: explain only the applicability/approval basis of front-matter requirement_refs; do not copy requirement prose. -->
 
 ## Evidence and Constraints
 

@@ -187,4 +187,6 @@ Then provide:
 5. unverified claims or evidence gaps; and
 6. a short self-check record: frozen-draft corrections with reasons, or `none`.
 
+For canonical release embedding, finish the section with `- findings: P1:<n>, P2:<n>, P3:<n>` and `- deferred P2: none` when P2 is zero. When P2 is nonzero, include one detailed `[P2]...` finding per count and a non-`none` deferred-P2 line naming consequence and follow-up evidence/proof.
+
 `release_recommendation=ready` requires an independent session reviewing a clean full source commit, `self_check: pass | corrected`, no P1, no unresolved applicable FAIL, successful required automated/regression checks, and every deferred P2 explicitly justified with consequence and follow-up evidence. P3 never blocks by itself. Use `not_assessed` when the request was not a release review. `WORKFLOW_REVIEW RESULT=pass` and `release_recommendation=not_ready` may coexist when Workflow quality passes but a separate publication gate such as completed release evidence is still pending.

@@ -1,5 +1,31 @@
 # Workflow Changelog
 
+## manual-v1.2 — 2026-07-30
+
+- Added optional requirement baselines that pin only applicable PRD/spec/GDD sections and revisions without requiring a form or copying whole documents.
+- Classified requirement drift as implementation deviation, approved intent change, or unclear authority so code and specifications are never silently synchronized.
+- Added a deterministic requirement-drift fixture and negative validation cases covering routing, Task supersession, and source-only Knowledge indexing.
+- Kept requirement-drift status inside Knowledge-owned entries and synchronized the new requirement baseline with the fresh-Lane Architecture scaffold.
+- Clarified that Workflow rules, approvals, Git, and Worktrees are process controls rather than OS security boundaries, with risk-scaled containment, actionable context/user recovery, and an inverse guard that keeps proven project-local checks on the normal path.
+- Added evidence-triggered re-scope for directionally wrong candidates and bounded batching of related input without widening Task scope or adding a new gate.
+- Separated external update-candidate read containment from target `.ai` write containment, rejected symlink/reparse escapes at both roots, made the Golden Core trigger catalog single-source, and removed an unmeasured time implication from the README example.
+- Made context retrieval evidence-based: names and similarity produce candidates only, while targeted source checks establish scope, freshness, authority, schema, and runtime applicability before Knowledge or Architect relies on them.
+- Allowed bounded restores from project-declared dependency sources without weakening lifecycle-script execution controls, centralized Review PASS conditions, documented Knowledge approval-field compatibility, and kept normative Architecture rules outside generated artifact prose.
+- Reframed the README around the intended user experience—start briefly, decide with understanding, learn through real work, build small, and verify with evidence—while keeping `.ai/WORKFLOW.md#design-principles` as the single canonical source.
+- Bound Workflow Apply to the exact candidate commit/tree and canonical input manifest recorded by Check, persisted exact new-path approvals, and made rollback restore both present and absent pre-state without deleting concurrent work by assumption.
+- Added an optional cross-lane requirement baseline to System Architecture so shared-contract requirement changes version the system boundary and supersede every affected Lane Task before Integration.
+- Made README philosophy completeness, Update transaction oracles, cross-lane requirement routing, and ASCII-only PowerShell validator sources deterministic regression checks.
+- Treated tacit feedback such as "something feels off" as a valid design seed: Architect now performs one bounded evidence-based diagnosis before clarification, surfaces non-obvious possibilities without expanding scope, and resolves the result into observable acceptance criteria before Build.
+- Closed `ready_to_build/blocked` and `building/blocked` repair/resume paths, including explicit disposition of interrupted single-main Task-attributed changes before a replacement Build.
+- Replaced free-form installed Update validation claims with a seven-row observation/evidence matrix and unified rollback proof under one transaction manifest with immutable pre-state and completed mutation records.
+- Corrected the public Workflow Review lens summary, enforced a fresh non-authoring release-finalizer session, and aligned the top-level Update summary with its independent candidate-read and install-write roots.
+- Clarified that green checks cannot excuse weakened test oracles, invariant bypasses, or concrete maintainability pressure; preferred bounded vertical slices and conditional program-shape guidance without adding a new artifact or gate; and kept consequential code ownership human-centered through focused inspection paths.
+- Hardened canonical release evidence so every named source-regression case must pass and every counted P2 carries a detailed finding plus deferred follow-up proof.
+- Completed pre-Review, changed-byte Build, and Task-Review integration recovery paths without reusing stale candidates or verdicts, and made Build Baseline preserve unrelated, inherited, and unknown dirty-path attribution across attempts.
+- Made Workflow Apply transactions discoverable after session interruption through a durable manifest pointer and required all seven installed checks to return evidenced `pass|fail` results rather than `not_applicable`.
+- Let release finalization select and faithfully record `changed` or `full` Workflow Review mode, and defined the narrow, disclosed, non-release reduced-assurance exception for ordinary same-session Task Review.
+- Made the canonical distribution source self-describing while requiring user confirmation before installed source metadata can seed an update Check, and exposed Change Brief in the public glossary.
+
 ## manual-v1.1 — 2026-07-26
 
 - Made request intake adapt to the user's level of detail: preserve explicit intent, derive known project context, and ask only consequential user-owned unknowns without a mandatory prompt form.

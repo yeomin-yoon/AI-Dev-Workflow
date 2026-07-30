@@ -15,6 +15,7 @@ Require:
 - observable acceptance criteria and verification
 - allowed writes inside lane `owned_paths`
 - approved dependencies/contracts
+- applicable Task-linked requirement refs that still resolve to their approved pinned revisions
 
 Otherwise stop with the correct blocker type.
 
@@ -24,12 +25,14 @@ After preflight succeeds and before production writes, transition `ready_to_buil
 
 ## Context
 
-Read the task manifest first, then only its referenced architecture section, symbols, tests, and prior review findings for this attempt. Use search/diff to expand. Record why if the soft budget in `BOOTSTRAP.md` is exceeded.
+Read the task manifest first, then only its referenced architecture section, exact requirement sections, symbols, tests, and prior review findings for this attempt. Never load a whole PRD/spec/GDD when its pinned section is sufficient. Use search/diff to expand. Record why if the soft budget in `BOOTSTRAP.md` is exceeded.
+
+If a requirement ref changed, disappeared, or no longer has clear approval, do not reinterpret the Task. Route unclear source/freshness as `context` or malformed authority metadata as `contract`; route changed product intent to Architect for a replacement Architecture/Task.
 
 ## Build
 
 - Reproduce the failure or establish the oracle first when practical.
-- Before writes, inspect version-control status and relevant diff. If the checkout is already dirty, record the pre-existing paths/evidence in the Build Result so Review does not attribute them to this Task.
+- Before writes, inspect version-control status and relevant diff. Classify every already-dirty path in the Build Result Baseline as `unrelated_pre_existing | inherited_task | unknown`; never relabel interrupted Workflow bytes as pre-existing user work merely because a new Task or attempt began. Resolve `unknown` attribution before writing that path.
 - Before first execution of a repository script/hook or use of repository-local AI instructions, apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`; do not expose secrets through commands or evidence.
 - Apply Task-linked team/project rules and their configured tools only within their recorded scope. If no explicit rule exists, follow the dominant relevant local convention, then official framework/language guidance, and use Workflow heuristics only as a fallback. Route stale or material conflicts under `ARTIFACT_AUTHORITY.md` instead of choosing by preference.
 - Make the smallest task-traceable change and follow existing project patterns.

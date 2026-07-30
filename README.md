@@ -4,18 +4,25 @@
 [![Release Evidence](https://github.com/yeomin-yoon/AI-Dev-Workflow/actions/workflows/release-evidence.yml/badge.svg)](https://github.com/yeomin-yoon/AI-Dev-Workflow/actions/workflows/release-evidence.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-*A file-backed AI development workflow for durable context, small verified changes, independent review, and human-controlled decisions.*
+*A human-centered, file-backed AI development workflow for low-friction starts, informed decisions, small verified changes, and independent review.*
 
-**파일에 상태를 남기고, 작게 구현하고, 독립적으로 검증하는 AI 협업 개발 워크플로우입니다.**
+**짧게 시작하고, 알고 선택하고, 작게 구현하고, 근거로 검증합니다.**
 
-채팅 기억 대신 프로젝트 파일과 Git을 작업 상태의 기준으로 사용한다. 세션이나 AI 도구가 바뀌어도 작업을 복원하고, 중요한 판단은 사람이 통제하며, `설계 → 작은 구현 → 독립 검증 → 필요한 지식 갱신`을 반복한다.
+완벽한 프롬프트를 준비한 뒤 시작할 필요가 없다. “이 기능 구현해줘”처럼 짧게 출발해도 되고, 문제를 느끼지만 원인이나 표현이 아직 정리되지 않은 상태도 유효한 시작점이다. 알고 있는 목표·이유·환경·제약·완료 조건은 원하는 만큼 자세히 더할 수 있다.
 
-저장소에 접근할 수 있는 AI로 실제 프로젝트를 개발하면서 세션 교체로 인한 상태 유실, 과도한 변경 범위, 작성 세션의 자기승인을 줄이려는 개발자를 위한 Workflow다.
+<!-- tacit-seed-diagnostic: evidence-before-clarification -->
+Work는 제공된 의도를 보존하고 프로젝트 파일에서 확인 가능한 맥락을 채운다. 막연한 감각을 곧바로 되묻거나 임의로 좁히지 않고, 관련 결과를 살펴 관찰된 상태·가능한 원인·가장 유력한 해석·작은 확인 방법으로 번역한다. 결과나 구조를 바꾸는 핵심 불확실성만 질문하고, 중요한 선택은 근거·영향·추천·재검토 조건을 보여준 뒤 사용자가 결정한다.
 
-> 사용자는 원하는 만큼만 설명한다. Work는 제공된 의도를 보존하고, 프로젝트 파일에서 나머지 맥락을 채우며, 결과나 구조를 바꾸는 핵심 불확실성만 질문한다.
+승인된 일은 작은 Task로 구현하고 별도 Reviewer가 실제 Diff와 실행 근거로 검증한다. 파일과 Git은 이 흐름을 세션과 AI 도구가 바뀌어도 이어 준다. AI로 빠르게 만들면서도 결과를 이해하고 다음 선택을 직접 판단하려는 개발자를 위한 Workflow다.
 
-| 흔한 AI 개발 문제 | AI Dev Workflow의 대응 |
+<!-- philosophy-core: human-judgment-over-automation -->
+> AI는 사용자의 사고를 대신하지 않는다. 시작 부담과 반복 작업을 줄이고, 중요한 판단에 필요한 근거를 보여준다.
+
+| 사용자가 겪는 문제 | AI Dev Workflow가 만드는 경험 |
 |---|---|
+| 시작 전에 요구사항을 완벽하게 정리해야 한다는 부담 | 짧거나 자세한 요청을 그대로 받고, 프로젝트에서 확인 가능한 맥락은 AI가 채운다. |
+| 문제는 느끼지만 원인이나 전문 용어를 모름 | 관련 결과를 살펴 가능한 원인과 유력한 해석, 가장 작은 확인 방법을 제시한다. |
+| AI가 추천한 구조를 이유도 모른 채 선택함 | 중요한 선택 전에 근거·영향·추천·재검토 조건을 이해할 수 있게 보여준다. |
 | 작업 상태가 채팅에만 남아 세션 교체 시 유실 | 파일과 Git에서 승인된 상태·결정·근거를 복원한다. |
 | 큰 기능을 한 번에 수정해 실패 범위가 불명확 | 독립적으로 구현·검증 가능한 Task 단위로 반복한다. |
 | 작성 세션이 자신의 결과를 그대로 완료 처리 | 별도 Reviewer가 실제 변경과 실행 근거를 검증한다. |
@@ -30,6 +37,7 @@
 1. 이 저장소의 `.ai` 폴더를 대상 프로젝트 루트에 복사한다. 기존 `.ai`가 있다면 먼저 백업한다.
 2. AI 도구로 프로젝트 루트를 열고 **[창 1] Work** 세션에 아래 Prompt를 붙인다.
 3. `READY`를 확인한 뒤 **[창 2] Reviewer** 세션을 새로 열어 Reviewer Prompt를 붙인다.
+4. 두 세션이 준비되면 Work에 만들 기능을 원하는 만큼 설명한다. `이 기능 구현해줘.`처럼 한 줄로 시작해도 된다.
 
 > [!IMPORTANT]
 > 아래 Bootstrap Prompt는 각각 **새 세션의 첫 번째 사용자 메시지**로 수정 없이 보낸다. System Prompt·Custom Instructions·터미널 명령으로 넣지 않는다.
@@ -53,22 +61,22 @@ Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=compact, user_la
 
 ```mermaid
 flowchart LR
-    Seed["기능 요청<br/>짧게 또는 자세히"] --> Design["Work · Architect<br/>근거 · 설계 · Task"]
-    Design --> Gate{"중요한 구조 결정?"}
-    Gate -->|있음| User["사용자 승인"]
+    Seed["짧거나 자세한 기능 요청"] --> Design["Work · Architect<br/>맥락 · 선택지 · 영향"]
+    Design --> Gate{"사용자 소유 결정?"}
+    Gate -->|있음| User["이유를 알고 선택"]
     Gate -->|없음| Build["Work · Builder<br/>작은 구현"]
     User --> Build
-    Build --> Review["독립 Reviewer"]
+    Build --> Review["독립 Reviewer<br/>실제 Diff · 실행 근거"]
     Review -->|구현 문제| Build
     Review -->|구조 문제| Design
-    Review -->|PASS| Sync["필요한 Knowledge 갱신"]
+    Review -->|PASS| Sync["Change Brief<br/>필요한 Knowledge 갱신"]
     Sync --> Next{"다음 단계"}
     Next -->|승인된 다음 Task| Build
     Next -->|새 기능 · 구조 변경| Design
 ```
 
 <details>
-<summary>실제 1분 사용 예시</summary>
+<summary>기본 사용 예시</summary>
 
 ```text
 [창 1 · Work]
@@ -80,7 +88,7 @@ Work: RESULT=ready_to_review ... DO_NEXT session=reviewer say="현재 Build Resu
 
 [창 2 · Reviewer]
 사용자: 현재 Build Result를 검증해.
-Reviewer: 실제 변경과 실행 근거를 독립 검증한 뒤 PASS 또는 수정용 DO_NEXT 제공
+Reviewer: 실제 변경과 실행 근거를 독립 검증한 뒤 PASS 또는 수정용 DO_NEXT 제공. PASS면 목적·전후 흐름·지켜야 할 조건·확인 위치를 Change Brief로 설명
 
 [창 1 · Work]
 사용자: PASS면 `계속 진행해.`, 수정이면 Reviewer의 DO_NEXT 문장을 그대로 붙여넣기
@@ -154,18 +162,19 @@ Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=strict, user_lan
 | Lane | 작업 소유 범위·상태·산출물을 분리하는 논리적 작업 흐름이다. 평소에는 `main` 하나만 사용하며, 병렬 개발 시 별도 Worktree·Branch와 연결될 수 있다. |
 | Task | AI가 한 번에 구현·검증할 수 있게 나눈 작은 작업 단위다. |
 | Build Result | Builder가 남기는 변경 경로·검증·위험 근거다. 코드 자체를 대신하지 않는다. |
+| Change Brief | Reviewer가 PASS한 변경의 목적·핵심 흐름·지켜야 할 조건·확인 위치를 짧게 설명한 안내다. |
 | Knowledge | 채팅 기억이 아니라 파일에 저장된 프로젝트 사실·위치·출처 색인이다. |
 | Integration | 검토·봉인된 비-`main` 후보를 `main`에 반영하고 다시 검증하는 절차다. |
 
 ### 자주 쓰는 복붙 문장
 
-정해진 명령 문법은 없다. 아래 문장은 반복해서 쓰기 좋은 표준형이며, 같은 뜻의 자연어로 말해도 된다.
+정해진 명령어는 없다. 아래 문장은 자주 쓰는 예시일 뿐이며, 같은 뜻의 자연어로 말해도 된다.
 
 #### 개발
 
 | 하고 싶은 일 | 입력할 세션 | 입력 |
 |---|---|---|
-| 기능 시작 | Work | `이 기능 짜야 해.` |
+| 기능 시작 | Work | `<기능명> 구현해줘.` |
 | Architecture 승인 | 질문한 Work/Architect | `이 Architecture를 승인해.` |
 | 구현 결과 검증 | Reviewer | `현재 Build Result를 검증해.` |
 | PASS 후 다음 Task | Work | `계속 진행해.` |
@@ -305,7 +314,8 @@ Read `.ai/reference/OPERATIONS.md` and handle this issue:
 
 명백한 오경로·가짜 BLOCKED·필수 안내 누락·반복 복구 실패처럼 증거가 있는 Workflow 문제는 역할이 작업을 멈추는 시점에 자동으로 중복 없이 기록한다. 일반 코드 버그나 한 번의 실수는 자동 기록하지 않는다. 기록될 때만 `WORKFLOW_OBSERVATION=<path>` 한 줄이 나온다.
 
-`Workflow 자체 검토`는 프로젝트 코드를 리뷰하는 Reviewer와 다르다. 배포 저장소에서 목적·첫 사용·단계·책임·실패 복구·검증·효율·유지보수·보안을 종합 점검하고, 마지막에 자신의 첫 판정도 한 번 역검증하는 읽기 전용 절차다. 누락·오탐·개수/결론 모순을 고칠 수 있지만 무한 재검토는 하지 않으며, 파일 수정이나 릴리스를 자동으로 수행하지 않는다. 기본 복붙문은 `changed`이고, 첫 기준선·대규모 재설계·정기 감사에만 `mode=full`로 바꾼다. 공개 릴리스에서는 소스를 작성하지 않은 새 `FINALIZE_RELEASE_EVAL` 세션이 깨끗한 커밋을 검토하고 자기검증 결과까지 release Eval에 함께 보존한다.
+<!-- workflow-review-summary: canonical-lenses-1-through-10 -->
+`Workflow 자체 검토`는 프로젝트 코드를 리뷰하는 Reviewer와 다르다. 배포 저장소에서 목적·첫 사용·단계·책임·실패 복구·검증·권위·Context·이식성·효율·유지보수·보안을 종합 점검하고, 마지막에 자신의 첫 판정도 한 번 역검증하는 읽기 전용 절차다. 누락·오탐·개수/결론 모순을 고칠 수 있지만 무한 재검토는 하지 않으며, 파일 수정이나 릴리스를 자동으로 수행하지 않는다. 기본 복붙문은 `changed`이고, 첫 기준선·대규모 재설계·정기 감사에만 `mode=full`로 바꾼다. 공개 릴리스에서는 소스를 작성하지 않은 새 `FINALIZE_RELEASE_EVAL` 세션이 깨끗한 커밋을 검토하고 자기검증 결과까지 release Eval에 함께 보존한다.
 
 <details>
 <summary>여러 프로젝트·Worktree의 개선 기록 취합</summary>
@@ -349,7 +359,8 @@ user_language=ko
 
 승인 가능한 공통 변경만 별도 `AI-Dev-Workflow/.ai`에 일반화해 반영하고 버전·Changelog·영향받는 Eval 항목의 사전 검사와 개발 중 검증까지 수행한다. 중요한 정책 충돌은 적용하지 않고 먼저 묻는다.
 
-`BUILD_RELEASE_COPY RESULT=source_commit_required`이면 변경 내용을 확인해 **소스 변경만 먼저 커밋**한다. 그다음 같은 배포 저장소 세션에 아래 문장을 보낸다.
+<!-- release-finalizer-session: fresh-non-authoring -->
+`BUILD_RELEASE_COPY RESULT=source_commit_required`이면 변경 내용을 확인해 **소스 변경만 먼저 커밋**한다. 그다음 소스를 작성한 세션을 닫고, 소스 변경을 작성하지 않은 새 배포 저장소 세션을 연 뒤 아래 문장을 보낸다.
 
 ```text
 Read `maintenance/RELEASE.md` and run FINALIZE_RELEASE_EVAL for HEAD.
@@ -385,7 +396,22 @@ Read `maintenance/RELEASE.md` and run FINALIZE_RELEASE_EVAL for HEAD.
 
 ### 설계 원칙
 
-Workflow를 변경할 때 사용하는 철학의 단일 기준은 [Design Principles](.ai/WORKFLOW.md#design-principles)다. README는 사용자용 요약이고, BOOTSTRAP과 역할 계약은 원칙을 실행하며, Eval은 실제 품질·비용 효과를 측정한다. 일반 사용 중에는 이 내부 문서를 따로 읽을 필요가 없다.
+Workflow를 변경할 때 사용하는 철학의 단일 기준은 [Design Principles](.ai/WORKFLOW.md#design-principles)다. 아래는 사용자용 전체 요약이며, BOOTSTRAP과 역할 계약은 원칙을 실행하고 Eval은 실제 품질·비용 효과를 측정한다. 일반 사용 중에는 내부 문서를 따로 읽을 필요가 없다.
+
+이 Workflow의 주인공은 파일이나 Git이 아니라 판단하는 사용자다. 파일·Task·Reviewer·Eval은 AI가 근거를 건너뛰거나 중요한 판단까지 대신하지 못하게 하는 보조 장치다.
+
+<!-- public-philosophy-summary: canonical-design-principles-1-through-11 -->
+1. **채팅 기억보다 파일과 Git.** 세션은 교체 가능한 작업자이고, 지속 상태·결정·근거·이력은 각 파일과 Git에 남긴다.
+2. **크게 사고하고 작게 구현.** 사람과 Architect는 Feature 규모의 의도와 구조를 판단하고, Builder는 한 번에 작은 승인 Task 하나만 구현한다.
+3. **입력 깊이는 사용자에 맞춘다.** 짧은 요청·상세 명세·참조 문서뿐 아니라 아직 전문적으로 정의되지 않은 문제 감각도 유효한 Seed로 보존한다. 프로젝트에서 알 수 있는 맥락을 찾아 증상과 원인 후보를 먼저 번역하고, 결과를 바꾸는 사용자 소유 불확실성만 질문한다.
+4. **Context 양보다 품질.** 상태 포인터·경로·심볼·Diff부터 읽고, 근거가 부족할 때만 Context를 확장한다.
+5. **자신감보다 증거.** 승인된 의도, 실제 소스, 결정적 검사, 런타임 관찰과 정확한 revision이 수용 여부를 결정한다. 검사 통과도 그 기준이 약해지지 않았을 때의 증거일 뿐, 설계와 장기 유지보수성을 자동으로 보증하지 않는다.
+6. **자기 승인보다 독립 검증.** 결과를 만든 세션은 자신의 결과에 독립 PASS를 줄 수 없으며, 문제는 원인을 소유한 역할로 보낸다.
+7. **중요한 결정은 근거를 이해한 사람이 통제.** AI는 되돌릴 수 있는 지역 판단과 반복 작업을 맡고, 중요한 선택 전에는 근거·영향·추천·재검토 조건을 보여준다. 독립 AI 검토는 부담을 줄일 뿐 코드 소유권을 대신하지 않으며, 낯설거나 중요한 변경은 유지해야 할 핵심 흐름·불변조건과 확인 위치를 보여준다. 별도 퀴즈 없이 실제 작업 흐름이 자연스러운 학습을 지원한다.
+8. **좋은 코드는 패턴 수가 아니라 의도·안전·필요로 판단.** 프로젝트 규칙과 실제 변경 압력을 우선하고, 근거 없는 추상화·다형성·최적화는 요구하지 않는다.
+9. **토큰·시간 절감보다 품질 하한.** 정확성·안전·승인 범위·유지보수성·검증·필요한 사용자 이해를 잃은 절약은 개선으로 인정하지 않는다.
+10. **모델을 바꿀 수 있어도 결과 동등성을 가정하지 않는다.** 같은 파일 계약은 여러 AI 도구에서 사용할 수 있지만, 실질적 동등성은 측정된 Eval로만 주장한다.
+11. **단순한 기본 경로, 복잡성은 필요할 때만.** `main` Work와 독립 Reviewer를 기본으로 하고, 추가 역할·Lane·Worktree·Integration·전체 Eval은 실제 필요가 있을 때만 활성화한다.
 
 여기서 `model-agnostic`은 같은 파일 계약을 여러 AI 도구에서 사용할 수 있다는 뜻이지, 모델별 결과가 동등하다는 뜻이 아니다. Context·재작업 절감과 자연스러운 학습은 Workflow가 지원하도록 설계한 목표이며, 비교 측정이나 장기 관찰 없이 보장된 성과로 주장하지 않는다.
 
@@ -401,11 +427,13 @@ Workflow를 변경할 때 사용하는 철학의 단일 기준은 [Design Princi
 
 중요한 Architecture와 사용자 소유 결정은 사용자가 승인하고, 그 안의 일반 Task는 Architect가 승인할 수 있다. Builder 결과는 별도 Reviewer가 PASS해야 수용된다. 구현 문제는 Builder, 구조·공개 계약은 Architect, 결과물 형식 문제는 해당 작성 역할이 수정한다. Knowledge는 매 Task마다 강제 실행하지 않고 필요한 변경을 즉시 반영하거나 같은 Feature 안에서 묶어 갱신한다.
 
+PRD·GDD·기능 Spec은 필수가 아니다. 문서가 있으면 Architect가 전체 내용을 복사하지 않고 관련 요구사항의 경로·섹션·revision만 고정한다. 승인된 요구사항은 제품 의도, 실제 소스는 현재 구현, 테스트·런타임 증거는 관찰된 동작의 기준이다. 서로 어긋나면 자동으로 어느 한쪽을 덮어쓰지 않고 구현 오류·승인된 요구 변경·출처 불명확을 구분해 담당 역할로 보낸다.
+
 모든 세션에서 자유롭게 질문할 수 있다. Work/Architect에게 설계 근거와 영향을, Reviewer에게 문제의 근거·재현 방법·수동 검증 방법과 위험을 물어볼 수 있다.
 
 ### 변경을 이해하는 흐름
 
-별도 학습 세션이나 의무 질문은 없다. Architect는 중요한 구조를 승인받기 전에 현재 동작, 바뀔 흐름, 실제 영향, 제외 범위와 재검토 조건을 한국어로 보여준다. 영어 Architecture 링크는 근거일 뿐 설명을 대신하지 않는다. Reviewer는 PASS 후 실제 구현 기준으로 목적, 전후 동작, 핵심 흐름, 지켜야 할 조건과 직접 확인할 위치를 `Change Brief`로 보여준다.
+학습을 업무 뒤에 별도 과제로 붙이지 않는다. 실제 구조 선택과 구현 검증 자체가 이해의 순간이 되게 하며, 의무 질문이나 퀴즈는 만들지 않는다. Architect는 중요한 구조를 승인받기 전에 현재 동작, 바뀔 흐름, 실제 영향, 제외 범위와 재검토 조건을 한국어로 보여준다. 영어 Architecture 링크는 근거일 뿐 설명을 대신하지 않는다. Reviewer는 PASS 후 실제 구현 기준으로 목적, 전후 동작, 핵심 흐름, 지켜야 할 조건과 직접 확인할 위치를 `Change Brief`로 보여준다.
 
 설명 깊이는 변경에 맞춘다. 이름·서식 같은 기계적 변경은 생략하고, 일반 동작 변경은 짧게, 구조·수명주기·동시성·네트워크·저장 방식처럼 사고 모델이 중요한 변경만 자세히 설명한다. 설명은 새로운 Source of Truth가 아니라 해당 Review revision을 이해하기 위한 안내다.
 

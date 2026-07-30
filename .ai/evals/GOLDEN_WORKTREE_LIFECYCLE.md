@@ -133,9 +133,18 @@ Given main records `main_before=M0`, applies one sealed candidate to `M1`, and I
 - If architecture, a material contract, ownership, scope, or dependency order changes, the same repair mapping retains `M0`; Architect supersedes the affected boundary/Task and obtains any consequential approval before another candidate is built.
 - A conflict/partial checkout never becomes a baseline. If it cannot be recovered with a project-safe non-lossy action, the user receives an actionable Git recovery card and Integration remains blocked.
 
+## Case 10 — Cross-lane requirement revision
+
+Given approved requirement `Docs/SharedPRD.md#REQ-SHARED-1@R1` governs one shared contract consumed by `character` and `ui`, System Architecture pins that exact ref, and newly approved revision `R2` changes the contract:
+
+- Architect versions `.ai/shared/SYSTEM_ARCHITECTURE.md`, pins `Docs/SharedPRD.md#REQ-SHARED-1@R2` once in its canonical `requirement_refs`, and updates the affected ownership/contract before another Integration attempt.
+- Every approved or active Task in each affected Lane is superseded and regenerated against the new System Architecture before Build/Integration. An unaffected Lane is not interrupted merely because the requirement document changed.
+- Lane Architecture may explain its local consequence but never duplicates ownership of the cross-lane requirement ref. A missing historical System Architecture field reads as an empty optional baseline until the next applicable cross-lane decision.
+- Main rejects Integration when the shared requirement revision, System Architecture version, or any affected Task still points to `R1`; chat summaries cannot bridge the mismatch.
+
 ## Acceptance
 
-All nine cases must agree across:
+All ten cases must agree across:
 
 - `.ai/BOOTSTRAP.md`
 - `.ai/contracts/MAIN_DESK.md`
@@ -144,6 +153,7 @@ All nine cases must agree across:
 - `.ai/contracts/BUILD_RESULT.md`
 - `.ai/contracts/REVIEW_RESULT.md`
 - `.ai/contracts/PARALLEL_START.md`
+- `.ai/shared/SYSTEM_ARCHITECTURE.md`
 - `.ai/roles/WORK.md`
 - `.ai/roles/BUILDER.md`
 - `.ai/roles/REVIEWER.md`
