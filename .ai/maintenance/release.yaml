@@ -1,6 +1,6 @@
 schema_version: 1
-workflow_version: manual-v1.1
-released_at: 2026-07-26
+workflow_version: manual-v1.2
+released_at: 2026-07-30
 
 compatibility:
   lane_schema: [3]
@@ -10,7 +10,7 @@ compatibility:
   eval_schema: [2]
 
 source:
-  repository: null
-  release_ref: null
+  repository: https://github.com/yeomin-yoon/AI-Dev-Workflow
+  release_ref: v1.2
 
 migrations: []

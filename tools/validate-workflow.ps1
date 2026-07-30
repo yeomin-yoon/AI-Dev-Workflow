@@ -425,6 +425,26 @@ foreach ($relativePath in $sourceRequiredPaths) {
     }
 }
 
+# Windows PowerShell 5.1 may decode BOM-less script source with the active ANSI
+# code page. Keep validator sources ASCII so the default Windows command and
+# PowerShell 7/CI parse the same bytes.
+$powerShellSourceRoot = Get-RepositoryPath 'tools'
+if (Test-Path -LiteralPath $powerShellSourceRoot -PathType Container) {
+    foreach ($powerShellSource in @(Get-ChildItem -LiteralPath $powerShellSourceRoot -File -Filter '*.ps1')) {
+        $hasNonAsciiByte = $false
+        foreach ($sourceByte in [System.IO.File]::ReadAllBytes($powerShellSource.FullName)) {
+            if ($sourceByte -gt 127) {
+                $hasNonAsciiByte = $true
+                break
+            }
+        }
+        if ($hasNonAsciiByte) {
+            $relativePowerShellPath = Get-RepositoryRelativePath $powerShellSource.FullName
+            Add-Failure "PowerShell validation source must remain ASCII for Windows PowerShell 5.1 compatibility: $relativePowerShellPath"
+        }
+    }
+}
+
 $ciWorkflowContracts = @(
     @{
         Path = '.github/workflows/validate.yml'
@@ -564,19 +584,83 @@ foreach ($rolePath in $roleTransitionRequirements.Keys) {
 # These string checks are only lightweight smoke tests. Prefer structured
 # schema/FSM validation whenever a contract can be parsed deterministically.
 $contractTokenRequirements = @{
-    '.ai/reference/OPERATIONS.md' = @('Knowledge required/checkpoint', 'single-main defer/none', 'non-main')
+    'README.md' = @(
+        'philosophy-core: human-judgment-over-automation',
+        'tacit-seed-diagnostic: evidence-before-clarification',
+        'workflow-review-summary: canonical-lenses-1-through-10',
+        'release-finalizer-session: fresh-non-authoring',
+        '| Change Brief |'
+    )
+    '.ai/WORKFLOW.md' = @(
+        'Evaluative or tacit seeds are valid problem signals, not failed requirements',
+        'the smallest discriminating probe or proposed improvement',
+        'A green check is evidence, not proof that its oracle, architecture, or long-term maintainability remained sound',
+        'Independent AI Review reduces review burden but never transfers code ownership',
+        'Candidate manifests, managed files, migration sources, and resolved read links must remain inside the pinned read-only candidate source root',
+        'Passing one boundary never implies passing the other',
+        'validates the installed-project profile with itemized evidence'
+    )
+    '.ai/reference/OPERATIONS.md' = @(
+        'Knowledge required/checkpoint',
+        'single-main defer/none',
+        'non-main',
+        'leave `ready_to_build/blocked`, `building/blocked`, `reviewing/blocked`, or `integration/blocked` without a return path'
+    )
     '.ai/contracts/BUILD_RESULT.md' = @(
         'candidate_fingerprint',
         'canonical UTF-8/LF manifest',
         'fixed first header',
-        'For an untracked regular file, use the literal `regular`'
+        'For an untracked regular file, use the literal `regular`',
+        'unrelated_pre_existing | inherited_task | unknown',
+        'Historical Build Results with the older Baseline bullets remain readable'
     )
     '.ai/contracts/TASK_RECORD.md' = @(
         '## Task Quality Gate',
         'Split only when reduced context, risk, or review ambiguity repays another handoff',
-        'Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`'
+        'Prefer a narrow end-to-end/vertical slice',
+        'Do not prescribe full code, copy source, or create a separate Program Design artifact',
+        'Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`',
+        'exact requirement ID/section and pinned revision',
+        'A replacement Task after an interrupted/superseded single-main attempt classifies every inherited Task path',
+        'It never authorizes deleting unrelated pre-existing or `unknown` work'
     )
-    '.ai/contracts/REVIEW_RESULT.md' = @('reviewed_fingerprint', 'immediately before PASS')
+    '.ai/contracts/ARCHITECTURE.md' = @(
+        'requirement_refs: []',
+        'Front-matter `requirement_refs` is the canonical machine-readable list',
+        'A mismatch is a `contract` blocker',
+        'Implementation discovery may propose a requirement change but never rewrites the requirement baseline silently'
+    )
+    '.ai/shared/SYSTEM_ARCHITECTURE.md' = @(
+        'requirement_refs: []',
+        'Front-matter `requirement_refs` is the canonical optional list',
+        'A historical System Architecture without this field remains readable as `requirement_refs: []`',
+        'supersession of every affected Lane Task before Integration'
+    )
+    '.ai/contracts/KNOWLEDGE.md' = @(
+        'A requirement-bearing `document` source records approval separately from source freshness',
+        '`approval.status` is `approved | candidate | rejected | superseded | unknown`',
+        '`verification.status` describes source accuracy/freshness; it never substitutes for requirement approval',
+        'Historical schema-v2 document entries without `approval` remain readable as `approval.status: unknown`',
+        'Search hints identify candidates, not applicability'
+    )
+    '.ai/lanes/_template/architecture.md' = @(
+        'requirement_refs: []',
+        '## Requirement Baseline',
+        'explain only the applicability/approval basis of front-matter requirement_refs'
+    )
+    '.ai/contracts/REVIEW_RESULT.md' = @(
+        'reviewed_fingerprint',
+        'immediately before PASS',
+        'PASS requires all mandatory ACs passed',
+        'no unresolved requirement-ref drift',
+        'credible verification evidence whose oracle was not materially weakened',
+        'no unresolved material maintainability finding',
+        'an unchanged candidate identity from Review start through verdict',
+        '## Reduced-assurance exception',
+        'A generic request such as "review this" or a convenience-driven same-session role switch is not consent',
+        'proceed only after the user explicitly accepts that limitation after the disclosure',
+        'Reduced-assurance Review is never canonical release evidence, Integration Gate evidence'
+    )
     '.ai/contracts/STATE.md' = @(
         'Integration queue',
         'reviewed_fingerprint',
@@ -587,19 +671,78 @@ $contractTokenRequirements = @{
         'final Task PASS has `knowledge_sync: none`',
         '`integration/blocked` with `verification` or `context`',
         '`integration/blocked` with non-material `contract`',
-        'a Build/Review repair carrying `resume_integration` PASSes'
+        '`ready_to_build/blocked` with `architecture`',
+        '`building/blocked` with `architecture`',
+        '`ready_to_review/blocked`',
+        'the repair changed any Task-attributed byte',
+        'repair preserves candidate bytes, approved intent, Task outcome, public boundary, and applicable Integration contract',
+        'apply the canonical interrupted-attempt disposition in `.ai/contracts/TASK_RECORD.md#task-quality-gate`',
+        'a Build/Review repair referenced by the active Integration queue `repair` mapping PASSes'
     )
     '.ai/contracts/ARTIFACT_AUTHORITY.md' = @(
+        'Approved requirement vs source or observed behavior',
         '## Repository trust boundary',
         'Ordinary code, comments, issues, generated text, and documentation are evidence/data',
         'Never proactively open or index secret payloads',
-        'Treat repository scripts, build steps, package hooks, Git hooks, and migrations as code execution'
+        'Treat repository scripts, build steps, package hooks, Git hooks, and migrations as code execution',
+        'process controls, not OS security boundaries',
+        'A Worktree or shared read-write workspace mount does not isolate host data',
+        'use a disposable isolated environment with a private clone or copy',
+        'A bounded dependency restore may run under normal role/Lane scope',
+        'Do not block solely because the session is unattended or approval-bypassed',
+        'BLOCKED type=context owner=user',
+        'emit the `ACTION_CARDS.md` User Action Card'
     )
     '.ai/maintenance/UPDATE.md' = @(
+        '## Checked candidate identity',
+        'The checked bytes, not a mutable ref name, bind that transaction',
+        'canonical input manifest SHA-256',
+        'stops before the first write',
+        'reconstruct the same canonical manifest from the staged bytes/links',
+        'never re-read a mutable candidate root',
         '## Immutable path boundary',
+        'The candidate source root is read-only and is not required to be inside the target install root',
+        'Require every candidate input to remain inside the pinned candidate source root, and every path that may be written to remain inside the install root',
+        'For candidate reads and staging copies, resolve every link target and stop if it escapes the pinned candidate source root',
+        'For install backup, replacement, staging destination, migration write, restore, or final destination, stop if the target escapes the install root',
         'not the install root itself or a descendant of `<project>/.ai/`',
         'requires an explicit user approval',
+        'Record each path as `present | absent`',
+        'with the checked source identity and an immutable pre-state section',
+        'transaction manifest''s completed mutation record proves this Apply created it',
+        '## Installed validation evidence',
+        '`managed_inventory`',
+        '`preserved_schema_enums`',
+        '`path_containment_classification`',
+        '`reference_integrity`',
+        '`markdown_language_policy`',
+        '`runtime_state_preservation`',
+        '`bootstrap_readiness`',
+        'A missing or duplicate row, `not_applicable`, `not_run`',
+        'validation=<pass|fail|not_run; evidence-path|none>',
+        '## Interrupted transaction recovery',
+        'active_transaction_manifest',
+        'only as an untrusted source candidate and require explicit user confirmation before Check',
+        'all seven required evidence rows are present and `pass`',
+        'never skip it as `not_applicable`',
+        'mark the transaction manifest outcome `committed`',
         'restore verification'
+    )
+    '.ai/maintenance/update-state.template.yaml' = @(
+        'last_checked_revision: null',
+        'last_checked_tree: null',
+        'last_checked_manifest_sha256: null',
+        'last_checked_new_managed: []',
+        'approved_new_managed: []',
+        'active_transaction_manifest: null'
+    )
+    '.ai/maintenance/update-state.yaml' = @(
+        'last_checked_revision: null',
+        'last_checked_tree: null',
+        'last_checked_manifest_sha256: null',
+        'last_checked_new_managed: []',
+        'approved_new_managed: []',
+        'active_transaction_manifest: null'
     )
     '.ai/contracts/MAIN_DESK.md' = @('## Worker delivery procedure', '## Post-integration Lane disposition')
     '.ai/integration/README.md' = @(
@@ -614,12 +757,38 @@ $contractTokenRequirements = @{
     )
     '.ai/evals/GOLDEN_WORKTREE_LIFECYCLE.md' = @(
         'Integration blocker repair and resume',
-        'All nine cases must agree across:'
+        'Cross-lane requirement revision',
+        'pins `Docs/SharedPRD.md#REQ-SHARED-1@R2` once in its canonical `requirement_refs`',
+        'All ten cases must agree across:'
     )
     '.ai/evals/README.md' = @(
         '`source_regression`: the default canonical release Eval',
         "exactly A's provider/host tool/model/reasoning/configuration",
-        "Never use a model's conversational self-identification as evidence"
+        "Never use a model's conversational self-identification as evidence",
+        '`directional-failure-rescope`',
+        'repository trust/execution containment',
+        'Workflow update containment',
+        'external candidate inputs remain inside their pinned read-only source root',
+        'process controls are not mistaken for OS isolation',
+        'high-risk execution either proves effective filesystem/credential/network containment',
+        'an inspected deterministic search/build/test with effects proven inside the approved project/worktree is not forced into disposable isolation',
+        'a bounded dependency restore from approved project-declared sources',
+        'batching related constraints or evidence never crosses a pending consequential approval',
+        'names, keywords, similarity, or nearby examples alone remain candidate refs',
+        'Apply revalidates the exact checked revision/tree/input manifest before its first write',
+        'records exactly seven mandatory `pass|fail` installed-profile rows with concrete observations and evidence paths/outputs',
+        '`ready_to_build/blocked`, `building/blocked`, `ready_to_review/blocked`, `reviewing/blocked`, and `integration/blocked` have explicit identity-sensitive repair/resume paths',
+        'replacement single-main Task explicitly disposes every inherited Task path',
+        'System Architecture owns cross-lane requirement refs',
+        'a tacit signal triggers one bounded evidence-based diagnosis before questions or Task creation',
+        'a narrow end-to-end/vertical outcome is preferred over a horizontal scaffold without standalone approved value',
+        'green checks never excuse a weakened oracle',
+        'AI Review supports rather than replaces human ownership',
+        'Every named case in a passing canonical `source_regression` is exactly `pass`',
+        'non-`none` deferred-P2 entry with follow-up proof',
+        '`ready_to_review/blocked`',
+        'mandatory `pass|fail` installed-profile rows',
+        'unrelated-pre-existing/inherited-task/unknown attribution'
     )
     '.ai/evals/SCORECARD.md' = @(
         'eval_type: <source_regression|end_to_end|fixed_contract>',
@@ -629,19 +798,50 @@ $contractTokenRequirements = @{
         'contract_or_route: <owning contract/path or route name|unknown>',
         'stage | symptom_class | provider_scope | contract_or_route'
     )
-    '.ai/BOOTSTRAP.md' = @('the one contract for an artifact the role will create or change')
+    '.ai/BOOTSTRAP.md' = @(
+        'the one contract for an artifact the role will create or change',
+        'never combine unrelated outcomes or widen an approved Task merely to reduce messages'
+    )
     '.ai/roles/ARCHITECT.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
         '.ai/contracts/INTEGRATION_REQUEST.md',
-        'Only `READY` may be handed to Builder'
+        'Only `READY` may be handed to Builder',
+        'implementation never silently rewrites product intent',
+        'pin it once in `.ai/shared/SYSTEM_ARCHITECTURE.md`',
+        'supersede every affected Lane Task before Integration',
+        'Treat filename, symbol, keyword, and similarity matches as candidate context rather than proof',
+        'Treat evaluative or tacit seeds as valid problem signals, not failed requirements',
+        'Before asking the user to diagnose the system',
+        'This is inline Architect work, not a new artifact, session, approval gate',
+        'make only the needed program shape explicit',
+        'Prefer the smallest end-to-end/vertical slice'
     )
     '.ai/roles/BUILDER.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
         '.ai/contracts/BUILD_RESULT.md',
-        'Do not silently split, merge, enlarge, or reinterpret a Task that fails the Gate'
+        'Do not silently split, merge, enlarge, or reinterpret a Task that fails the Gate',
+        'applicable Task-linked requirement refs that still resolve to their approved pinned revisions',
+        'unrelated_pre_existing | inherited_task | unknown',
+        'never relabel interrupted Workflow bytes as pre-existing user work'
     )
-    '.ai/roles/REVIEWER.md' = @('.ai/contracts/REVIEW_RESULT.md')
-    '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @('.ai/contracts/KNOWLEDGE.md')
+    '.ai/roles/REVIEWER.md' = @(
+        '.ai/contracts/REVIEW_RESULT.md',
+        'single authority for PASS conditions',
+        'apply the exact-range and immutable-candidate rules in `.ai/contracts/REVIEW_RESULT.md`',
+        'For requirement drift, use existing finding types instead of silently synchronizing documents and code',
+        'Evidence that the approved approach or Task boundary itself is directionally wrong is an `architecture` finding',
+        'A green test is evidence, not acceptance by itself',
+        'three-way attribution',
+        'never accept a new attempt ID as evidence that inherited Workflow bytes became user work',
+        '.ai/contracts/REVIEW_RESULT.md#reduced-assurance-exception',
+        'they do not claim to prove long-term maintainability or transfer that ownership'
+    )
+    '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
+        '.ai/contracts/KNOWLEDGE.md',
+        'A changed requirements document does not automatically rewrite Architecture or Tasks',
+        'Mark only owned Knowledge entries that point to affected requirement refs `stale/conflict`; never edit the Architecture/Task artifacts',
+        'Treat index/search/name matches as candidate refs'
+    )
     'maintenance/WORKFLOW_REVIEW.md' = @(
         'It is not the project `Reviewer`, a fifth runtime role, an installed `.ai` document',
         'Workflow Review is read-only',
@@ -662,14 +862,19 @@ $contractTokenRequirements = @{
         'independence=<independent_session|reduced_assurance>',
         'self_check=<pass|corrected|blocked> corrections=<n>',
         'must not have authored the candidate source changes',
-        'release_recommendation=<ready|not_ready|not_assessed>'
+        'release_recommendation=<ready|not_ready|not_assessed>',
+        'include one detailed `[P2]...` finding per count'
     )
     'maintenance/RELEASE.md' = @(
         'workflow_review=<required_after_source_commit|not_run>',
         'workflow_review_independence: independent_session',
         'workflow_review_self_check: pass | corrected',
         'Copy the complete ten-lens review',
-        'Set `eval_type: source_regression`'
+        'Set `eval_type: source_regression`',
+        'Every counted P2 must have a detailed finding',
+        'apply its mode-selection rule',
+        'workflow_review_mode: <selected changed|full>',
+        'A canonical PASS record requires every named case to be `pass`'
     )
 }
 foreach ($contractPath in $contractTokenRequirements.Keys) {
@@ -684,6 +889,114 @@ foreach ($contractPath in $contractTokenRequirements.Keys) {
     }
 }
 
+$installedUpdatePath = Get-RepositoryPath '.ai/maintenance/UPDATE.md'
+if (Test-Path -LiteralPath $installedUpdatePath -PathType Leaf) {
+    $installedUpdateText = Read-Utf8Text $installedUpdatePath
+    $installedValidationSection = [regex]::Match(
+        $installedUpdateText,
+        '(?ms)^## Installed validation evidence\s*\r?\n(?<body>.*?)(?=^##\s|\z)'
+    )
+    $expectedInstalledValidationChecks = @(
+        'managed_inventory',
+        'preserved_schema_enums',
+        'path_containment_classification',
+        'reference_integrity',
+        'markdown_language_policy',
+        'runtime_state_preservation',
+        'bootstrap_readiness'
+    )
+
+    if ($installedValidationSection.Success) {
+        $installedValidationBody = $installedValidationSection.Groups['body'].Value
+        $installedValidationRowCount = [regex]::Matches(
+            $installedValidationBody,
+            '(?m)^\|\s+`[^`]+`\s+\|'
+        ).Count
+        if ($installedValidationRowCount -ne $expectedInstalledValidationChecks.Count) {
+            Add-Failure "UPDATE.md installed validation evidence must define exactly seven check rows, found: $installedValidationRowCount"
+        }
+
+        foreach ($installedValidationCheck in $expectedInstalledValidationChecks) {
+            $rowPattern = '(?m)^\|\s+`' + [regex]::Escape($installedValidationCheck) + '`\s+\|'
+            $rowCount = [regex]::Matches($installedValidationBody, $rowPattern).Count
+            if ($rowCount -ne 1) {
+                Add-Failure "UPDATE.md installed validation evidence must define exactly one row: check=$installedValidationCheck found=$rowCount"
+            }
+        }
+    }
+}
+
+$canonicalPrinciplePath = Get-RepositoryPath '.ai/WORKFLOW.md'
+$publicPrinciplePath = Get-RepositoryPath 'README.md'
+if ((Test-Path -LiteralPath $canonicalPrinciplePath -PathType Leaf) -and
+    (Test-Path -LiteralPath $publicPrinciplePath -PathType Leaf)) {
+    $canonicalPrincipleText = Read-Utf8Text $canonicalPrinciplePath
+    $publicPrincipleText = Read-Utf8Text $publicPrinciplePath
+    $canonicalPrincipleSection = [regex]::Match(
+        $canonicalPrincipleText,
+        '(?ms)^## Design principles\s*\r?\n(?<body>.*?)(?=^##\s)'
+    )
+    $publicPrincipleSection = [regex]::Match(
+        $publicPrincipleText,
+        '(?ms)^<!-- public-philosophy-summary:[^\r\n]*-->\s*\r?\n(?<body>.*?)(?=^###\s)'
+    )
+
+    if (-not $canonicalPrincipleSection.Success) {
+        Add-Failure 'WORKFLOW.md is missing the canonical Design principles section'
+    }
+    if (-not $publicPrincipleSection.Success) {
+        Add-Failure 'README.md is missing the public philosophy summary section'
+    }
+
+    if ($canonicalPrincipleSection.Success -and $publicPrincipleSection.Success) {
+        $canonicalPrincipleNumbers = New-Object 'System.Collections.Generic.List[int]'
+        foreach ($principleMatch in [regex]::Matches(
+                $canonicalPrincipleSection.Groups['body'].Value,
+                '(?m)^(?<number>[0-9]+)\.\s+\*\*'
+            )) {
+            $canonicalPrincipleNumbers.Add([int]$principleMatch.Groups['number'].Value)
+        }
+
+        $publicPrincipleNumbers = New-Object 'System.Collections.Generic.List[int]'
+        foreach ($principleMatch in [regex]::Matches(
+                $publicPrincipleSection.Groups['body'].Value,
+                '(?m)^(?<number>[0-9]+)\.\s+\*\*'
+            )) {
+            $publicPrincipleNumbers.Add([int]$principleMatch.Groups['number'].Value)
+        }
+
+        for ($index = 0; $index -lt $canonicalPrincipleNumbers.Count; $index++) {
+            if ($canonicalPrincipleNumbers[$index] -ne ($index + 1)) {
+                Add-Failure "WORKFLOW.md Design principles must use a continuous 1-based sequence: index=$($index + 1) found=$($canonicalPrincipleNumbers[$index])"
+                break
+            }
+        }
+        for ($index = 0; $index -lt $publicPrincipleNumbers.Count; $index++) {
+            if ($publicPrincipleNumbers[$index] -ne ($index + 1)) {
+                Add-Failure "README public philosophy principles must use a continuous 1-based sequence: index=$($index + 1) found=$($publicPrincipleNumbers[$index])"
+                break
+            }
+        }
+
+        if ($canonicalPrincipleNumbers.Count -ne $publicPrincipleNumbers.Count) {
+            Add-Failure "README public philosophy principle count does not match canonical Design principles: canonical=$($canonicalPrincipleNumbers.Count) public=$($publicPrincipleNumbers.Count)"
+        }
+
+        $expectedPublicMarker = "public-philosophy-summary: canonical-design-principles-1-through-$($canonicalPrincipleNumbers.Count)"
+        if (-not $publicPrincipleText.Contains($expectedPublicMarker)) {
+            Add-Failure "README public philosophy marker does not match canonical principle count: expected=$expectedPublicMarker"
+        }
+    }
+}
+
+$reviewerRolePath = Get-RepositoryPath '.ai/roles/REVIEWER.md'
+if (Test-Path -LiteralPath $reviewerRolePath -PathType Leaf) {
+    $reviewerRoleText = Read-Utf8Text $reviewerRolePath
+    if ($reviewerRoleText -match '(?m)^PASS requires\b') {
+        Add-Failure 'Reviewer role restates PASS conditions; .ai/contracts/REVIEW_RESULT.md is the single authority'
+    }
+}
+
 $workflowReviewPath = Get-RepositoryPath 'maintenance/WORKFLOW_REVIEW.md'
 if (Test-Path -LiteralPath $workflowReviewPath -PathType Leaf) {
     $workflowReviewText = Read-Utf8Text $workflowReviewPath
@@ -693,6 +1006,15 @@ if (Test-Path -LiteralPath $workflowReviewPath -PathType Leaf) {
     ).Count
     if ($workflowReviewLensCount -ne 10) {
         Add-Failure "Workflow Review must define exactly 10 review lenses, found: $workflowReviewLensCount"
+    }
+
+    $workflowReviewSummaryPath = Get-RepositoryPath 'README.md'
+    if (Test-Path -LiteralPath $workflowReviewSummaryPath -PathType Leaf) {
+        $workflowReviewSummaryText = Read-Utf8Text $workflowReviewSummaryPath
+        $expectedWorkflowReviewSummary = "workflow-review-summary: canonical-lenses-1-through-$workflowReviewLensCount"
+        if (-not $workflowReviewSummaryText.Contains($expectedWorkflowReviewSummary)) {
+            Add-Failure "README Workflow Review marker does not match canonical lens count: expected=$expectedWorkflowReviewSummary"
+        }
     }
 }
 
@@ -735,10 +1057,20 @@ Assert-YamlScalar '.ai/maintenance/release.yaml' 'lane_state_schema' '[3]' -AnyI
 Assert-YamlScalar '.ai/maintenance/release.yaml' 'knowledge_schema' '[2]' -AnyIndent
 Assert-YamlScalar '.ai/maintenance/release.yaml' 'maintenance_schema' '[1]' -AnyIndent
 Assert-YamlScalar '.ai/maintenance/release.yaml' 'eval_schema' '[2]' -AnyIndent
+
+$releaseRepository = Get-YamlScalarAnyIndent '.ai/maintenance/release.yaml' 'repository'
+if ($null -ne $releaseRepository -and ($releaseRepository -eq 'null' -or $releaseRepository -notmatch '^https://[^/]+/.+')) {
+    Add-Failure 'release.yaml source.repository must be a non-null HTTPS repository URL'
+}
+$releaseRef = Get-YamlScalarAnyIndent '.ai/maintenance/release.yaml' 'release_ref'
+if ($null -ne $releaseRef -and ($releaseRef -eq 'null' -or $releaseRef -notmatch '^[A-Za-z0-9][A-Za-z0-9._/-]*$')) {
+    Add-Failure 'release.yaml source.release_ref must be a non-null immutable ref label'
+}
 Assert-YamlScalar '.ai/lanes/_template/lane.yaml' 'status' 'uninitialized'
 Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'phase' 'uninitialized'
 Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'status' 'idle'
 Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'action' 'initialize_lane' -AnyIndent
+Assert-YamlScalar '.ai/shared/SYSTEM_ARCHITECTURE.md' 'requirement_refs' '[]'
 Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'entrypoints' '[]'
 Assert-YamlScalar '.ai/shared/knowledge/glossary.yaml' 'terms' '[]'
 
@@ -897,10 +1229,57 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             '## Fixture 4',
             '## Fixture 5',
             '## Fixture 6',
+            '## Fixture 7',
+            '## Fixture 8',
+            '## Fixture 9',
+            '## Fixture 10',
+            '## Fixture 11',
+            '## Fixture 12',
+            'The canonical trigger list and case routing live there; do not maintain a second list in this file',
             'state transitions directly to `synced/idle`',
             '`base` is the fixed first manifest line',
             'untracked regular file uses literal `regular`',
-            'C returns `READY` and is the only proposed slice that may reach Builder'
+            'C returns `READY` and is the only proposed slice that may reach Builder',
+            'Related constraints and evidence may be batched while evaluating the same slice, but batching never crosses a pending consequential approval',
+            'state becomes `ready_to_build/blocked`',
+            'state becomes `building/blocked`',
+            'Knowledge marks only its owned document/feature entries `stale/conflict`; it never edits Architecture/Task artifacts',
+            'A changed requirement revision never silently authorizes Build or rewrites product intent from code',
+            'A Worktree or shared read-write workspace mount is not accepted as execution isolation',
+            'BLOCKED type=context owner=user',
+            'emits a complete User Action Card',
+            'a `sandbox` label alone is not accepted as evidence of effective filesystem, credential, and network containment',
+            'The bounded inverse control may proceed under normal role/Lane scope and available approval controls',
+            'The bounded dependency restore may proceed under normal role/Lane scope',
+            'Reviewer classifies the problem as `architecture`, not repeated `implementation`',
+            'the replacement Task classifies every Task-attributed dirty path as `retain`, `adapt`, or `remove`',
+            'destructive rollback is never automatic',
+            'The candidate source root is not required to be inside the target project or `P/.ai`',
+            'Every backup, staging, migration-write, restore, and destination remains inside `P/.ai`',
+            'candidate symlink/reparse escape',
+            'before any escaping source is read or copied',
+            'Passing one containment check cannot satisfy or weaken the other',
+            'Apply is bound to the checked revision/tree and canonical input manifest, not the locator name',
+            'The transaction manifest records an immutable present/absent pre-state and a completed mutation record with output identity',
+            'Installed validation evidence contains exactly the seven named profile rows with a concrete observed result and evidence path/output',
+            'rollback removes only the transaction-created path',
+            'verifies byte-identical present/absent/type/hash/link state',
+            'Knowledge Maintainer and Architect treat every name, keyword, similarity, or nearby-example hit as a candidate rather than evidence',
+            'Only the confirmed live source may support the answer or design',
+            'only as an untrusted source candidate and does not begin Check until the user explicitly confirms it',
+            'The same session does not interpret the generic request as reduced-assurance consent',
+            'The resulting verdict is never used as canonical release evidence, Integration Gate evidence',
+            'The evaluative seed is a valid problem signal',
+            'No Task reaches Builder until evidence or the user''s response resolves the diagnosis into observable acceptance criteria',
+            'The green checks do not authorize PASS for the second candidate',
+            'repeated edits across unrelated owners for the same small behavior are concrete change-pressure evidence',
+            'E is reframed into narrow end-to-end/vertical outcomes',
+            'No separate Program Design artifact, session, score, or user gate is created',
+            'changed Task bytes with an unchanged approved boundary return to `ready_to_build/active`',
+            'Every already-dirty Build baseline path is classified as `unrelated_pre_existing`, `inherited_task`, or `unknown`',
+            'If Reviewer rejects preflight, state becomes `ready_to_review/blocked`',
+            '`update-state.yaml.active_transaction_manifest` durably points inside the backup root',
+            'each result is `pass | fail`'
         )) {
         if (-not $goldenCoreText.Contains($goldenToken)) {
             Add-Failure "Golden Core Behavior is missing oracle token: $goldenToken"
@@ -1039,7 +1418,7 @@ if (Test-Path -LiteralPath $changelogPath -PathType Leaf) {
     }
 
     if ($releaseHeadingLines.Count -ne $releaseHeadings.Count) {
-        Add-Failure 'CHANGELOG.md contains a malformed manual release heading; expected: ## manual-vX.Y — YYYY-MM-DD'
+        Add-Failure 'CHANGELOG.md contains a malformed manual release heading; expected: ## manual-vX.Y - YYYY-MM-DD'
     }
 }
 
@@ -1297,17 +1676,49 @@ else {
                         $workflowReviewBody,
                         '(?im)^- findings:\s*P1:(?<p1>\d+),\s*P2:(?<p2>\d+),\s*P3:(?<p3>\d+)\s*$'
                     )
+                    $p2Count = $null
                     if (-not $findingsMatch.Success) {
                         Add-Failure "Release Workflow Review needs canonical findings counts: $relativeEvalPath"
                         $recordValid = $false
                     }
-                    elseif ($workflowReviewResult -eq 'pass' -and $findingsMatch.Groups['p1'].Value -ne '0') {
-                        Add-Failure "Workflow Review result=pass conflicts with P1 findings: $relativeEvalPath"
-                        $recordValid = $false
+                    else {
+                        $p2Count = [int]$findingsMatch.Groups['p2'].Value
+                        if ($workflowReviewResult -eq 'pass' -and $findingsMatch.Groups['p1'].Value -ne '0') {
+                            Add-Failure "Workflow Review result=pass conflicts with P1 findings: $relativeEvalPath"
+                            $recordValid = $false
+                        }
+                        $p2DetailCount = [regex]::Matches(
+                            $workflowReviewBody,
+                            '(?im)^\s*\[P2\](?:\[[^\r\n]+\])*\s+.+$'
+                        ).Count
+                        if ($p2DetailCount -lt $p2Count) {
+                            Add-Failure "Workflow Review P2 findings require matching detailed entries: path=$relativeEvalPath count=$p2Count detailed=$p2DetailCount"
+                            $recordValid = $false
+                        }
                     }
-                    if (-not [regex]::IsMatch($workflowReviewBody, '(?im)^- deferred P2:\s*\S.+$')) {
+
+                    $deferredP2Match = [regex]::Match(
+                        $workflowReviewBody,
+                        '(?im)^- deferred P2:\s*(?<value>\S.+)$'
+                    )
+                    if (-not $deferredP2Match.Success) {
                         Add-Failure "Release Workflow Review must record deferred P2 evidence or none: $relativeEvalPath"
                         $recordValid = $false
+                    }
+                    elseif ($null -ne $p2Count) {
+                        $deferredP2Value = $deferredP2Match.Groups['value'].Value.Trim()
+                        if ($p2Count -eq 0 -and $deferredP2Value -ne 'none') {
+                            Add-Failure "Workflow Review with P2:0 must record deferred P2: none: $relativeEvalPath"
+                            $recordValid = $false
+                        }
+                        elseif ($p2Count -gt 0 -and $deferredP2Value -eq 'none') {
+                            Add-Failure "Workflow Review with P2 findings cannot record deferred P2: none: $relativeEvalPath"
+                            $recordValid = $false
+                        }
+                        elseif ($p2Count -gt 0 -and $deferredP2Value -notmatch '(?i)(evidence|proof)') {
+                            Add-Failure "Workflow Review deferred P2 needs follow-up evidence/proof: $relativeEvalPath"
+                            $recordValid = $false
+                        }
                     }
                     $selfCheckMatch = [regex]::Match(
                         $workflowReviewBody,
@@ -1515,8 +1926,13 @@ else {
                     $recordValid = $false
                     continue
                 }
-                if ($caseRow.Groups['value'].Value.Trim() -match '^(?i:fail)$') {
+                $caseResult = $caseRow.Groups['value'].Value.Trim().ToLowerInvariant()
+                if ($caseResult -eq 'fail') {
                     $caseFailureFound = $true
+                }
+                if ($evalType -eq 'source_regression' -and $runResult -eq 'pass' -and $caseResult -ne 'pass') {
+                    Add-Failure "Canonical source_regression PASS requires case result=pass: path=$relativeEvalPath case=$runCase result=$caseResult"
+                    $recordValid = $false
                 }
             }
 

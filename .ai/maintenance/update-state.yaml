@@ -1,8 +1,14 @@
 schema_version: 1
-installed_version: manual-v1.1
+installed_version: manual-v1.2
 source: null
 last_checked_at: null
 last_checked_ref: null
+last_checked_revision: null
+last_checked_tree: null
+last_checked_manifest_sha256: null
+last_checked_new_managed: []
+approved_new_managed: []
 available_version: null
 backup_path: null
+active_transaction_manifest: null
 last_result: not_checked

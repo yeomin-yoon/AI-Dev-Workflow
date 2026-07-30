@@ -21,8 +21,9 @@ builder: <session-id|unknown>
 <one short paragraph>
 
 ## Baseline
-- pre-existing dirty paths: <paths|none|unknown>
-- evidence: <status/diff ref>
+| Path | Attribution | Evidence |
+|---|---|---|
+| <path|none> | <unrelated_pre_existing|inherited_task|unknown> | <status/diff/Build ref> |
 
 ## Changes
 | Path | Change | AC/reason |
@@ -50,11 +51,13 @@ Use `candidate | ready_to_review | blocked | superseded`.
 
 Rules:
 
-- The Baseline section is required for every Build attempt.
+- The Baseline section is required for every Build attempt. Before current-attempt writes, classify every already-dirty path as `unrelated_pre_existing | inherited_task | unknown`; current-attempt writes belong in `Changes`, not Baseline.
 - List only executed checks; use `not_run/unavailable` explicitly.
 - Keep only decisive output excerpts and link the full log.
 - Every changed path maps to the task or an AC.
-- Capture pre-existing dirty paths before Builder writes. If no reliable baseline exists, use `unknown` and disclose the resulting attribution risk; never claim unrelated changes as this Task's work.
+- `unrelated_pre_existing` requires evidence that the path predates the applicable Workflow attempt and is not attributable to it. Preserve it and never claim it as this Task's work.
+- `inherited_task` means bytes attributable to an interrupted or superseded Workflow attempt. Preserve that attribution across Task/attempt IDs and reconcile it against the active Task's explicit `retain | adapt | remove` disposition when one is required.
+- Use `unknown` when evidence cannot distinguish the two. Route the attribution gap as `context`; do not relabel the path as user work or silently include it in a candidate. Historical Build Results with the older Baseline bullets remain readable, but they cannot support an interrupted-attempt resume or supersession when attribution is ambiguous.
 - When Git exists, `base_revision` is always the full `HEAD` commit captured before Builder writes. A dirty checkout does not turn the baseline into `working-tree`; disclose its pre-existing paths in Baseline. Use `no-git` only when the checkout has no usable Git commit.
 - For a non-`main` worktree candidate, `base_revision` and `result_revision` must be commits, `result_tree` must equal `result_revision^{tree}`, and `candidate_fingerprint` is `null`; the immutable Git tree already identifies the candidate. The on-demand delivery procedure is in `MAIN_DESK.md`.
 - A single-`main` Git Build uses `result_revision: working-tree`, `result_tree: unsealed`, and `candidate_fingerprint: sha256:<hash>`. It can be reviewed locally but is not eligible for cross-worktree Integration.

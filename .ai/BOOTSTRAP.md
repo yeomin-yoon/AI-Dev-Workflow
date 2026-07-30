@@ -91,6 +91,7 @@ Do not read `MAINTAIN.md` during ordinary work. At a natural stop, read it only 
 ## Token policy
 
 - Pass paths/symbols/IDs/diffs instead of copied files or chat summaries. Start from the Task manifest; soft budget is 8 live files/symbols and 120 relevant log lines, expanded only for missing evidence.
+- Batch related constraints, evidence, and corrections into one bounded turn when that avoids repetitive handoffs; never combine unrelated outcomes or widen an approved Task merely to reduce messages.
 - Prefer deterministic search/diff/checks before inference. Keep one fact in one artifact and load at most one directly applicable skill on demand.
 - Use an available host-native tool; for text search prefer `rg`, then `git grep`, then PowerShell `Select-String` on Windows or `grep` on POSIX. Use `git diff` for repository diffs, and never block only because a preferred executable is unavailable.
 - Scale Change Briefs by semantic risk: omit explanation for mechanical changes, summarize non-trivial behavior compactly, and expand only for structural/high-risk changes or on request. Reference paths/symbols instead of repeating the diff.
