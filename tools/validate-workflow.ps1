@@ -59,6 +59,19 @@ function Read-Utf8Text {
     return [System.IO.File]::ReadAllText($Path, [System.Text.Encoding]::UTF8)
 }
 
+function Get-Sha256Hex {
+    param([string]$Text)
+
+    $sha256 = [System.Security.Cryptography.SHA256]::Create()
+    try {
+        $bytes = [System.Text.UTF8Encoding]::new($false).GetBytes($Text)
+        return ([System.BitConverter]::ToString($sha256.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
+    }
+    finally {
+        $sha256.Dispose()
+    }
+}
+
 function Get-YamlScalarFromText {
     param(
         [string]$Text,
@@ -934,7 +947,9 @@ $contractTokenRequirements = @{
         'stops at `ready_to_review`',
         'A terse continue signal outside a currently displayed bounded choice',
         'Treat `DO_NEXT` as transport, not a user approval request',
-        'no preference authorizes Push, tag, another commit, or an unreviewed candidate'
+        'no preference authorizes Push, tag, another commit, or an unreviewed candidate',
+        'a feature boundary is only a safe checkpoint, not replacement evidence by itself',
+        'if that threshold is not met, continue silently'
     )
     '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
         '.ai/contracts/KNOWLEDGE.md',
@@ -1054,11 +1069,14 @@ if ((Test-Path -LiteralPath $canonicalPrinciplePath -PathType Leaf) -and
 
     if ($canonicalPrincipleSection.Success -and $publicPrincipleSection.Success) {
         $canonicalPrincipleNumbers = New-Object 'System.Collections.Generic.List[int]'
+        $canonicalPrincipleItems = New-Object 'System.Collections.Generic.List[string]'
         foreach ($principleMatch in [regex]::Matches(
                 $canonicalPrincipleSection.Groups['body'].Value,
-                '(?m)^(?<number>[0-9]+)\.\s+\*\*'
+                '(?ms)^(?<item>(?<number>[0-9]+)\.[ \t]+\*\*.*?)(?=^[0-9]+\.[ \t]+\*\*|^[ \t]*\r?$)'
             )) {
             $canonicalPrincipleNumbers.Add([int]$principleMatch.Groups['number'].Value)
+            $normalizedItem = ($principleMatch.Groups['item'].Value -replace "\r\n?", "`n").TrimEnd()
+            $canonicalPrincipleItems.Add($normalizedItem)
         }
 
         $publicPrincipleNumbers = New-Object 'System.Collections.Generic.List[int]'
@@ -1089,6 +1107,19 @@ if ((Test-Path -LiteralPath $canonicalPrinciplePath -PathType Leaf) -and
         $expectedPublicMarker = "public-philosophy-summary: canonical-design-principles-1-through-$($canonicalPrincipleNumbers.Count)"
         if (-not $publicPrincipleText.Contains($expectedPublicMarker)) {
             Add-Failure "README public philosophy marker does not match canonical principle count: expected=$expectedPublicMarker"
+        }
+
+        $normalizedCanonicalPrinciples = (($canonicalPrincipleItems.ToArray() -join "`n") + "`n")
+        $expectedPrincipleFingerprint = Get-Sha256Hex $normalizedCanonicalPrinciples
+        $fingerprintMatch = [regex]::Match(
+            $publicPrincipleText,
+            '(?m)^<!-- public-philosophy-source-sha256:\s*(?<hash>[0-9a-f]{64})\s*-->$'
+        )
+        if (-not $fingerprintMatch.Success) {
+            Add-Failure 'README public philosophy source fingerprint marker is missing or invalid'
+        }
+        elseif ($fingerprintMatch.Groups['hash'].Value -ne $expectedPrincipleFingerprint) {
+            Add-Failure "README public philosophy source fingerprint does not match canonical Design principles: expected=$expectedPrincipleFingerprint found=$($fingerprintMatch.Groups['hash'].Value)"
         }
     }
 }

@@ -1122,6 +1122,14 @@ migrations:
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'README public philosophy principle count does not match canonical Design principles: canonical=11 public=10'
 
+    Assert-NegativeFixture 'stale-public-philosophy-source-fingerprint' {
+        param($root)
+        $target = Join-Path $root '.ai/WORKFLOW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Providers and model strengths may change', 'Providers and model strengths can change')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'README public philosophy source fingerprint does not match canonical Design principles'
+
     Assert-NegativeFixture 'missing-workflow-review-self-check' {
         param($root)
         $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
@@ -1327,6 +1335,14 @@ migrations:
         $text = $text.Replace('Scenario C also continues because chat age or turn count alone is not evidence', 'Scenario C replaces because the chat is old')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Golden Core Behavior is missing oracle token: Scenario C also continues because chat age or turn count alone is not evidence'
+
+    Assert-NegativeFixture 'overbroad-work-session-replacement-advice' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/WORK.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('a feature boundary is only a safe checkpoint, not replacement evidence by itself', 'replace at every feature boundary')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/WORK.md token=a feature boundary is only a safe checkpoint, not replacement evidence by itself'
 
     Assert-NegativeFixture 'missing-planning-document-oracle' {
         param($root)

@@ -1,5 +1,10 @@
 # Workflow Changelog
 
+## manual-v1.4 — 2026-08-04
+
+- Aligned the Work role's session-replacement advice with the existing evidence-gated timing contract: a feature boundary is a safe checkpoint, not replacement evidence, and a viable session continues silently.
+- Bound the public README philosophy summary to a normalized fingerprint of the canonical Design Principles so wording changes require a fresh human comparison without claiming automated semantic equivalence.
+
 ## manual-v1.3 — 2026-08-03
 
 - Added terminal-safe `DEV_STATUS` and optional `COMMIT_READY` projections so developers can see semantic changes, decisive checks, Git state, exact include/exclude paths, and the next action without parsing a raw terminal diff.
