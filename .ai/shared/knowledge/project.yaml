@@ -10,6 +10,10 @@ interface_refs: []
 rule_refs: []
 document_refs: []
 
+interaction:
+  checkpoint: auto_after_pass # auto_after_pass | ask
+  routine_continuation: one_task # one_task | stop
+
 verification:
   status: unknown
   source_revision: null

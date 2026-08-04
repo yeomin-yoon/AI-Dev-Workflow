@@ -493,9 +493,9 @@ migrations:
         param($root)
         $target = Join-Path $root '.ai/contracts/STATE.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('requested user evidence arrives', 'user observation supplied')
+        $text = $text.Replace('requested `observe_only` evidence arrives and candidate bytes/identity are unchanged', 'user observation supplied')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=requested user evidence arrives'
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=requested `observe_only` evidence arrives and candidate bytes/identity are unchanged'
 
     Assert-NegativeFixture 'missing-build-resume-transition' {
         param($root)
@@ -1231,6 +1231,271 @@ migrations:
         $text = $text.Replace('| Change Brief |', '| Review Summary |')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=README.md token=| Change Brief |'
+
+    Assert-NegativeFixture 'missing-developer-status-contract' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Developer Status', '## Status Summary')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=## Developer Status'
+
+    Assert-NegativeFixture 'missing-single-main-commit-checkpoint' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Single-main commit checkpoint', '## Optional commit note')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=## Single-main commit checkpoint'
+
+    Assert-NegativeFixture 'missing-same-lane-resume-boundary' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/SESSION_CLOSE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('A role, topology, candidate, Lane, checkout, new-worktree, Integration, or return-intent change is not a same-Lane replacement', 'Related work may resume directly')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/SESSION_CLOSE.md token=role, topology, candidate, Lane, checkout, new-worktree, Integration, or return-intent change is not a same-Lane replacement'
+
+    Assert-NegativeFixture 'missing-front-desk-recovery-contract' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/MAIN_DESK.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Front Desk recovery', '## Front Desk restart')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/MAIN_DESK.md token=## Front Desk recovery'
+
+    Assert-NegativeFixture 'missing-front-desk-chat-independent-recovery' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/MAIN_DESK.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Recovery does not depend on the exhausted chat', 'Recovery uses the previous chat summary')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/MAIN_DESK.md token=Recovery does not depend on the exhausted chat'
+
+    Assert-NegativeFixture 'missing-single-main-work-route' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/REVIEWER.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('route=<knowledge_maintainer|work|builder|architect|integration|user>', 'route=<knowledge_maintainer|builder|architect|integration|user>')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/REVIEWER.md token=route=<knowledge_maintainer|work|builder|architect|integration|user>'
+
+    Assert-NegativeFixture 'missing-planning-document-read-only-default' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/KNOWLEDGE_MAINTAINER.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Approved product/requirements/specification or planning documents are reference-only by default', 'Planning inputs are ordinary writable documents')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/KNOWLEDGE_MAINTAINER.md token=Approved product/requirements/specification or planning documents are reference-only by default'
+
+    Assert-NegativeFixture 'missing-commit-boundary-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('No next Task is materialized over the uncommitted accepted candidate', 'The next Task may begin immediately')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: No next Task is materialized over the uncommitted accepted candidate'
+
+    Assert-NegativeFixture 'missing-session-recovery-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('The unchanged-identity scenario emits `RESUME_SAME_LANE`', 'Every replacement returns to Front Desk')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: The unchanged-identity scenario emits `RESUME_SAME_LANE`'
+
+    Assert-NegativeFixture 'missing-session-viability-boundary' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/SESSION_CLOSE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Assess viability only at a natural boundary', 'Assess viability on every turn')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/SESSION_CLOSE.md token=Assess viability only at a natural boundary'
+
+    Assert-NegativeFixture 'missing-session-age-inverse-guard' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/SESSION_CLOSE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('One corrected mistake, a long transcript, or turn count alone is not enough', 'A long transcript or high turn count requires replacement')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/SESSION_CLOSE.md token=One corrected mistake, a long transcript, or turn count alone is not enough'
+
+    Assert-NegativeFixture 'missing-session-timing-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Scenario C also continues because chat age or turn count alone is not evidence', 'Scenario C replaces because the chat is old')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Scenario C also continues because chat age or turn count alone is not evidence'
+
+    Assert-NegativeFixture 'missing-planning-document-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Knowledge indexes only applicable planning sections/revisions', 'Knowledge owns all planning documents')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Knowledge indexes only applicable planning sections/revisions'
+
+    Assert-NegativeFixture 'missing-editor-runtime-check-contract' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Editor/runtime check', '## Manual check')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=## Editor/runtime check'
+
+    Assert-NegativeFixture 'missing-candidate-mutating-review-transition' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('an authorized `candidate_mutating` Editor/runtime action changes Task-attributed bytes', 'user evidence arrives')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=an authorized `candidate_mutating` Editor/runtime action changes Task-attributed bytes'
+
+    Assert-NegativeFixture 'missing-editor-check-review-identity-boundary' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/REVIEW_RESULT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Earlier evidence may be reused only after an explicit impact check against that fresh candidate', 'Earlier evidence is reused automatically')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/REVIEW_RESULT.md token=Earlier evidence may be reused only after an explicit impact check against that fresh candidate'
+
+    Assert-NegativeFixture 'missing-approved-architecture-fast-lane' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/WORK.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('without a user-visible Architect handoff or repeated approval', 'after a new Architect approval')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/WORK.md token=without a user-visible Architect handoff or repeated approval'
+
+    Assert-NegativeFixture 'missing-editor-check-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('the saved bytes invalidate the old Build/Review identity and route a fresh Build attempt', 'the old Review resumes after saved changes')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: the saved bytes invalidate the old Build/Review identity and route a fresh Build attempt'
+
+    Assert-NegativeFixture 'missing-approved-architecture-fast-lane-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('there is no user-visible Architect handoff or repeated approval', 'the user approves Architect again')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: there is no user-visible Architect handoff or repeated approval'
+
+    Assert-NegativeFixture 'missing-working-summary-contract' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Working summary', '## Conversation recap')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=## Working summary'
+
+    Assert-NegativeFixture 'missing-just-in-time-term-rule' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Define an unfamiliar technical term at first user-facing use', 'Use precise technical terminology')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=Define an unfamiliar technical term at first user-facing use'
+
+    Assert-NegativeFixture 'missing-observable-unchanged-baseline' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/REVIEWER.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Never write `unchanged` or `the same` without naming the compared baseline', 'State that unaffected behavior is unchanged')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/REVIEWER.md token=Never write `unchanged` or `the same` without naming the compared baseline'
+
+    Assert-NegativeFixture 'missing-readable-learning-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence', 'The role replays the previous chat summary')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence'
+
+    Assert-NegativeFixture 'missing-public-install-boundary' {
+        param($root)
+        $target = Join-Path $root 'README.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('install-boundary: fresh-copy-vs-managed-update-vs-unrelated-ai', 'install note')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=README.md token=install-boundary: fresh-copy-vs-managed-update-vs-unrelated-ai'
+
+    Assert-NegativeFixture 'missing-managed-install-overlay-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('An existing managed installation uses Check/Apply rather than a folder overlay', 'An existing installation may be overwritten')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: An existing managed installation uses Check/Apply rather than a folder overlay'
+
+    Assert-NegativeFixture 'missing-descriptive-commit-choice' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('The canonical displayed replies for `ask` are descriptive', 'The canonical replies are opaque aliases')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=The canonical displayed replies for `ask` are descriptive'
+
+    Assert-NegativeFixture 'missing-cross-domain-learning-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('The same explanation contract applies across service/API, CLI/library, and editor/runtime work', 'The explanation contract applies only to one framework')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: The same explanation contract applies across service/API, CLI/library, and editor/runtime work'
+
+    Assert-NegativeFixture 'missing-gate-necessity-check' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('`gate necessity`', '`approval prompt`')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=`gate necessity`'
+
+    Assert-NegativeFixture 'missing-decision-readiness-check' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('`decision readiness`', '`decision output`')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=`decision readiness`'
+
+    Assert-NegativeFixture 'invalid-default-checkpoint-policy' {
+        param($root)
+        $target = Join-Path $root '.ai/shared/knowledge/project.yaml'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('checkpoint: auto_after_pass', 'checkpoint: unsafe')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } "Unexpected 'checkpoint' in .ai/shared/knowledge/project.yaml"
+
+    Assert-NegativeFixture 'missing-auto-checkpoint-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Missing preferences read as `auto_after_pass + one_task`', 'Missing preferences require another confirmation')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Missing preferences read as `auto_after_pass + one_task`'
+
+    Assert-NegativeFixture 'missing-informed-gate-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Scenario C does not accept an uninformed affirmative reply', 'Scenario C accepts any affirmative reply')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Scenario C does not accept an uninformed affirmative reply'
+
+    Assert-NegativeFixture 'missing-handoff-transport-boundary' {
+        param($root)
+        $target = Join-Path $root '.ai/WORKFLOW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('A cross-session handoff is transport, not approval', 'A handoff is another user approval')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/WORKFLOW.md token=A cross-session handoff is transport, not approval'
+
     Assert-NegativeFixture 'empty-modern-eval' {
         param($root)
         $target = Join-Path $root 'evals/runs/EVAL-20990101T000000000Z-test-manual-v1.0-empty.md'

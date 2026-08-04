@@ -13,7 +13,7 @@ The main session never messages, creates, or commands another chat. Unless the u
 Before a start card:
 
 1. Confirm the requested streams are independently buildable/reviewable and their production `owned_paths` do not overlap.
-2. Identify shared read-only paths, shared-contract owner, dependencies, and integration order. If the handoff cost or shared surface is larger than the independent work, recommend sequential `main` work instead.
+2. Identify shared read-only paths, shared-contract owner, dependencies, integration order, expected session/checkpoint load, and whether an available main Front Desk can be recovered for returns and Integration. Treat tool/account availability and Front Desk handoff cost as real partition costs. If those costs or the shared surface are larger than the independent work, recommend sequential `main` work instead.
 3. Present the normal Architecture Decision Brief and obtain approval.
 4. Persist the approved partition in System Architecture and any already-existing affected lane Architecture/ownership. New Lane scaffolds are created later inside their own worktrees from this shared boundary.
 5. Require one Git commit that contains `.ai`, canonical Knowledge needed by the lanes, and the approved partition. A worktree cannot inherit uncommitted chat/files.

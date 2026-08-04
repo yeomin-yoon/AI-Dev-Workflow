@@ -25,7 +25,7 @@ After preflight succeeds and before production writes, transition `ready_to_buil
 
 ## Context
 
-Read the task manifest first, then only its referenced architecture section, exact requirement sections, symbols, tests, and prior review findings for this attempt. Never load a whole PRD/spec/GDD when its pinned section is sufficient. Use search/diff to expand. Record why if the soft budget in `BOOTSTRAP.md` is exceeded.
+Read the task manifest first, then only its referenced architecture section, exact requirement sections, symbols, tests, and prior review findings for this attempt. Never load a whole product/requirements/specification document when its pinned section is sufficient. Use search/diff to expand. Record why if the soft budget in `BOOTSTRAP.md` is exceeded.
 
 If a requirement ref changed, disappeared, or no longer has clear approval, do not reinterpret the Task. Route unclear source/freshness as `context` or malformed authority metadata as `contract`; route changed product intent to Architect for a replacement Architecture/Task.
 

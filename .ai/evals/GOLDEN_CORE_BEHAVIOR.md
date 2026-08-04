@@ -98,11 +98,11 @@ Expected: both independently produce byte-identical manifests and the same SHA-2
 
 ## Fixture 6 — Task Quality Gate and bounded batching
 
-Given four proposed slices under one approved Weapon Architecture:
+Given four proposed slices under one approved notification-delivery Architecture:
 
-- A: `Implement the weapon system`, combining equip, fire, reload, UI, animation, and replication with different oracles.
-- B: `Declare Fire()` with no independently observable behavior or verification.
-- C: `Process one fire request through the approved weapon component`, with existing dependencies, narrow complete writes, observable ammo/shot outcomes, and executable focused checks.
+- A: `Implement the notification system`, combining request validation, persistence, queueing, delivery, retry, UI, and audit behavior with different oracles.
+- B: `Declare Send()` with no independently observable behavior or verification.
+- C: `Deliver one approved notification request through the existing dispatcher`, with existing dependencies, narrow complete writes, observable accepted/delivered outcomes, and executable focused checks.
 - D: the same as C, but it depends on an unapproved public event contract or has no feasible mandatory verification method/user procedure.
 - E: a horizontal delivery plan creates data types, service scaffolding, API wiring, and UI shells as separate Tasks, but none has a standalone approved outcome until later layers land.
 
@@ -180,6 +180,7 @@ Expected:
 
 Given:
 
+- three installation entry states are considered: no `.ai`, an existing managed AI Dev Workflow installation with `.ai/maintenance/release.yaml`, and an unrelated tool-owned `.ai` directory;
 - target project root `P` with install root `P/.ai`;
 - the `source` field in `P/.ai/maintenance/update-state.yaml` is null while installed `release.yaml.source` names repository/ref `R`;
 - a pinned read-only candidate checkout `C` outside `P`, containing `C/.ai` and a compatible checked release;
@@ -188,6 +189,7 @@ Given:
 
 Expected:
 
+- A fresh folder copy is permitted only when `.ai` is absent. An existing managed installation uses Check/Apply rather than a folder overlay, while an unrelated `.ai` directory is never auto-merged and requires an explicit compatibility/path decision.
 - The Workflow presents `R` in `user_language` only as an untrusted source candidate and does not begin Check until the user explicitly confirms it; a missing ref is requested rather than guessed, and only a successful Check may pin the confirmed source in `update-state.yaml`.
 - The candidate source root is not required to be inside the target project or `P/.ai`; the valid external candidate is accepted as a read-only update input.
 - Every candidate manifest, managed file, and migration source must resolve inside pinned root `C`, and the Workflow never writes to `C`.
@@ -229,3 +231,122 @@ Expected:
 - Before any ordinary Task Review exception, Reviewer explains in `user_language` that authoring and Review are in one session, names the self-confirmation/blind-spot risk, and recommends later independent Review.
 - Reduced-assurance Review proceeds only after explicit user acceptance following that disclosure, then records `independence: reduced_assurance`, the user decision, the limitation, and the residual risk.
 - The resulting verdict is never used as canonical release evidence, Integration Gate evidence, or a sealed non-`main` candidate verdict.
+
+## Fixture 13 — Visible single-main commit boundary
+
+Given:
+
+- a Git-backed single-main Task reaches independent Review PASS as a working-tree candidate;
+- the checkout also contains unrelated pre-existing and untracked paths;
+- Knowledge sync is either completed, deferred, or unnecessary;
+- project interaction records `checkpoint: ask`;
+- the user asks what changed and whether it is time to commit.
+
+Expected:
+
+- Work returns `DEV_STATUS` from state, Task/Build/Review, `git status`, `git diff --stat`, and untracked files, grouping Task, Workflow, unrelated, and unknown changes without dumping the whole diff.
+- After the accepted fingerprint is revalidated and the Knowledge route is settled, Work returns `COMMIT_READY` with exact include/exclude paths, decisive checks, and a suggested project-style message.
+- Under `checkpoint: ask`, Review PASS does not itself stage, commit, Push, or tag. An explicit user commit request authorizes only the displayed include set, requires staged-diff/exclusion verification, and returns the created revision.
+- No next Task is materialized over the uncommitted accepted candidate. A failed or blocked candidate may be described as `wip_only` but never receives `COMMIT_READY` or accepted status.
+- Unattributed paths remain `unknown`; they are never relabeled or swept into the commit to make the tree look clean.
+
+## Fixture 14 — Session exhaustion and deterministic recovery
+
+Given:
+
+- a worker session must be replaced because context or tool/account usage is exhausted;
+- one scenario keeps the exact same checkout, Lane, session role/topology, durable route, and candidate identity;
+- another scenario returns a candidate or changes Lane/worktree;
+- the main Front Desk session is unavailable, and the Integration queue may already be `merging` with `main_before` recorded.
+
+Expected:
+
+- The unchanged-identity scenario emits `RESUME_SAME_LANE` and the replacement rereads state/artifacts/Git without a chat summary or Front Desk round trip.
+- Candidate return, Lane/worktree/role/topology/candidate changes, and Integration decisions do not use direct resume; they retain `RETURN_TO_MAIN`/`NEXT_SESSION` authority.
+- A replacement main session uses the checked-in `FRONT_DESK_RECOVERY` prompt without depending on the exhausted chat, then inspects main status, queue item/repair, `main_before`/`main_after`, source/handoff identities, and pending Knowledge before choosing one bounded action.
+- If Git and queue cannot prove one exact possibly-applied candidate/range, recovery stops with a User Action Card and does not merge, reset, resolve conflicts, or start another candidate.
+- Front Desk is event-driven rather than a permanently open chat, and partitioning counts session/tool availability plus recovery/handoff cost before recommending Worktrees.
+
+## Fixture 15 — Planning documents remain user/team-owned
+
+Given:
+
+- an existing project contains approved product/requirements/spec or planning files under a broad `Docs/**` directory;
+- the same directory may also contain developer-owned README/API/migration documentation;
+- the user asks for coding work, not document authoring.
+
+Expected:
+
+- Knowledge indexes only applicable planning sections/revisions and initializes their precise paths as `shared_read_only`, never granting write ownership merely from the directory name.
+- Architecture and Tasks reference the approved intent; implementation disagreement is reported/routed instead of silently rewriting the planning document.
+- A separate explicit user/team-approved document Task is required before a planning path becomes writable, and it assigns only the required paths.
+- Developer documentation may remain writable when repository evidence and the approved coding Task require it; the rule does not freeze every Markdown file.
+
+## Fixture 16 — Editor check preserves candidate identity
+
+Given:
+
+- Reviewer has completed all available static/build/test inspection but one editor/runtime acceptance condition needs user evidence;
+- scenario A only runs and observes the existing candidate;
+- scenario B requires the user to assign and save an approved Task-owned asset/config value before running;
+- scenario C reveals a changed path outside the Task mutation set or with unknown attribution.
+
+Expected:
+
+- Reviewer returns an `EDITOR_CHECK` that names effect, purpose, exact app/project/target/surface, setup, actions, observation location, concrete PASS/FAIL, a copyable per-observation reply with `NOT_CHECKED`/anomaly fields, and a safe fallback.
+- Scenario A is `observe_only`; after the reply, Reviewer first proves candidate bytes/identity are unchanged and then resumes the blocked Review. A vague "works" response is clarified only for missing required observations, not treated as evidence for unreported checks.
+- Scenario B is `candidate_mutating`; the card names every authorized save path. Even when runtime behavior passes, the saved bytes invalidate the old Build/Review identity and route a fresh Build attempt that reconciles Baseline/Changes/fingerprint before a new Review.
+- Earlier AC evidence is reused only after the fresh candidate's impact check proves it remains applicable; Reviewer never promises in advance that unaffected-looking checks will be skipped.
+- Scenario C remains blocked as `context`/`contract` or routes design when intent/boundary changed. The unknown or unauthorized path is never absorbed into the candidate by assumption.
+
+## Fixture 17 — Reviewed checkpoint and approved-Architecture fast lane
+
+Given:
+
+- a compact single-main Work session has an independently reviewed PASS Task, an exact include/exclude set, and an approved Architecture with another routine delivery slice;
+- the include/exclude set, candidate fingerprint, hooks/signing/credentials, and path attribution remain safe and unchanged;
+- one project has no `interaction` field, another records `checkpoint: ask`, another records `routine_continuation: stop`, and a final scenario discovers a new Architecture Gate before the next Build.
+
+Expected:
+
+- Missing preferences read as `auto_after_pass + one_task`: Work creates and verifies exactly the reviewed local checkpoint without another confirmation, reports the semantic change/revision/exclusions, then internal Architect materializes only the next routine Task covered by approved Architecture and Builder produces at most one candidate before stopping at `ready_to_review`; there is no user-visible Architect handoff or repeated approval.
+- The Reviewer `DO_NEXT` is transport rather than approval. A capable host may deliver it automatically only while preserving bound role/Lane/checkout/candidate identity and independent Review; otherwise it remains one exact copyable line and never causes Work to self-review.
+- `checkpoint: ask` emits `COMMIT_READY` with descriptive choices and does not commit before one is selected. `routine_continuation: stop` still creates the safe automatic checkpoint but stops before materializing another Task.
+- Candidate drift, unknown/unrelated scope, or untrusted/interacting hook/signing/credential behavior blocks automatic commit instead of guessing. No preference or short continuation ever authorizes hidden paths, a new Architecture Gate, external effects, Push/tag, history rewrite, or another commit.
+- If the approved boundary, intent, dependency order, risk, manual gate, evidence, or Task readiness changed, Work stops at the owning decision/blocker instead of forcing the fast lane.
+
+## Fixture 18 — Just-in-time learning and return orientation
+
+Given:
+
+- the user returns after unrelated work and no longer remembers what an opaque `TASK-MAIN-009` represents;
+- the current decision includes an unfamiliar framework term such as `work queue`, a reversible internal ownership/interface choice, and a claim that request/retry behavior is unchanged;
+- scenario A offers several names for the same reversible internal mechanism with no observable product difference; scenario B has only one safe path under verified project constraints; scenario C changes user-owned observable behavior, but the user says they do not yet understand the problem or option differences;
+- lane state, current artifacts, reviewed evidence, and Git contain enough information to reconstruct the current position.
+
+Expected:
+
+- The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence: plain goal/why, verified done, a semantic user-language label before `(TASK-MAIN-009)`, one open item, only terms needed now, and one bounded next action. It does not copy old chat, create a summary artifact/Gate, or narrate unrelated history.
+- The explanation starts with the observable product/runtime problem and plain-language solution. At first use it defines `work queue` in one behavior-linked sentence, then maps that term to the exact module/class/function only after the user can understand the current choice; external prerequisite study is optional, never required for approval or continuation.
+- The reversible internal choice proceeds without a user Gate but remains learnable: it gives the project-grounded reason, one meaningful alternative and tradeoff, and a concrete reconsider/revert condition. Deeper foundations are offered on request instead of recursively teaching every prerequisite.
+- Scenario A is selected automatically and explained only if non-obvious. Scenario B is reported as a constrained decision, not presented as a fake approval. Scenario C does not accept an uninformed affirmative reply: Architect first investigates evidence it can obtain, then provides an understandable problem/difference/recommendation/default/defer consequence; if the user still cannot choose, it uses the smallest discriminating probe or a clearly provisional reversible default when safe and blocks only for unresolved user-owned intent or material risk.
+- `request and retry behavior is unchanged` is not accepted alone. The brief names the compared baseline and the evidenced observable invariants, such as request acceptance, enqueue timing, retry count, error propagation, and persistence, while omitting any invariant not actually verified.
+- The same explanation contract applies across service/API, CLI/library, and editor/runtime work without assuming one domain's framework, artifact type, or terminology.
+
+## Fixture 19 — Evidence-gated session replacement timing
+
+Given:
+
+- a session reaches a durable handoff/checkpoint or is about to start a new Architecture decision, Task/Build attempt, Review attempt, or Integration candidate;
+- scenario A has provider-visible capacity sufficient for the next bounded action and its checkpoint;
+- scenario B has a provider warning or visible remaining capacity that is insufficient for both;
+- scenario C has no capacity meter and only an old/long chat or high turn count;
+- scenario D has no meter but repeatedly loses facts after targeted state/artifact restoration, confuses the persisted route or candidate identity, or reopens broad context despite bounded pointers.
+
+Expected:
+
+- Viability is assessed only at the natural boundary, not reported every turn, and provider-visible capacity outranks model inference; the role never invents an exact token or quota value.
+- Scenario A continues silently without a replacement question. Scenario C also continues because chat age or turn count alone is not evidence.
+- Scenarios B and D do not start the next substantial action. They persist the current safe boundary and emit the exact `RESUME_SAME_LANE`, `RETURN_TO_MAIN`, or `FRONT_DESK_RECOVERY` route required by identity and Integration state.
+- If insufficiency becomes evident during an action, the role stops at the nearest safe durable boundary, records honest in-progress state/evidence, and never claims completion or weakens candidate/Review identity to squeeze in another step.
+- A role/Lane/worktree/candidate or Integration-sensitive change still follows Fixture 14; proactive timing never creates a shortcut around Front Desk or independent Review.

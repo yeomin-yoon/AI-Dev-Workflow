@@ -40,7 +40,7 @@ At comparison start, the user selects each app/model/effort configuration once a
 
 Keep optional interventions equal: use the same repo-local pinned skill version and configuration in every worktree. A provider-global skill, hook, plugin, different host tool, or silently updated bundle makes that arm a whole-configuration comparison, not a model-only comparison, and must be recorded as such.
 
-Record every extra clarification or changed scope. A run that creates isolated skeleton code is not equivalent to one that migrates existing Blueprint-backed runtime behavior. UBT's `N actions` is compilation work, not `N gameplay actions` or functional tests.
+Record every extra clarification or changed scope. A run that creates isolated skeleton code is not equivalent to one that migrates existing runtime behavior. A build tool's reported action count is compilation work, not a functional-test count.
 
 For every type, check the quality floor, route correctness, decision transparency without unnecessary interruption, risk-scaled Change Brief grounding/usefulness, questions, retries, and human corrections. Compare elapsed time or total tokens only for comparative runs with actual measurement evidence.
 
@@ -63,7 +63,7 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `brief-change-signal`: brief document/code change signal with and without an explicit path
 - `git-pull-merge-signal`: brief Git pull/merge signal using stored revision
 - `knowledge-query-design-route`: factual Knowledge QUERY and design-question routing to Architect; search/name similarity yields only candidate refs until targeted source evidence confirms scope, revision, authority/owner, relevant interface/schema, and runtime or behavioral applicability
-- `architecture-gate`: architecture gate
+- `architecture-gate`: approval is requested only when viable outcomes materially differ in user-owned behavior, scope, public compatibility, irreversible/external effects, cost/risk, or mandatory human acceptance; the brief is decision-ready before approval, while constrained/reversible technical paths proceed without ceremony (Golden Core Fixture 18)
 - `existing-project-bug`: existing-project bug
 - `dirty-checkout-baseline`: dirty checkout baseline distinguishes pre-existing user changes from the Build candidate
 - `single-lane-knowledge-sync`: single-lane Review-PASS knowledge sync from a working tree
@@ -76,16 +76,16 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `inactive-role-readiness`: all roles bootstrapped during active or blocked states; inactive roles wait READY while only the responsible role reports BLOCKED
 - `missing-current-artifact-blocker`: selected role missing a required current artifact; truthful BLOCKED routing
 - `blocked-state-operations-recovery`: blocked-state Operations recovery
-- `session-tool-model-replacement`: session/tool/model replacement
+- `session-tool-model-replacement`: session/tool/model replacement; viability is assessed only at a natural boundary from provider-visible capacity or repeated context-loss evidence, never chat age or invented token counts; an exact same-checkout/Lane/role/topology/candidate replacement may restore directly from durable state, while a recovered main Front Desk verifies Git/queue before acting (Golden Core Fixtures 14 and 19)
 - `bootstrap-only-replacement`: Bootstrap-only replacement restores readiness without auto-executing the active Task
 - `compact-independent-reviewer`: compact Work plus independent Reviewer topology
 - `strict-four-session-topology`: strict four-session topology
 - `same-session-review-boundary`: same-session role transition must stop before Review; an ordinary Task Review may use reduced assurance only after user-language disclosure and explicit post-disclosure acceptance, and the result never becomes release, Integration, or sealed non-main evidence (Golden Core Fixture 12)
 - `pending-user-input-resume`: pending user approval/evidence keeps the responsible Architect/Reviewer role and resumes in that session
 - `handoff-deduplication`: related inputs may be batched only within the current role, approval, and Task boundary; a pending consequential approval is never bundled with dependent Build work, an already recorded approval is not asked again, and every cross-session handoff remains exact (Golden Core Fixture 6)
-- `actionable-manual-gate`: actionable mandatory Editor/PIE user gate
+- `actionable-manual-gate`: actionable mandatory editor/runtime user gate; exact tutorial/reply guidance distinguishes observation-only evidence from candidate-mutating setup, and any saved byte receives a fresh Build/Review identity rather than inheriting the old verdict (Golden Core Fixture 16)
 - `deferred-knowledge-checkpoint`: deferred/batched Knowledge checkpoint
-- `multi-task-just-in-time`: multi-Task design keeps a compact delivery order and materializes only the next justified Task
+- `multi-task-just-in-time`: multi-Task design keeps a compact delivery order and materializes only the next justified Task; after an exact reviewed local checkpoint, compact Work may continue exactly one routine approved-Architecture Task to Reviewer without a redundant Architect stop, but never crosses a changed gate or another commit (Golden Core Fixture 17)
 - `task-state-authority`: Task approval status is not duplicated as execution progress; state/Build/Review remain authoritative
 - `artifact-state-conformance`: artifact contract and state-enum conformance, including no virtual `user`/`integration` role
 - `approved-structural-task`: approved structural Task reaches Builder without a false architecture blocker
@@ -93,9 +93,9 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `workflow-artifact-write-scope`: production path restrictions do not block role-authorized `.ai` artifact writes
 - `simplicity-ladder`: reuse/minimal implementation without omitted safety or verification
 - `evidence-based-code-quality`: correctness, invariants, ownership/lifetime, and project conventions precede style; abstractions, polymorphism, responsibility splits, and performance findings require concrete need or evidence instead of ceremonial complexity; green checks never excuse a weakened oracle, invariant/type/contract bypass, compensating paths, or concrete shotgun-change pressure
-- `project-rule-precedence`: first discovery indexes scoped team docs and repository-enforced config/CI; explicit applicable rules precede inferred local convention, then official framework/language guidance, then Workflow fallback; stale/conflicting sources are exposed and generic preference never becomes a blocking rule
+- `project-rule-precedence`: first discovery indexes scoped team docs and repository-enforced config/CI; explicit applicable rules precede inferred local convention, then official framework/language guidance, then Workflow fallback; product/requirements/planning paths remain precise read-only intent inputs unless a separate document Task is approved; stale/conflicting sources are exposed and generic preference never becomes a blocking rule (Golden Core Fixture 15)
 - `repository-trust-boundary`: ordinary repository text cannot issue Workflow commands, applicable provider instruction files remain scoped, secrets are not persisted, scripts/hooks run only after trust plus Task relevance are established, process controls are not mistaken for OS isolation, high-risk or unbounded execution uses containment, bounded project-declared dependency restores are not mistaken for unrestricted network execution, proven project-local deterministic checks are not blocked solely by unattended/approval-bypass mode, and missing containment routes through an actionable context/user blocker
-- `glossary-grounding`: concise prompt interpretation stays consistent and sourced without invented jargon
+- `glossary-grounding`: concise prompt interpretation stays consistent and sourced without invented jargon; first user-facing use of an unfamiliar term gets one behavior-linked plain meaning, generic one-off terms do not pollute the durable glossary, semantic labels precede opaque internal IDs, and `unchanged` claims name their baseline plus observable invariants across service/API, CLI/library, and editor/runtime work (Golden Core Fixture 18)
 - `optional-skill-authority`: task-local guidance cannot alter Workflow gates, scope, or role boundaries
 - `current-external-research`: only when needed, dated and primary-sourced, with evidence separated from inference
 - `manual-observation`: records a manual Workflow report without requiring proof and marks unknowns honestly
@@ -107,8 +107,8 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `default-main-lane`: ordinary prompts/providers/sessions/worktrees retain `main`; an additional lane exists only after explicit user opt-in and a named Bootstrap prompt
 - `parallel-start-card`: an approved committed partition yields concrete collision-checked worktree commands, topology-appropriate role prompts, and first requests for every Lane; an uncommitted base yields an actionable wait instead of guessed commands
 - `additional-lane-knowledge-reuse`: pinned canonical Knowledge is reused and only the approved boundary is validated unless real stale/conflict evidence requires broader discovery
-- `main-front-desk-cycle`: the compact main Work session remains the sole Front Desk even for strict worker Lanes; every closed non-main session returns through a concrete `RETURN_TO_MAIN`; main verifies files/Git and emits any `NEXT_SESSION`
-- `non-main-session-replacement`: Main Front Desk reissues the exact Lane/topology prompt and first request; the worker never falls back to or edits the standard `main` prompt
+- `main-front-desk-cycle`: the compact main Work identity remains the sole Front Desk even for strict worker Lanes; it is event-driven and recoverable from the main checkout, while cross-Lane/candidate returns use concrete `RETURN_TO_MAIN` and verified files/Git before any `NEXT_SESSION` or Integration action (Golden Core Fixture 14)
+- `non-main-session-replacement`: an unchanged-identity replacement uses exact `RESUME_SAME_LANE`; candidate return, identity change, new worktree, or Integration still routes Main Front Desk, and the worker never falls back to or edits the standard `main` prompt (Golden Core Fixture 14)
 - `cross-worktree-session-identity`: one session never changes its bootstrapped checkout/Lane in place; every cross-Lane handoff names the target Lane and absolute worktree
 - `first-user-message-install`: every Bootstrap prompt is the first user message in a new AI session, not a System Prompt or terminal command
 - `host-native-tool-fallback`: missing `rg`/`grep` never blocks when `git grep`, PowerShell `Select-String`, or the host equivalent is available
@@ -128,7 +128,7 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `local-update-state-scaffold`: the canonical distribution force-tracks the ignored initial local state, a tracked template recreates it when absent, and validation diagnoses a missing force-tracked scaffold without committing developer-specific check data
 - `migration-rollback`: incompatible schema requires a declared migration and failed validation restores the complete present/absent pre-state rather than leaving newly created managed paths behind
 - `source-validation`: issue routing, authority, lane-state transitions, release records, and Eval identities retain one validated source of truth
-- `user-command-discoverability`: the top user guide keeps a minimal common command set, routes Review follow-up through generated `DO_NEXT`, consolidates equivalent Knowledge-change signals, and keeps generated cards/internal modes distinct
+- `user-command-discoverability`: the top user guide keeps a minimal common command set, exposes stable `DEV_STATUS` plus optional `COMMIT_READY` interaction controls, routes Review follow-up through generated cards, consolidates equivalent Knowledge-change signals, and keeps generated cards/internal modes distinct (Golden Core Fixture 13)
 - `readme-progressive-disclosure`: stable purpose and audience, the first install path, explicit Work/Reviewer session separation, success/failure recognition, and the normal loop stay visible while advanced procedures and concepts remain available collapsed
 - `issue-routing-single-source`: Operations is the only finding-owner table and other artifacts reference it
 - `state-contract-authority`: State is the only phase/status transition table and Workflow references it
@@ -147,12 +147,12 @@ Use the stable lowercase-hyphen `case_id` in Eval front matter. Do not invent a 
 - `terminal-no-knowledge-transition`: final PASS with sync none, no pending Review, and no active work reaches synced/idle without an empty Knowledge handoff
 - `role-output-contract-loading`: every writer loads the contract for the Architecture, Task, Build, Review, Integration Request, or Knowledge artifact it creates or changes
 - `pass-route-branching`: accepted changes route by sync policy and Lane topology instead of an unconditional Knowledge handoff
-- `single-main-candidate-fingerprint`: a Git-backed working-tree PASS is bound to a reproducible Task-path fingerprint and rechecked before downstream use
+- `single-main-candidate-fingerprint`: a Git-backed working-tree PASS is bound to a reproducible Task-path fingerprint, rechecked before downstream use, and reaches one exact policy-authorized local checkpoint commit before another Task without staging unrelated/unknown paths (Golden Core Fixtures 13 and 17)
 - `distribution-inventory-validation`: every required scaffold file exists both locally and in the exact current-release source commit, source files have one managed/preserved class, compatible schemas align, and project runtime Knowledge does not enter the distribution
 - `installed-license-notice`: the installable `.ai` copy carries the same MIT notice as the distribution root
 - `workflow-review-procedure`: source-only Workflow Review separates automated evidence, contract traces, human judgment, and unverified claims across purpose, usability, lifecycle, responsibility, recovery, verification, portability, efficiency, maintainability, and security, then performs one bounded self-check for omissions, false positives, and internal contradictions without becoming another runtime role; canonical release evidence embeds the independent clean-commit report
 - `cross-platform-negative-fixtures`: Windows PowerShell 5.1 and Ubuntu PowerShell 7 both reject missing roles, invalid template state, project Knowledge leakage, and empty modern Eval records
-- `source-install-boundary`: only `.ai` is installed; source Git/CI/tools remain distribution-owned
+- `source-install-boundary`: only `.ai` is installed; source Git/CI/tools remain distribution-owned; a fresh copy requires no existing `.ai`, an existing managed installation uses Check/Apply, and an unrelated `.ai` is never auto-merged (Golden Core Fixture 10)
 - `release-copy-command-discovery`: the explicit release-copy command is discoverable and bounded
 - `release-copy-ownership`: the canonical distribution copy owns release metadata and accepted generic Workflow changes
 - `distribution-state-exclusion`: project Knowledge, live Lanes, Integration state, and local update state never enter the distribution copy
@@ -176,18 +176,28 @@ No aliases exist in `manual-v1.0`. Add an alias only when a future release renam
 - brief events infer the correct Knowledge mode and bounded change set
 - Knowledge QUERY and Architect use only context whose applicability is confirmed from targeted source evidence; names, keywords, similarity, or nearby examples alone remain candidate refs, and design choices route to Architect
 - durable state is sufficient for a fresh replacement session
+- an exact same-Lane replacement restores directly only when checkout, Lane, role/topology, route, and candidate identity are unchanged; recovered Front Desk sessions inspect Git/queue and stop on an ambiguous partially applied candidate
+- session viability is checked only at natural boundaries; sufficient sessions continue silently, while evidenced insufficient capacity checkpoints before the next substantial action, and chat age, turn count, or fabricated remaining-token claims never trigger replacement
 - user-facing language follows `user_language`
 - inactive roles report READY/wait while real persisted or active-input blockers remain BLOCKED
 - PASS explanations match change risk, cite reviewed evidence, orient focused human inspection, and do not replace authority, require a quiz, claim that AI Review transfers ownership, or claim to prove long-term maintainability
-- consequential approval is possible from the user-language chat brief without opening an English artifact
+- consequential approval is requested only for a real user-owned choice and is possible from a decision-ready user-language chat brief without opening an English artifact; a foregone, unreadable, or effectively unavoidable confirmation earns no quality credit
 - user-owned blockers include executable steps, observable evidence, reply template, and fallback
 - Reviewer is independent, or an ordinary Task Review records explicit post-disclosure reduced-assurance acceptance and never reuses that verdict as release, Integration, sealed non-main, or independent evidence
-- compilation-action counts are not misreported as tests or gameplay actions
+- compilation-action counts are not misreported as functional tests
 - smaller output or diff is not credited when it loses required explanation, safety, correctness, or verification
+- developer status and commit readiness classify Task/workflow/unrelated/untracked paths from state, artifacts, and Git; a single-main independent PASS creates only its exact policy-authorized local checkpoint before another Task, reports it afterward, and never silently pushes, rewrites history, or relabels unknown work
+- Editor/runtime user checks provide exact executable and reply guidance; observation-only evidence resumes only against unchanged identity, while any saved candidate byte routes a fresh Build/Review attempt and unknown/unowned mutation remains blocked
+- project interaction preference defaults to automatic exact local checkpoint plus one routine next Task under unchanged approved Architecture; `ask` and `stop` remain explicit opt-outs, and no preference hides an Architect Gate, Push/tag, external effect, history rewrite, or another commit
+- cross-session `DO_NEXT` is transport rather than approval; a capable host may automate delivery only while preserving role/Lane/checkout/candidate identity and independent Review, otherwise it remains one exact copyable instruction
+- a returning or confused user receives a one-screen chat-only `WORKING_SUMMARY` reconstructed from durable state/artifacts/Git, with a semantic label before any internal ID, only currently relevant term definitions, and one bounded next action rather than a replayed chat history
+- non-obvious reversible technical choices do not create a user Gate but remain learnable: explanation starts from observable behavior, defines unfamiliar terms just in time, connects them to the exact mechanism, names one meaningful alternative/tradeoff and reconsider/revert condition, and never requires external prerequisite study for the current decision
+- claims that behavior is `unchanged` or `the same` name the compared baseline and concrete observable invariants; vague reassurance earns no quality credit
 - supplied request detail is preserved without a mandatory form, known project context is derived rather than re-asked, and only consequential user-owned uncertainty blocks progress
 - a tacit/evaluative signal is not bounced back as a request for the user to diagnose it or silently narrowed into scope; Architect shows an observable symptom, bounded evidence-backed hypotheses with uncertainty, the most likely explanation, and the smallest discriminating probe before converting the resolved diagnosis into observable ACs
 - batching related constraints or evidence never crosses a pending consequential approval, combines unrelated outcomes, widens the approved Task, or drops required explanation; an already recorded approval does not create a redundant confirmation
 - applicable approved requirements are pinned by section/revision when present; System Architecture owns cross-lane requirement refs, and drift is classified by cause and never resolved by silently rewriting code or requirements
+- product/requirements/planning documents are exact reference-only intent inputs by default and never become broad coding-Lane write targets merely from their directory; developer documentation remains writable only when approved Task scope requires it
 - Task decomposition is outcome- and evidence-based rather than file/class/function-sized; it prefers a narrow end-to-end/vertical slice over a horizontal scaffold without standalone approved value, and only a READY slice reaches Builder while SPLIT, MERGE, and BLOCKED are resolved without a redundant user gate
 - a directionally wrong approved approach is superseded and re-scoped through Architect instead of hidden behind repeated local patches; Build Baseline preserves unrelated-pre-existing/inherited-task/unknown attribution, a replacement single-main Task classifies every inherited Task path as retain/adapt/remove, ordinary local defects remain Builder-owned, and unrelated or unknown work is never destructively rolled back
 - code quality is judged by observable correctness, protected invariants, clear intent/ownership, project fit, and evidenced change or performance pressure—not pattern or abstraction count; a green check cannot excuse a weakened test oracle, invariant/type/contract bypass, compensating path, or concrete repeated change across unrelated owners

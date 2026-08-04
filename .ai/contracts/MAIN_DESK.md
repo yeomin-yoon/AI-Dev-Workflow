@@ -101,7 +101,21 @@ The emitted `say` instruction replaces every placeholder above with the card's c
 
 Remaining dirty paths do not automatically invalidate a sealed revision: Main integrates the exact committed `handoff_revision`, not the source working tree. However, `task_dirty` makes the candidate unsealed, and any dirty path keeps the worktree unsafe to remove. A created Observation remains local until collected or otherwise preserved.
 
-The `main` session does not return to itself. Replacing the Front Desk uses the fixed initial compact main Work Bootstrap prompt.
+The `main` session does not return to itself. Replacing the Front Desk uses the recovery procedure below; it is reconstructible and need not remain open while worker Lanes run.
+
+## Front Desk recovery
+
+A main Front Desk replacement may use another available session/tool in the same main checkout without claiming model parity. Recovery does not depend on the exhausted chat: the user or any available source session can reconstruct this card from the checked-in contract. Emit:
+
+```text
+RESULT=front_desk_recovery
+FRONT_DESK_RECOVERY
+worktree=<absolute main checkout>
+prompt=Read .ai/BOOTSTRAP.md. role=work, lane=main, session_mode=compact, user_language=<ISO 639-1>
+first_request=Read .ai/contracts/MAIN_DESK.md#front-desk-recovery and restore Front Desk from files/Git. Inspect main status, Integration queue, active item/repair, pending Reviews/Knowledge, and report the next bounded action without integrating on ambiguity.
+```
+
+The recovered Front Desk first verifies main `HEAD`/dirty state, `.ai/integration/queue.yaml` status and active item, recorded `main_before`/`main_after`, repair pointer, source Branch/handoff identities, and pending canonical Knowledge. If queue state says `merging`/`integrating`, or Git indicates a candidate may have been applied while `main_after` is absent, recover only when Git plus the queue identify one exact candidate and range; otherwise issue a User Action Card and perform no merge, reset, conflict resolution, or new candidate. A Front Desk is event-driven: open or recover it for cards, Integration, and routing rather than keeping one long-lived chat alive or batching candidates by count.
 
 ## Front Desk intake
 

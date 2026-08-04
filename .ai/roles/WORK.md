@@ -10,6 +10,7 @@ This is a session shell, not a fifth authority. Before each project-role action,
 |---|---|
 | missing or uninitialized lane | Knowledge Maintainer `BUILD` |
 | explicit factual project question | Knowledge Maintainer `QUERY`; preserve the existing workflow route |
+| explicit current-status, Task-diff, commit-readiness, or interaction-preference question | read-only `DEV_STATUS`/`COMMIT_READY` procedure or Knowledge preference update in `.ai/contracts/ACTION_CARDS.md` / `.ai/contracts/KNOWLEDGE.md`; preserve the existing workflow route |
 | explicit document/code/pull Knowledge sync | Knowledge Maintainer `UPDATE/VALIDATE`; if it affects the active contract, report drift and route Architect |
 | explicit concurrent worktree/lane setup or startup-card reconstruction | Architect; preserve or resolve any active gate, then follow `PARALLEL_START.md` |
 | explicit non-main return intake or replacement/next session request while bootstrapped as `lane=main` | Main Front Desk procedure in `.ai/contracts/MAIN_DESK.md`; this is not a project role or authority |
@@ -38,7 +39,9 @@ Do not load either procedure during ordinary single-`main` development.
 - A separate Task approval is required only for new user-owned intent, a new Architecture Gate, irreversible/external effects, material cost or scope growth, or a mandatory human gate.
 - Execute at most one Build candidate before stopping for independent Review.
 - After Review FAIL, resume only the routed Architect or Builder repair.
-- After single-`main` Review PASS, process required/checkpointed Knowledge sync or defer it according to state, then return to Architect.
+- After single-`main` independent Review PASS, process required/checkpointed Knowledge sync or defer it according to state, then apply `.ai/shared/knowledge/project.yaml#interaction` through `ACTION_CARDS.md`. Missing preferences default to the exact verified local checkpoint plus one routine next Task. Do not materialize another Task over an uncommitted accepted candidate.
+- In compact mode after the verified checkpoint, `routine_continuation: one_task` runs internal Architect Task materialization and one Builder candidate in the same turn, without a user-visible Architect handoff or repeated approval, and stops at `ready_to_review`. `stop` ends after the checkpoint. `checkpoint: ask` emits `COMMIT_READY` first; `auto_after_pass` does not create a ceremonial confirmation. Every route stops for a new Architecture Gate, user-owned intent, manual gate, blocker, changed evidence, or exhausted delivery order; no preference authorizes Push, tag, another commit, or an unreviewed candidate.
+- A terse continue signal outside a currently displayed bounded choice may resume only an already-authorized non-mutating role action. It never authorizes a commit, Architecture Gate, external effect, candidate-scope expansion, Review bypass, or Push; when no such action is ready, return the current status and exact next choice.
 - After non-`main` Review PASS, run required `PREPARE_DELTA` only when later unmerged Lane work needs it; otherwise seal the candidate and return it to Main for Integration. Do not route an accepted unmerged candidate back to Architect merely as a generic next step.
 - Never interpret `next=reviewer` as permission to self-review, even if the host can change role labels in one chat.
 
@@ -52,6 +55,8 @@ DO_NEXT session=Reviewer say="<review the current Build Result in user_language>
 
 For a user-owned gate, use the Decision Brief or User Action Card from `ACTION_CARDS.md` in the current responsible session. Do not end with only `need=evidence` or a file link.
 
+Treat `DO_NEXT` as transport, not a user approval request. When the host can deliver it to an already-bound target session while preserving role, Lane, checkout, candidate identity, and Reviewer independence, automatic delivery is allowed; otherwise show the exact copyable instruction. Never simulate automation by self-reviewing or changing this session's identity.
+
 ## Session size
 
-Files remain durable state. Recommend replacement at a feature boundary or when the session has accumulated unrelated work. A non-main replacement first emits `RETURN_TO_MAIN`, then Main Front Desk issues its `NEXT_SESSION`; a main Front Desk replacement uses the fixed initial main Work prompt. No replacement receives a chat summary, and no session is reused for a different worktree/Lane.
+Files remain durable state. Recommend replacement at a feature boundary or when the session has accumulated unrelated work. A pure same-Lane replacement with unchanged checkout, role/topology, durable route, and candidate identity may emit `RESUME_SAME_LANE` directly. Cross-Lane, new-worktree, candidate-return, or Integration decisions still emit `RETURN_TO_MAIN`; a main Front Desk replacement uses `FRONT_DESK_RECOVERY`. No replacement receives a chat summary, and no session is reused for a different worktree/Lane.

@@ -587,23 +587,39 @@ $contractTokenRequirements = @{
     'README.md' = @(
         'philosophy-core: human-judgment-over-automation',
         'tacit-seed-diagnostic: evidence-before-clarification',
+        'install-boundary: fresh-copy-vs-managed-update-vs-unrelated-ai',
         'workflow-review-summary: canonical-lenses-1-through-10',
         'release-finalizer-session: fresh-non-authoring',
-        '| Change Brief |'
+        '| Change Brief |',
+        '`DEV_STATUS`',
+        '`COMMIT_READY`',
+        '`RESUME_SAME_LANE`',
+        '`FRONT_DESK_RECOVERY`'
     )
     '.ai/WORKFLOW.md' = @(
         'Evaluative or tacit seeds are valid problem signals, not failed requirements',
         'the smallest discriminating probe or proposed improvement',
         'A green check is evidence, not proof that its oracle, architecture, or long-term maintainability remained sound',
         'Independent AI Review reduces review burden but never transfers code ownership',
+        'Decision authority and learning visibility are separate',
+        'A user Gate exists only when the user has a real choice',
+        'Run a Gate necessity check before every approval request',
+        'independent Review PASS is the default authorization for one exact local checkpoint commit',
+        'A cross-session handoff is transport, not approval',
+        'at a natural boundary, continue silently when the current session can likely finish the next bounded action and durable checkpoint',
+        'Session age, turn count, or an invented token estimate is not evidence',
+        'The user never needs prerequisite external study merely to understand the current decision',
+        'without naming the baseline and the concrete observable invariants that remain true',
         'Candidate manifests, managed files, migration sources, and resolved read links must remain inside the pinned read-only candidate source root',
         'Passing one boundary never implies passing the other',
         'validates the installed-project profile with itemized evidence'
     )
     '.ai/reference/OPERATIONS.md' = @(
         'Knowledge required/checkpoint',
-        'single-main defer/none',
+        'Git-backed single-main',
         'non-main',
+        'observation-only or candidate-mutating',
+        'any saved candidate byte routes a fresh Build/Review attempt',
         'leave `ready_to_build/blocked`, `building/blocked`, `reviewing/blocked`, or `integration/blocked` without a return path'
     )
     '.ai/contracts/BUILD_RESULT.md' = @(
@@ -641,7 +657,11 @@ $contractTokenRequirements = @{
         '`approval.status` is `approved | candidate | rejected | superseded | unknown`',
         '`verification.status` describes source accuracy/freshness; it never substitutes for requirement approval',
         'Historical schema-v2 document entries without `approval` remain readable as `approval.status: unknown`',
-        'Search hints identify candidates, not applicability'
+        'Search hints identify candidates, not applicability',
+        'interaction:',
+        'checkpoint: auto_after_pass # auto_after_pass | ask',
+        'routine_continuation: one_task # one_task | stop',
+        'Missing `interaction` remains backward-compatible and reads as `auto_after_pass + one_task`'
     )
     '.ai/lanes/_template/architecture.md' = @(
         'requirement_refs: []',
@@ -657,6 +677,9 @@ $contractTokenRequirements = @{
         'no unresolved material maintainability finding',
         'an unchanged candidate identity from Review start through verdict',
         '## Reduced-assurance exception',
+        '<Knowledge Maintainer | Work | Architect | Builder | responsible role/user gate | Integration Gate>',
+        'ACTION_CARDS.md#editorruntime-check',
+        'Earlier evidence may be reused only after an explicit impact check against that fresh candidate',
         'A generic request such as "review this" or a convenience-driven same-session role switch is not consent',
         'proceed only after the user explicitly accepts that limitation after the disclosure',
         'Reduced-assurance Review is never canonical release evidence, Integration Gate evidence'
@@ -667,7 +690,9 @@ $contractTokenRequirements = @{
         'continue_architecture_repair',
         'owning role repairs only the malformed artifact/contract',
         'authoritative context is restored without changing candidate/intent',
-        'requested user evidence arrives',
+        'requested `observe_only` evidence arrives and candidate bytes/identity are unchanged',
+        'an authorized `candidate_mutating` Editor/runtime action changes Task-attributed bytes',
+        'the action changes an unowned/unknown path, exceeds the authorized mutation set',
         'final Task PASS has `knowledge_sync: none`',
         '`integration/blocked` with `verification` or `context`',
         '`integration/blocked` with non-material `contract`',
@@ -677,7 +702,8 @@ $contractTokenRequirements = @{
         'the repair changed any Task-attributed byte',
         'repair preserves candidate bytes, approved intent, Task outcome, public boundary, and applicable Integration contract',
         'apply the canonical interrupted-attempt disposition in `.ai/contracts/TASK_RECORD.md#task-quality-gate`',
-        'a Build/Review repair referenced by the active Integration queue `repair` mapping PASSes'
+        'a Build/Review repair referenced by the active Integration queue `repair` mapping PASSes',
+        'single-main working-tree PASS must reach the `ACTION_CARDS.md` scoped checkpoint commit before another Task is materialized'
     )
     '.ai/contracts/ARTIFACT_AUTHORITY.md' = @(
         'Approved requirement vs source or observed behavior',
@@ -691,7 +717,8 @@ $contractTokenRequirements = @{
         'A bounded dependency restore may run under normal role/Lane scope',
         'Do not block solely because the session is unattended or approval-bypassed',
         'BLOCKED type=context owner=user',
-        'emit the `ACTION_CARDS.md` User Action Card'
+        'emit the `ACTION_CARDS.md` User Action Card',
+        'Product/requirements/planning documents are intent authorities within their approved scope, not implicit coding-Lane write targets'
     )
     '.ai/maintenance/UPDATE.md' = @(
         '## Checked candidate identity',
@@ -744,7 +771,44 @@ $contractTokenRequirements = @{
         'approved_new_managed: []',
         'active_transaction_manifest: null'
     )
-    '.ai/contracts/MAIN_DESK.md' = @('## Worker delivery procedure', '## Post-integration Lane disposition')
+    '.ai/contracts/ACTION_CARDS.md' = @(
+        '## Working summary',
+        'WORKING_SUMMARY',
+        'A human-readable label precedes its internal ID',
+        '## Developer Status',
+        'DEV_STATUS',
+        '## Single-main commit checkpoint',
+        'COMMIT_READY',
+        '## Editor/runtime check',
+        'effect=<observe_only|candidate_mutating>',
+        'independent Review PASS is the default authorization for one exact local checkpoint',
+        'at most one next routine Task already covered by unchanged approved Architecture',
+        'Any `candidate_mutating` result invalidates the old Build/Review identity',
+        'Before another Task starts, the accepted single-main change must have a verified checkpoint commit when Git is usable',
+        'The canonical displayed replies for `ask` are descriptive',
+        'This never authorizes Push, tag, history rewrite'
+    )
+    '.ai/contracts/MAIN_DESK.md' = @(
+        '## Worker delivery procedure',
+        '## Front Desk recovery',
+        'FRONT_DESK_RECOVERY',
+        'Recovery does not depend on the exhausted chat',
+        'Read .ai/BOOTSTRAP.md. role=work, lane=main, session_mode=compact',
+        'A Front Desk is event-driven',
+        '## Post-integration Lane disposition'
+    )
+    '.ai/contracts/SESSION_CLOSE.md' = @(
+        '## Replacement timing',
+        'Assess viability only at a natural boundary',
+        'One corrected mistake, a long transcript, or turn count alone is not enough',
+        'If the next action and checkpoint remain likely achievable, continue silently',
+        'RESUME_SAME_LANE',
+        'role, topology, candidate, Lane, checkout, new-worktree, Integration, or return-intent change is not a same-Lane replacement',
+        'MAIN_DESK.md#front-desk-recovery'
+    )
+    '.ai/contracts/PARALLEL_START.md' = @(
+        'Treat tool/account availability and Front Desk handoff cost as real partition costs'
+    )
     '.ai/integration/README.md' = @(
         'An Integration blocker must retain the queue item',
         'full range from the retained original `main_before`',
@@ -788,7 +852,17 @@ $contractTokenRequirements = @{
         'non-`none` deferred-P2 entry with follow-up proof',
         '`ready_to_review/blocked`',
         'mandatory `pass|fail` installed-profile rows',
-        'unrelated-pre-existing/inherited-task/unknown attribution'
+        'unrelated-pre-existing/inherited-task/unknown attribution',
+        'developer status and commit readiness classify Task/workflow/unrelated/untracked paths',
+        'product/requirements/planning documents are exact reference-only intent inputs by default',
+        'an exact same-Lane replacement restores directly only when checkout, Lane, role/topology, route, and candidate identity are unchanged',
+        'Editor/runtime user checks provide exact executable and reply guidance',
+        'project interaction preference defaults to automatic exact local checkpoint plus one routine next Task under unchanged approved Architecture',
+        'cross-session `DO_NEXT` is transport rather than approval',
+        'a foregone, unreadable, or effectively unavoidable confirmation earns no quality credit',
+        'a returning or confused user receives a one-screen chat-only `WORKING_SUMMARY`',
+        'non-obvious reversible technical choices do not create a user Gate but remain learnable',
+        'name the compared baseline and concrete observable invariants'
     )
     '.ai/evals/SCORECARD.md' = @(
         'eval_type: <source_regression|end_to_end|fixed_contract>',
@@ -800,7 +874,12 @@ $contractTokenRequirements = @{
     )
     '.ai/BOOTSTRAP.md' = @(
         'the one contract for an artifact the role will create or change',
-        'never combine unrelated outcomes or widen an approved Task merely to reduce messages'
+        'never combine unrelated outcomes or widen an approved Task merely to reduce messages',
+        'A pure same-Lane replacement may use `RESUME_SAME_LANE` only when checkout, Lane, session role/topology, durable route, and active candidate identity are unchanged',
+        'use the stable `WORKING_SUMMARY`, `DEV_STATUS`, or `COMMIT_READY` projection',
+        'At a natural boundary before a new Architecture decision, Task/Build attempt, Review attempt, or Integration candidate',
+        'Never invent an exact token/quota value, interrupt every turn, or replace solely because the chat is old',
+        'Do not require external study for the active decision'
     )
     '.ai/roles/ARCHITECT.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -814,7 +893,13 @@ $contractTokenRequirements = @{
         'Before asking the user to diagnose the system',
         'This is inline Architect work, not a new artifact, session, approval gate',
         'make only the needed program shape explicit',
-        'Prefer the smallest end-to-end/vertical slice'
+        'Prefer the smallest end-to-end/vertical slice',
+        'Do not expose a redundant Architect stop or approval',
+        'Define an unfamiliar technical term at first user-facing use',
+        'Decision burden and learning are independent',
+        '`gate necessity`',
+        '`decision readiness`',
+        'An affirmative reply to a brief that fails either check is not durable approval'
     )
     '.ai/roles/BUILDER.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -834,13 +919,32 @@ $contractTokenRequirements = @{
         'three-way attribution',
         'never accept a new attempt ID as evidence that inherited Workflow bytes became user work',
         '.ai/contracts/REVIEW_RESULT.md#reduced-assurance-exception',
-        'they do not claim to prove long-term maintainability or transfer that ownership'
+        '.ai/contracts/ACTION_CARDS.md#editorruntime-check',
+        'a user action that saved a Task-attributed asset/config/source routes Builder for a fresh Build/Review identity',
+        'they do not claim to prove long-term maintainability or transfer that ownership',
+        'Never write `unchanged` or `the same` without naming the compared baseline',
+        '.ai/contracts/ACTION_CARDS.md#working-summary',
+        'checkpoint=commit_ready',
+        'route=<knowledge_maintainer|work|builder|architect|integration|user>',
+        'Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection'
+    )
+    '.ai/roles/WORK.md' = @(
+        'explicit current-status, Task-diff, commit-readiness, or interaction-preference question',
+        'without a user-visible Architect handoff or repeated approval',
+        'stops at `ready_to_review`',
+        'A terse continue signal outside a currently displayed bounded choice',
+        'Treat `DO_NEXT` as transport, not a user approval request',
+        'no preference authorizes Push, tag, another commit, or an unreviewed candidate'
     )
     '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
         '.ai/contracts/KNOWLEDGE.md',
         'A changed requirements document does not automatically rewrite Architecture or Tasks',
         'Mark only owned Knowledge entries that point to affected requirement refs `stale/conflict`; never edit the Architecture/Task artifacts',
-        'Treat index/search/name matches as candidate refs'
+        'Treat index/search/name matches as candidate refs',
+        'Approved product/requirements/specification or planning documents are reference-only by default',
+        'Do not infer document-authoring permission from a broad `Docs/**` directory',
+        'An accepted single-main working-tree checkpoint returns to Work for the exact policy-controlled local checkpoint',
+        'updates only `.ai/shared/knowledge/project.yaml#interaction`'
     )
     'maintenance/WORKFLOW_REVIEW.md' = @(
         'It is not the project `Reviewer`, a fifth runtime role, an installed `.ai` document',
@@ -1072,6 +1176,8 @@ Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'status' 'idle'
 Assert-YamlScalar '.ai/lanes/_template/state.yaml' 'action' 'initialize_lane' -AnyIndent
 Assert-YamlScalar '.ai/shared/SYSTEM_ARCHITECTURE.md' 'requirement_refs' '[]'
 Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'entrypoints' '[]'
+Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'checkpoint' 'auto_after_pass' -AnyIndent
+Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'routine_continuation' 'one_task' -AnyIndent
 Assert-YamlScalar '.ai/shared/knowledge/glossary.yaml' 'terms' '[]'
 
 $templateStatePath = Get-RepositoryPath '.ai/lanes/_template/state.yaml'
@@ -1235,6 +1341,13 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             '## Fixture 10',
             '## Fixture 11',
             '## Fixture 12',
+            '## Fixture 13',
+            '## Fixture 14',
+            '## Fixture 15',
+            '## Fixture 16',
+            '## Fixture 17',
+            '## Fixture 18',
+            '## Fixture 19',
             'The canonical trigger list and case routing live there; do not maintain a second list in this file',
             'state transitions directly to `synced/idle`',
             '`base` is the fixed first manifest line',
@@ -1267,6 +1380,7 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'Knowledge Maintainer and Architect treat every name, keyword, similarity, or nearby-example hit as a candidate rather than evidence',
             'Only the confirmed live source may support the answer or design',
             'only as an untrusted source candidate and does not begin Check until the user explicitly confirms it',
+            'An existing managed installation uses Check/Apply rather than a folder overlay',
             'The same session does not interpret the generic request as reduced-assurance consent',
             'The resulting verdict is never used as canonical release evidence, Integration Gate evidence',
             'The evaluative seed is a valid problem signal',
@@ -1279,7 +1393,26 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'Every already-dirty Build baseline path is classified as `unrelated_pre_existing`, `inherited_task`, or `unknown`',
             'If Reviewer rejects preflight, state becomes `ready_to_review/blocked`',
             '`update-state.yaml.active_transaction_manifest` durably points inside the backup root',
-            'each result is `pass | fail`'
+            'each result is `pass | fail`',
+            'No next Task is materialized over the uncommitted accepted candidate',
+            'The unchanged-identity scenario emits `RESUME_SAME_LANE`',
+            'without depending on the exhausted chat',
+            'Knowledge indexes only applicable planning sections/revisions',
+            'Reviewer returns an `EDITOR_CHECK` that names effect, purpose, exact app/project/target/surface',
+            'the saved bytes invalidate the old Build/Review identity and route a fresh Build attempt',
+            'there is no user-visible Architect handoff or repeated approval',
+            'Missing preferences read as `auto_after_pass + one_task`',
+            'The Reviewer `DO_NEXT` is transport rather than approval',
+            'No preference or short continuation ever authorizes hidden paths, a new Architecture Gate, external effects, Push/tag, history rewrite, or another commit',
+            'The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence',
+            'external prerequisite study is optional, never required for approval or continuation',
+            'Scenario C does not accept an uninformed affirmative reply',
+            '`request and retry behavior is unchanged` is not accepted alone',
+            'The same explanation contract applies across service/API, CLI/library, and editor/runtime work',
+            'Viability is assessed only at the natural boundary, not reported every turn',
+            'Scenario C also continues because chat age or turn count alone is not evidence',
+            'Scenarios B and D do not start the next substantial action',
+            'never claims completion or weakens candidate/Review identity to squeeze in another step'
         )) {
         if (-not $goldenCoreText.Contains($goldenToken)) {
             Add-Failure "Golden Core Behavior is missing oracle token: $goldenToken"

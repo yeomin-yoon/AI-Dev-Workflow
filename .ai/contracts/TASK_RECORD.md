@@ -51,7 +51,7 @@ Use `draft | proposed | approved | rejected | superseded`. Task status records a
 
 The manifest starts with only required refs. Default soft budget comes from `BOOTSTRAP.md`; add optional refs or a budget override only when evidence justifies it.
 
-When a mandatory AC derives from a referenced PRD/spec/GDD, include only its exact requirement ID/section and pinned revision in the Context Manifest, or rely on the exact Architecture requirement ref when it is already sufficient. Do not copy the full document or repeat unrelated requirements.
+When a mandatory AC derives from a referenced product/requirements/specification document, include only its exact requirement ID/section and pinned revision in the Context Manifest, or rely on the exact Architecture requirement ref when it is already sufficient. Do not copy the full document or repeat unrelated requirements.
 
 When existing source and approved Architecture do not determine a consequential implementation shape, use `Constraints / Assumptions` or `Expected Output` to pin only the key types/signatures, call or control flow, file placement, and dependency boundaries needed for this Task. Do not prescribe full code, copy source, or create a separate Program Design artifact.
 
@@ -97,4 +97,4 @@ Every mandatory human gate must use:
 |---|---|---|---|---|---|---|
 ```
 
-Do not approve a mandatory gate described only as `manual test`, `Editor/PIE required`, or `user evidence needed`.
+Do not approve a mandatory gate described only as `manual test`, `editor/runtime required`, or `user evidence needed`.
