@@ -64,13 +64,14 @@ For a non-`main` candidate, apply the exact-range and immutable-candidate rules 
 
 Simplicity never justifies removing required validation, failure handling, security, accessibility, ownership/lifetime safety, or verification.
 
-If a mandatory manual/Editor/PIE gate remains:
+If a mandatory manual/editor/runtime gate remains:
 
 1. finish reviewing all available code, diff, build, and automated evidence first;
 2. return `blocked type=verification owner=user`, not an implementation failure;
-3. reproduce the Task's exact procedure as a concise User Action Card;
-4. accept the user's observations or attached evidence in the same Reviewer session and resume the verdict;
-5. route any observed implementation failure to Builder.
+3. classify the procedure as `observe_only` or `candidate_mutating` and reproduce it through `.ai/contracts/ACTION_CARDS.md#editorruntime-check` with exact app/path/setup/action/observation/PASS/FAIL/reply/fallback guidance in `user_language`;
+4. when evidence returns, compare current status and candidate identity before consuming it;
+5. resume Review only for observation-only evidence against unchanged bytes; a user action that saved a Task-attributed asset/config/source routes Builder for a fresh Build/Review identity, while an unowned, unknown, or unauthorized mutation remains a `context`/`contract` blocker;
+6. route any observed implementation failure to Builder and never grant PASS merely because the user said the behavior looked correct.
 
 Keep `state.next.role=reviewer` while waiting for that evidence; the user is the blocker owner, not a virtual role.
 
@@ -86,6 +87,10 @@ After PASS, add a Change Brief grounded only in the approved intent, reviewed di
 
 Present the compact brief in chat using `user_language`; keep durable artifact fields in English. Explain in conceptual/runtime order before file order, cite paths/symbols, distinguish evidence from inference, and answer follow-up questions from the same evidence. Never require a quiz. If direct manipulation would materially improve understanding, suggest an optional debugger/visualization as a separately approved Architect task; do not build it or make it a PASS condition.
 
+Layer an unfamiliar change as `observable problem/behavior → plain-language solution → technical term and exact mechanism → optional deeper detail`. Define an unfamiliar technical term once at first use and do not send the user to external study merely to understand the accepted change. For a non-obvious local/reversible technical choice, include the reason, one meaningful alternative/tradeoff, and the reconsider/revert condition without pretending it required a user Gate. Never write `unchanged` or `the same` without naming the compared baseline and the concrete observable invariants preserved by the reviewed candidate.
+
+User-facing Task, Review, and artifact references use a short semantic label before the internal ID/path. When the user returns confused or related follow-ups have obscured the current thread, use `.ai/contracts/ACTION_CARDS.md#working-summary`; derive it from durable evidence and end with one next action rather than replaying the full history.
+
 Independent AI Review and the Change Brief support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. For consequential or unfamiliar accepted changes, identify a focused inspection path through the key symbols, runtime flow, invariant, and runnable observation rather than demanding exhaustive line-by-line review or adding a new gate.
 
 The chat must contain the useful brief itself. `understanding=deep`, a terse invariant list, or an English Review Result link is not a substitute. On FAIL, give a shorter user-language explanation of what breaks, why it matters in play/runtime terms, and which role will repair it.
@@ -94,9 +99,9 @@ The chat must contain the useful brief itself. `understanding=deep`, a terse inv
 
 Classify accepted changes as `required | defer | none` for Knowledge sync.
 
-- `required`: a public contract, responsibility/ownership, entry point, command, project rule, document map, or source location needed by the next work changed. Append the Review path and route Knowledge Maintainer. For an unmerged non-`main` candidate that needs the new index before Integration, request `PREPARE_DELTA`, then seal and return to Main.
-- `defer`: knowledge-worthy but the next Task in the same feature can rely on approved Architecture/Review/source. Append the Review path and route Architect; for an unmerged multi-lane change, route the user-coordinated Integration Gate instead.
-- `none`: purely local implementation/test detail with no stable discovery value.
+- `required`: a public contract, responsibility/ownership, entry point, command, project rule, document map, or source location needed by the next work changed. Append the Review path and route Knowledge Maintainer. For a single-main working-tree candidate, Knowledge returns to Work for the scoped commit checkpoint before another Task. For an unmerged non-`main` candidate that needs the new index before Integration, request `PREPARE_DELTA`, then seal and return to Main.
+- `defer`: knowledge-worthy but the next Task in the same feature can rely on approved Architecture/Review/source. Append the Review path; a single-main working-tree candidate routes Work through the scoped commit checkpoint before Architect, while an unmerged multi-lane change routes the user-coordinated Integration Gate.
+- `none`: purely local implementation/test detail with no stable discovery value. A single-main working-tree candidate still routes Work through the scoped commit checkpoint before Architect/next Task.
 
 Force a Knowledge checkpoint before a new feature, external pull/merge, architecture re-baseline, session handoff that needs the new index, or when pending entries would make discovery stale. This batching avoids a Knowledge handoff after every small Task without losing durable facts.
 
@@ -129,9 +134,9 @@ verification=<summary> risks=<items|none>
 understanding=<none|brief|deep> change=<summary|none>
 invariants=<summary|none> inspect=<paths/check|none>
 knowledge_sync=<required|defer|none>
-route=<knowledge_maintainer|builder|architect|integration|user>
+route=<knowledge_maintainer|work|builder|architect|integration|user>
 candidate_status=<sealed|unsealed|not_applicable>
-checkpoint=<commit|none>
+checkpoint=<commit|commit_ready|none>
 ```
 
-End a cross-role/session route with the exact `DO_NEXT` from `ACTION_CARDS.md`. A blocked user gate stays in this Reviewer session and includes that contract's `USER_ACTION` card. An Integration Gate is a procedure, not a target session. For a non-`main` Review-PASS candidate routed to Integration, tell the user in `user_language` to finish this session with the standard close-and-return instruction; `SESSION_CLOSE.md` then emits the normal close result and concrete `RETURN_TO_MAIN` from `MAIN_DESK.md`. Never ask the user to interpret `route=integration` or reuse this Lane session as `main`. For integrated Review PASS, target the already-open `main` Work session for the next candidate or final Knowledge sync.
+End a cross-role/session route with the exact `DO_NEXT` from `ACTION_CARDS.md`. For a single-main working-tree PASS, set `checkpoint=commit_ready` and route the selected Knowledge action first when required, otherwise Work; Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection. A blocked user gate stays in this Reviewer session and includes that contract's `USER_ACTION` card. An Integration Gate is a procedure, not a target session. For a non-`main` Review-PASS candidate routed to Integration, tell the user in `user_language` to finish this session with the standard close-and-return instruction; `SESSION_CLOSE.md` then emits the normal close result and concrete `RETURN_TO_MAIN` from `MAIN_DESK.md`. Never ask the user to interpret `route=integration` or reuse this Lane session as `main`. For integrated Review PASS, target the already-open `main` Work session for the next candidate or final Knowledge sync.

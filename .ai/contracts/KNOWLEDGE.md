@@ -65,6 +65,16 @@ Historical schema-v2 document entries without `approval` remain readable as `app
 
 Do not store source copies, every private member, Git history, full logs/docs, line-only references, unsourced claims, or task-local reasoning.
 
+`project.yaml` may preserve explicit project interaction preferences without turning them into Architecture or product intent:
+
+```yaml
+interaction:
+  checkpoint: auto_after_pass # auto_after_pass | ask
+  routine_continuation: one_task # one_task | stop
+```
+
+Missing `interaction` remains backward-compatible and reads as `auto_after_pass + one_task`. `auto_after_pass` authorizes only the exact local single-main checkpoint defined by `ACTION_CARDS.md`; it never authorizes Push, tag, history rewrite, external effects, or an unreviewed candidate. `one_task` continues only one routine Task already covered by approved Architecture and still stops at independent Review. Record a different value only from the user's explicit standing preference; never infer it from a one-off pause, question, or short reply.
+
 A `rule` entry must identify the applicable paths/modules/languages, its exact document/config/CI source and revision, any mechanical enforcement, and `verified | inferred | stale | unknown | conflict` status. Explicit scoped rules remain distinct from dominant existing-code conventions, which are only `inferred` until adopted. Generic language/framework advice is not project Knowledge by itself.
 
 ```yaml

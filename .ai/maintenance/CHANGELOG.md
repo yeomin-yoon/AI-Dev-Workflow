@@ -1,8 +1,24 @@
 # Workflow Changelog
 
+## manual-v1.3 — 2026-08-03
+
+- Added terminal-safe `DEV_STATUS` and optional `COMMIT_READY` projections so developers can see semantic changes, decisive checks, Git state, exact include/exclude paths, and the next action without parsing a raw terminal diff.
+- Made independent Review PASS the single-main local checkpoint boundary: the Workflow stages only the exact reviewed Task/evidence set, verifies exclusions, defaults to an automatic local commit, and never implicitly Pushes or starts the next Task over an uncommitted accepted candidate.
+- Added exact-identity `RESUME_SAME_LANE` replacement for exhausted worker sessions and deterministic `FRONT_DESK_RECOVERY` for unavailable main sessions, while keeping cross-Lane, candidate-return, worktree, and Integration authority at the Front Desk.
+- Made the Front Desk event-driven and counted tool/account availability plus recovery and handoff cost before recommending Worktree parallelism.
+- Added evidence-gated session timing: at natural boundaries the active role continues silently when it can likely finish the next bounded action and checkpoint, but checkpoints before starting when provider-visible capacity or repeated context-loss evidence indicates it cannot; chat age and invented token estimates never trigger replacement.
+- Kept product and domain planning documents user/team-owned reference inputs by default, while allowing precise explicit document Tasks and Task-required developer documentation updates.
+- Added Golden Core and negative regression coverage for commit timing, terminal-visible status, same-Lane recovery, Front Desk recovery, and planning-document ownership.
+- Made Editor/runtime verification executable with exact open/setup/action/observe/PASS/FAIL/reply guidance, and separated observation-only evidence from user actions that mutate candidate bytes and therefore require a fresh Build/Review identity.
+- Added a bounded compact-mode fast lane: after the verified local checkpoint, the default continues exactly one routine Task already covered by approved Architecture to the next Reviewer handoff, while project preferences may request `COMMIT_READY` first or stop after the checkpoint without a redundant Architect approval.
+- Separated decision burden from learning visibility: non-obvious reversible technical choices now use observable-behavior-first, just-in-time terminology, grounded alternatives/tradeoffs, and reconsider/revert guidance without adding a user Gate or prerequisite study.
+- Added the chat-only `WORKING_SUMMARY` for return/confusion recovery, human-readable labels before internal IDs, and evidence-bound baseline/invariant wording instead of vague `unchanged` assurances.
+- Hardened the public install boundary for fresh, managed, and unrelated `.ai` directories; made commit choices descriptive instead of slang-dependent; and diversified user-facing and Golden examples across service/API, CLI/library, and editor/runtime projects.
+- Replaced ceremonial consent with necessity/readiness checks for user Gates, made exact independently reviewed local checkpoints automatic by default, and let a durable project preference opt back into pre-commit confirmation or stop before the next routine Task without weakening Push, scope, or external-effect boundaries.
+
 ## manual-v1.2 — 2026-07-30
 
-- Added optional requirement baselines that pin only applicable PRD/spec/GDD sections and revisions without requiring a form or copying whole documents.
+- Added optional requirement baselines that pin only applicable product/requirements/specification sections and revisions without requiring a form or copying whole documents.
 - Classified requirement drift as implementation deviation, approved intent change, or unclear authority so code and specifications are never silently synchronized.
 - Added a deterministic requirement-drift fixture and negative validation cases covering routing, Task supersession, and source-only Knowledge indexing.
 - Kept requirement-drift status inside Knowledge-owned entries and synchronized the new requirement baseline with the fresh-Lane Architecture scaffold.
