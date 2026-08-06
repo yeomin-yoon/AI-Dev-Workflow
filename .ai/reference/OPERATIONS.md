@@ -40,7 +40,7 @@ Repair only the responsible artifact; do not restart the whole workflow.
 - Run parallel Builders only in isolated worktrees.
 - The user approved the dependency-safe order with the parallel boundary; do not ask again unless conflicts, shared contracts, scope, or evidence change it.
 - After a non-main Lane closes, the user pastes its `RETURN_TO_MAIN` instruction into main Work Front Desk. A sealed return authorizes at most the exact next `handoff_revision` and stops for a designated independent `main` Reviewer.
-- Main records the exact before/after range and merge strategy. Reviewer verifies that range, the reviewed candidate identity/tree, post-review metadata-only paths, and affected contracts; Knowledge Maintainer syncs only after that verification.
+- Main records the exact before/after range and merge strategy. Reviewer verifies that range, the reviewed candidate identity/tree, post-review Lane-handoff-only paths, and affected contracts; Knowledge Maintainer syncs only after that verification.
 - Run relevant checks after each merge, then full integration checks.
 - Validate architecture drift and promote verified knowledge deltas last.
 

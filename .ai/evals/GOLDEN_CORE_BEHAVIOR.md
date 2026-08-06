@@ -231,6 +231,7 @@ Expected:
 - Before any ordinary Task Review exception, Reviewer explains in `user_language` that authoring and Review are in one session, names the self-confirmation/blind-spot risk, and recommends later independent Review.
 - Reduced-assurance Review proceeds only after explicit user acceptance following that disclosure, then records `independence: reduced_assurance`, the user decision, the limitation, and the residual risk.
 - The resulting verdict is never used as canonical release evidence, Integration Gate evidence, or a sealed non-`main` candidate verdict.
+- A fresh independent Reviewer still reconstructs the approved user need from exact requirement refs, Architecture, Task, scoped project rules/Knowledge, candidate Diff, and verification evidence. It excludes the author's hidden reasoning and confidence rather than reviewing without context; freshness alone never compensates for a missing required authority.
 
 ## Fixture 13 — Visible single-main commit boundary
 
@@ -245,7 +246,7 @@ Given:
 Expected:
 
 - Work returns `DEV_STATUS` from state, Task/Build/Review, `git status`, `git diff --stat`, and untracked files, grouping Task, Workflow, unrelated, and unknown changes without dumping the whole diff.
-- After the accepted fingerprint is revalidated and the Knowledge route is settled, Work returns `COMMIT_READY` with exact include/exclude paths, decisive checks, and a suggested project-style message.
+- After the accepted fingerprint is revalidated and the Knowledge route is settled, Work returns a one-screen `COMMIT_READY` with semantic scope, recommendation, every viable atomic alternative, decisive evidence, and a `details` pointer to the exact include/exclude inventory and scoped Diff.
 - Under `checkpoint: ask`, Review PASS does not itself stage, commit, Push, or tag. An explicit user commit request authorizes only the displayed include set, requires staged-diff/exclusion verification, and returns the created revision.
 - No next Task is materialized over the uncommitted accepted candidate. A failed or blocked candidate may be described as `wip_only` but never receives `COMMIT_READY` or accepted status.
 - Unattributed paths remain `unknown`; they are never relabeled or swept into the commit to make the tree look clean.
@@ -329,6 +330,8 @@ Expected:
 - The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence: plain goal/why, verified done, a semantic user-language label before `(TASK-MAIN-009)`, one open item, only terms needed now, and one bounded next action. It does not copy old chat, create a summary artifact/Gate, or narrate unrelated history.
 - The explanation starts with the observable product/runtime problem and plain-language solution. At first use it defines `work queue` in one behavior-linked sentence, then maps that term to the exact module/class/function only after the user can understand the current choice; external prerequisite study is optional, never required for approval or continuation.
 - The reversible internal choice proceeds without a user Gate but remains learnable: it gives the project-grounded reason, one meaningful alternative and tradeoff, and a concrete reconsider/revert condition. Deeper foundations are offered on request instead of recursively teaching every prerequisite.
+- After the core problem, result/direction, and next action, a non-trivial change may add one bounded expert note by default: plain meaning, precise professional term, exact current code/evidence anchor, and one reusable criterion. A `deep` explanation uses at most two or three; mechanical, repeated, speculative, and unrelated knowledge produces no note.
+- The expert note never precedes or obscures the action, becomes a finding/Gate/quiz/PASS condition, requires external study, or claims user understanding. When confusion or fatigue is signaled, the role simplifies the core before adding depth.
 - Scenario A is selected automatically and explained only if non-obvious. Scenario B is reported as a constrained decision, not presented as a fake approval. Scenario C does not accept an uninformed affirmative reply: Architect first investigates evidence it can obtain, then provides an understandable problem/difference/recommendation/default/defer consequence; if the user still cannot choose, it uses the smallest discriminating probe or a clearly provisional reversible default when safe and blocks only for unresolved user-owned intent or material risk.
 - `request and retry behavior is unchanged` is not accepted alone. The brief names the compared baseline and the evidenced observable invariants, such as request acceptance, enqueue timing, retry count, error propagation, and persistence, while omitting any invariant not actually verified.
 - The same explanation contract applies across service/API, CLI/library, and editor/runtime work without assuming one domain's framework, artifact type, or terminology.
@@ -350,3 +353,70 @@ Expected:
 - Scenarios B and D do not start the next substantial action. They persist the current safe boundary and emit the exact `RESUME_SAME_LANE`, `RETURN_TO_MAIN`, or `FRONT_DESK_RECOVERY` route required by identity and Integration state.
 - If insufficiency becomes evident during an action, the role stops at the nearest safe durable boundary, records honest in-progress state/evidence, and never claims completion or weakens candidate/Review identity to squeeze in another step.
 - A role/Lane/worktree/candidate or Integration-sensitive change still follows Fixture 14; proactive timing never creates a shortcut around Front Desk or independent Review.
+
+## Fixture 20 — Diff-first direct source understanding
+
+Given:
+
+- an independently reviewed non-trivial Task changes two existing hand-written production source files, adds one new production source file, changes focused tests, and also touches one generated/mechanical file;
+- the exact candidate/range and Build Result Changes table are available;
+- a new project and a historical project without the field both resolve to `interaction.code_inspection: no_pause`, while another Git-backed project explicitly opts in to `before_next_task`;
+- another PASS changes only mechanical/generated or non-code content;
+- a supported no-Git Task Review has a reconciled changed-file manifest but no revision, fingerprint, or Git Diff command;
+- the user wants to understand what each changed source file does by opening the actual Diff and source rather than trusting a summary.
+
+Expected:
+
+- Reviewer records and shows the exact reviewed snapshot/range plus a scoped Diff command or Git UI range. It starts with a stat and proceeds one file/symbol at a time instead of dumping an unbounded terminal Diff.
+- Every changed hand-written production source file receives a one-sentence plain-language role, key symbol, and Task-specific reason for change. The newly added source appears under `new_files` and is opened as a whole file; generated/mechanical content is grouped separately and never hides a production file.
+- The `files` list uses `F#` and the runtime `read_order` uses `R#`, so a follow-up names one unambiguous item. Displayed replies are descriptive sentences in `user_language`; internal tokens such as `inspected_continue` or an unqualified `explain_2` never replace their meaning.
+- The read order follows observable runtime flow—entry point, important state/decision, effect—then maps invariants to their enforcement points and tests to what they prove and do not prove. Unchanged context files are labeled `context`, not presented as changed.
+- A Change Brief, Review artifact link, directory list, or selected hunk alone does not satisfy the walkthrough; the user is directed to open the actual reviewed Diff and source files.
+- The no-Git variant records `snapshot=no-git/unsealed`, keeps reduced attribution assurance visible, and uses the reviewed changed-file manifest plus exact `F#`/`R#` path+symbol open sequence; it never invents a Git revision, fingerprint, or Diff command. It returns `shown_no_pause` even when the project opted in, follows the recorded route once, and never enters or repeats an identity-dependent inspection wait.
+- Explicit `before_next_task` on an identity-revalidatable Git-backed candidate stores `accepted/active + next.role: reviewer + next.action: await_code_inspection_then_resume_review_route`, returns `code_inspection=awaiting_user`, and emits no `DO_NEXT` before the displayed descriptive read/continue reply. A replacement Reviewer reconstructs the same walkthrough and route from state, the accepted Review, and candidate identity rather than silently continuing.
+- The pause applies to ordinary Task Review on `main` or non-`main`; Integration Review returns `not_applicable` and follows its exact range/queue route without another source-inspection wait.
+- The reply controls pace only: it does not approve correctness, certify permanent understanding, or repeat Architecture approval. New-scaffold `no_pause` and historical missing `code_inspection` both return `shown_no_pause` and may follow the normal route after showing the walkthrough. A mechanical/generated-only or non-code PASS returns `not_applicable`, may show a compact scoped Diff, and never waits for an inspection reply.
+- Read-only inspection preserves candidate identity. If the user edits/saves candidate bytes, the old PASS is not reused and a fresh Build/Review identity is required.
+- The Review keeps revision-scoped file roles for later reconstruction; only stable entry points, module owners, public boundaries, or repeatedly needed source locations enter existing Knowledge. No exhaustive permanent file catalog, new role/session, quiz, score, or approval Gate is created.
+- The same contract applies to service/API, CLI/library, and editor/runtime projects; it does not assume a specific language, engine, IDE, or Git UI.
+
+## Fixture 21 — Readable atomic decision and checkpoint closure
+
+Given:
+
+- a user-owned checkpoint choice remains after an accepted single-main candidate, while audit evidence contains many paths, tests, internal IDs, and three historical Tasks;
+- one safe strategy preserves the exact already-tested tree, a split strategy can become safe only after recreating and validating its intermediate trees, and a partial commit would leave an untested tree;
+- commit-backed state/Knowledge must repin from the working-tree baseline to the new content revision before another Task;
+- the recorded continuation preference is `one_task`, but the user has not asked to change that standing preference.
+- another consequential decision has four genuinely viable user-owned outcomes that cannot be evidencefully excluded.
+
+Expected:
+
+- The first decision screen leads with one plain question, marks the recommendation, and shows every currently viable alternative together, capped at three; each choice has one semantic action, observable result, and real tradeoff. Exact path/test/ID inventories remain behind the evidence artifact or scoped Diff command.
+- This general checkpoint decision begins directly with `DECISION`; it does not receive the five-line intent-gap preface because no incomplete planning source is being resolved.
+- The four-outcome decision first asks one discriminator with no more than three mutually exclusive, collectively exhaustive groups and lists every outcome under a group. After the answer it shows every viable outcome in the selected group; no outcome is silently dropped, and grouping never changes an outcome's meaning.
+- A number or letter may be accepted only as a short alias after the readable atomic choices are displayed; the persisted authorization is the semantic action. A long CLI table or a hidden follow-up alternative does not satisfy the decision contract.
+- The untested partial commit is not offered as a selectable strategy. The split path is offered only as `split and reverify` with its extra verification cost, or remains a blocker until those intermediate trees are proven.
+- Required metadata repinning is deterministic checkpoint closure, not another user option. Work creates the reviewed content commit, repins only role-owned state/Knowledge metadata to that revision, verifies the revision-repin-only Diff, and reports `content_revision` plus `metadata_revision`; it never asks whether to leave known-false pins behind.
+- Between those two commits, `DEV_STATUS` reports `checkpoint=content_committed_repin_pending` and names the deterministic revision-repin closure as the next action; it never calls the reviewed content uncommitted or ready for another Task.
+- `COMMIT_READY` asks only whether to create the displayed checkpoint. It reports the existing `one_task` continuation preference but never bundles `commit + repin + next Task` into one choice. Any change to continuation is a separate standing preference, and no new Task begins before checkpoint closure and any configured `CODE_WALKTHROUGH` pause.
+- If only one materially safe path remains, the role reports or executes that predetermined action under existing authority instead of manufacturing ceremonial alternatives. Push, tag, history rewrite, cleanup, merge, or external effects remain separately authorized.
+
+## Fixture 22 — Incomplete planning exposes the intent gap first
+
+Given:
+
+- an applicable approved planning section explicitly requires one user-visible outcome, while runtime/source evidence shows the current system stops before that outcome;
+- the planning source does not prescribe the internal class/interface/control-flow mechanism and also does not define one later user-visible behavior;
+- project evidence has already disproven one technical approach, while one reversible internal direction remains materially safer;
+- internal artifact history, identifiers, logs, and framework terms are available but would obscure the core problem if shown first.
+
+Expected:
+
+- The first Architect response begins with `current_behavior`, `intended_behavior`, and `confirmed_gap` in plain user language before internal terms, option tables, Task IDs, or historical detail. The user does not need a second `explain more` request to discover why the work exists.
+- The exact approved path/section/revision and strongest runtime/source evidence remain traceable under `details`; the first screen paraphrases their meaning rather than asking the user to read the artifact.
+- The explicit requirement is `specified` and constrains implementation. The unspecified internal mechanism is `implementation_open`, so Architect chooses and explains the smallest reversible project-grounded direction without a Gate.
+- The unspecified later user-visible behavior is `product_open`, so it is the only question returned to the user, with recommendation and genuinely viable observable alternatives. The role never treats planning silence as approval to invent that behavior.
+- Unclear approval/applicability/freshness becomes `authority_unknown` and uses the existing `context`/`contract` blocker. It is not silently converted into either implementation freedom or product approval.
+- The already disproven technical approach is shown only as rejected evidence and is absent from viable choices unless a named revalidation step could change its status.
+- The same intent-gap ordering applies to service/API, CLI/library, and editor/runtime work; no domain-specific document type, role, session, artifact, score, or additional approval Gate is introduced.

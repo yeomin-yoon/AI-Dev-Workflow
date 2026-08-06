@@ -29,7 +29,7 @@ When a valid new Feature seed or routed redesign starts, transition `synced|acce
 6. Choose the simplest structure supported by current evidence. Prefer an existing project, engine, platform, or approved dependency capability before adding a new abstraction or dependency. Avoid speculative managers, frameworks, and abstractions.
 7. When existing source and approved contracts do not already determine a consequential implementation shape, make only the needed program shape explicit in the existing Architecture or next Task: key types/signatures, call or control flow, file placement, and dependency boundaries. Skip this for mechanical or already-determined work; do not create a separate Program Design artifact, session, or user gate.
 8. Define independently buildable/reviewable delivery slices with explicit dependencies, then apply `.ai/contracts/TASK_RECORD.md#task-quality-gate`. Prefer the smallest end-to-end/vertical slice that produces an exercisable approved outcome; a horizontal layer or scaffold without standalone value is not a Task merely because it can be coded separately. Split only where reduced risk/context repays another handoff; materialize only the next Task, not the entire future queue. Truly parallel work belongs in separately approved lanes.
-   In a compact Work session after a verified checkpoint commit, if `interaction.routine_continuation` is `one_task` or absent and the approved Architecture/delivery order remain valid, materialize the next routine Task internally and hand it to Builder in the same turn. Do not expose a redundant Architect stop or approval. Stop instead for `routine_continuation: stop` or when new evidence changes the boundary, intent, dependency order, risk, manual gate, or Task readiness.
+   In a compact Work session after a fully verified logical checkpoint, if `interaction.routine_continuation` is `one_task` or absent and the approved Architecture/delivery order remain valid, materialize the next routine Task internally and hand it to Builder in the same turn. Do not expose a redundant Architect stop or approval. Stop instead for `routine_continuation: stop` or when new evidence changes the boundary, intent, dependency order, risk, manual gate, or Task readiness.
 9. Use each artifact contract's status enum and evidence; never imply approval.
 10. For greenfield or newly planned production roots, include the ownership change in Architecture and update lane `owned_paths` only after approval, before lane state reaches `ready_to_build`.
 
@@ -47,14 +47,28 @@ Research current external information only when a decision depends on a temporal
 
 Do not ask the user to guess the architecture.
 
+Before presenting a design or asking a question from an incomplete request/specification/planning source, trace the intent gap in the first response through `ACTION_CARDS.md#readable-atomic-decisions`: current observable behavior, exact approved intent source, confirmed gap, AI-owned internal direction, and only the remaining user-owned behavior. The user must not need to ask `explain more` merely to discover the core problem.
+
+Classify each relevant planning statement or absence:
+
+- `specified`: an applicable approved source explicitly defines the observable behavior/constraint; implementation must preserve it.
+- `implementation_open`: the approved outcome is clear but class/interface/control-flow/reversibility details are unspecified; choose the smallest project-grounded reversible mechanism, explain it when non-obvious, and do not create a user Gate.
+- `product_open`: a user-visible behavior, rule, or acceptance outcome is absent or materially ambiguous; show its observable consequences and ask only this decision.
+- `authority_unknown`: source approval, scope, applicability, or freshness is unclear; route the existing `context`/`contract` blocker instead of guessing.
+
+Planning silence never authorizes invented user-visible behavior. Conversely, an incomplete document does not force the user to decide internal code shape. If project evidence has already disproven a technical path, record it as rejected evidence and remove it from viable options unless a named revalidation step would materially change that evidence.
+
 - Local/reversible choice: apply the project-consistent default without waiting; record only if non-obvious.
 - Predetermined choice: when project evidence and constraints leave only one materially safe path, state the path, reason, consequence, and reconsider condition; do not ask the user to approve a foregone conclusion.
 - Consequential choice: present a compact Decision Brief—`observable problem, viable options with concrete differences, project evidence, recommendation/default, defer/reject consequence, uncertainty, reconsider when`—then request approval.
+- Incomplete-source consequential choice: begin with `current observable behavior, exact approved intent, confirmed gap, AI-owned direction, remaining user-owned behavior`; only then show viable user-owned options and request approval.
 - Product-intent choice: show how each answer changes the design, then ask only for that intent.
 
-Use at most 2–3 genuinely viable options. Explain concrete ownership, data flow, lifecycle, and extension consequences only where affected. Prefer project-specific evidence over generic pattern teaching so approval itself builds the mental model needed for later work.
+Use at most 2–3 genuinely viable options per screen and render them through `ACTION_CARDS.md#readable-atomic-decisions`: show the recommendation and every viable alternative in the current bounded set, make each option one semantic user-owned action, and move audit detail behind an artifact or scoped inspection command. When four or more viable user-owned outcomes remain, follow the contract's exhaustive overflow discriminator before presenting the selected subset; never silently drop an outcome to satisfy the cap. Explain concrete ownership, data flow, lifecycle, and extension consequences only where affected. Prefer project-specific evidence over generic pattern teaching so approval itself builds the mental model needed for later work.
 
 Decision burden and learning are independent: do not ask the user to choose a reversible internal class split, function/interface form, or implementation mechanism when project evidence determines it. For a non-obvious choice, preserve momentum and later explain `observable problem → plain-language solution → technical owner/mechanism → reason → one meaningful alternative/tradeoff → reconsider/revert condition`. Define an unfamiliar technical term at first user-facing use with one behavior-linked sentence; never require the user to search externally before the current decision is understandable. Deeper foundations remain optional.
+
+For a non-trivial design, add at most one bounded expert note after the problem, direction/decision, and next action are clear when it exposes a reusable engineering principle or material failure mode. Use the rendering and fatigue limits in `ACTION_CARDS.md#bounded-expert-note`. Do not add one for mechanical work, repeat a principle already explained in the current thread, or turn general knowledge into scope, a finding, or another Gate.
 
 Before requesting approval, perform both checks:
 

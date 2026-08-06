@@ -19,7 +19,7 @@ Before a start card:
 5. Require one Git commit that contains `.ai`, canonical Knowledge needed by the lanes, and the approved partition. A worktree cannot inherit uncommitted chat/files.
 6. Resolve the actual repository root, committed base revision, proposed branch names, and target paths. Read-only check that target branches/paths do not already conflict.
 7. Use compact `Work + Reviewer` topology for new Lanes by default, even if the coordinating main session is strict. Use strict four-role topology only when the user explicitly requests it for those Lanes.
-8. State that each non-`main` Builder creates one Task-scoped candidate commit before Review and the final Lane role creates one metadata-only handoff commit after PASS. These isolated commits are part of the approved worktree delivery flow; they never include unrelated changes.
+8. State that each non-`main` Builder creates one Task-scoped candidate commit before Review and the final Lane role creates one Lane handoff commit after PASS. These isolated commits are part of the approved worktree delivery flow; they never include unrelated changes.
 
 Lane IDs use lower-case domain slugs such as `character` or `ui`, never provider/model/session names. Suggested branches use `feature/<lane>` unless project Git rules say otherwise. Suggested worktree directories are siblings named `<repo>-<lane>` unless the user supplied paths.
 

@@ -13,6 +13,7 @@ document_refs: []
 interaction:
   checkpoint: auto_after_pass # auto_after_pass | ask
   routine_continuation: one_task # one_task | stop
+  code_inspection: no_pause # no_pause | before_next_task
 
 verification:
   status: unknown

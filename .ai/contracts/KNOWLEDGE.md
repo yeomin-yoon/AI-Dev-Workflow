@@ -71,9 +71,10 @@ Do not store source copies, every private member, Git history, full logs/docs, l
 interaction:
   checkpoint: auto_after_pass # auto_after_pass | ask
   routine_continuation: one_task # one_task | stop
+  code_inspection: no_pause # no_pause | before_next_task
 ```
 
-Missing `interaction` remains backward-compatible and reads as `auto_after_pass + one_task`. `auto_after_pass` authorizes only the exact local single-main checkpoint defined by `ACTION_CARDS.md`; it never authorizes Push, tag, history rewrite, external effects, or an unreviewed candidate. `one_task` continues only one routine Task already covered by approved Architecture and still stops at independent Review. Record a different value only from the user's explicit standing preference; never infer it from a one-off pause, question, or short reply.
+Missing `interaction` and a new scaffold both read as `auto_after_pass + one_task + no_pause`; `before_next_task` is an explicit project opt-in. `auto_after_pass` authorizes only the exact local single-main logical checkpoint defined by `ACTION_CARDS.md`, including a required single-main revision-repin closure; it never authorizes Push, tag, history rewrite, external effects, source changes outside the reviewed content commit, or an unreviewed candidate. `one_task` continues only one routine Task already covered by approved Architecture and still stops at independent Review. `before_next_task` shows the reviewed `CODE_WALKTHROUGH` and waits for the user's read/continue reply before transporting the existing route only when the Git-backed/commit-backed candidate identity can be revalidated; a no-Git/unsealed Review always shows without pausing. It is a pace preference, not a correctness approval or durable claim of understanding. Record a different value only from the user's explicit standing preference; never infer it from a one-off pause, question, or short reply.
 
 A `rule` entry must identify the applicable paths/modules/languages, its exact document/config/CI source and revision, any mechanical enforcement, and `verified | inferred | stale | unknown | conflict` status. Explicit scoped rules remain distinct from dominant existing-code conventions, which are only `inferred` until adopted. Generic language/framework advice is not project Knowledge by itself.
 

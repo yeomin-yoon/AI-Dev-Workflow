@@ -6,6 +6,8 @@ Independently compare the approved task/architecture with the actual diff and ve
 
 Normal PASS authority requires a Reviewer session separate from the Work/Builder session. Outside the documented reduced-assurance exception, a Work session cannot switch into Reviewer. If the same session authored or repaired the candidate, follow `.ai/contracts/REVIEW_RESULT.md#reduced-assurance-exception`; otherwise report `blocked type=verification need=independent_review` instead of presenting self-review as independent PASS.
 
+Independence removes the authoring session's hidden reasoning and self-confirmation, not the approved user need or project knowledge. Reconstruct context from the exact approved request/requirement refs, Architecture, Task, scoped project rules/Knowledge, actual candidate Diff, and verification evidence in the read order below. A fresh but context-starved session must load those bounded authorities before verdict; never fill the gap from Builder confidence or remembered rationale.
+
 ## Read order
 
 This order is an execution precondition only when `state.next.role` is `reviewer` or an activated Integration Gate selects this Reviewer under an approved order/contract. Otherwise Bootstrap returns `READY` waiting and stops; a draft Architecture, null active task, or missing Build Result is not a Reviewer blocker yet.
@@ -87,11 +89,15 @@ After PASS, add a Change Brief grounded only in the approved intent, reviewed di
 
 Present the compact brief in chat using `user_language`; keep durable artifact fields in English. Explain in conceptual/runtime order before file order, cite paths/symbols, distinguish evidence from inference, and answer follow-up questions from the same evidence. Never require a quiz. If direct manipulation would materially improve understanding, suggest an optional debugger/visualization as a separately approved Architect task; do not build it or make it a PASS condition.
 
+For every ordinary Task PASS on `main` or a non-`main` Lane, provide the exact reviewed Diff identity/command or the documented no-Git/unsealed changed-file manifest and path/symbol open sequence. When hand-written production source changed non-trivially, populate every source-role/read-order/new-file/test field in `REVIEW_RESULT.md`, then render `.ai/contracts/ACTION_CARDS.md#code-walkthrough` in chat. Give each changed production source file a one-sentence plain role and connect its key symbol to the runtime flow; a Change Brief summary or a few selected hunks cannot replace direct Diff and source inspection. If `interaction.code_inspection: before_next_task` and candidate identity can be revalidated through an immutable Git tree or canonical working-tree fingerprint, persist `accepted/active + next.role: reviewer + next.action: await_code_inspection_then_resume_review_route`, return `code_inspection=awaiting_user`, and wait for the user's displayed descriptive read/continue reply or questions before emitting or automatically transporting `DO_NEXT`; this pause controls pace, not PASS or correctness. A no-Git/unsealed Task Review shows the walkthrough with `shown_no_pause` and follows the recorded route without creating or repeating that wait. An Integration Review is not an ordinary Task Review: set `code_inspection=not_applicable`, verify and route its exact Integration range normally, and do not introduce another source-inspection wait.
+
 Layer an unfamiliar change as `observable problem/behavior → plain-language solution → technical term and exact mechanism → optional deeper detail`. Define an unfamiliar technical term once at first use and do not send the user to external study merely to understand the accepted change. For a non-obvious local/reversible technical choice, include the reason, one meaningful alternative/tradeoff, and the reconsider/revert condition without pretending it required a user Gate. Never write `unchanged` or `the same` without naming the compared baseline and the concrete observable invariants preserved by the reviewed candidate.
+
+After the Change Brief's core result and next action are clear, use `ACTION_CARDS.md#bounded-expert-note` for at most one reusable principle or material failure mode by default; a `deep` brief may use at most two or three. Omit mechanical, repeated, speculative, and unrelated knowledge. The note is optional presentation, not a finding, PASS condition, quiz, scope expansion, or proof that the user understood the code; simplify first when the user signals confusion.
 
 User-facing Task, Review, and artifact references use a short semantic label before the internal ID/path. When the user returns confused or related follow-ups have obscured the current thread, use `.ai/contracts/ACTION_CARDS.md#working-summary`; derive it from durable evidence and end with one next action rather than replaying the full history.
 
-Independent AI Review and the Change Brief support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. For consequential or unfamiliar accepted changes, identify a focused inspection path through the key symbols, runtime flow, invariant, and runnable observation rather than demanding exhaustive line-by-line review or adding a new gate.
+Independent AI Review, the Change Brief, and direct Diff/source inspection support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. Use a bounded inspection path through the changed source roles, key symbols, runtime flow, invariant, and runnable observation rather than demanding exhaustive line-by-line review or adding a correctness gate.
 
 The chat must contain the useful brief itself. `understanding=deep`, a terse invariant list, or an English Review Result link is not a substitute. On FAIL, give a shorter user-language explanation of what breaks, why it matters in play/runtime terms, and which role will repair it.
 
@@ -99,13 +105,15 @@ The chat must contain the useful brief itself. `understanding=deep`, a terse inv
 
 Classify accepted changes as `required | defer | none` for Knowledge sync.
 
-- `required`: a public contract, responsibility/ownership, entry point, command, project rule, document map, or source location needed by the next work changed. Append the Review path and route Knowledge Maintainer. For a single-main working-tree candidate, Knowledge returns to Work for the scoped commit checkpoint before another Task. For an unmerged non-`main` candidate that needs the new index before Integration, request `PREPARE_DELTA`, then seal and return to Main.
-- `defer`: knowledge-worthy but the next Task in the same feature can rely on approved Architecture/Review/source. Append the Review path; a single-main working-tree candidate routes Work through the scoped commit checkpoint before Architect, while an unmerged multi-lane change routes the user-coordinated Integration Gate.
-- `none`: purely local implementation/test detail with no stable discovery value. A single-main working-tree candidate still routes Work through the scoped commit checkpoint before Architect/next Task.
+- `required`: a public contract, responsibility/ownership, entry point, command, project rule, document map, or source location needed by the next work changed. Append the Review path and route Knowledge Maintainer. For a single-main working-tree candidate, Knowledge returns to Work for the scoped logical checkpoint before another Task. For an unmerged non-`main` candidate that needs the new index before Integration, request `PREPARE_DELTA`, then seal and return to Main.
+- `defer`: knowledge-worthy but the next Task in the same feature can rely on approved Architecture/Review/source. Append the Review path; a single-main working-tree candidate routes Work through the scoped logical checkpoint before Architect, while an unmerged multi-lane change routes the user-coordinated Integration Gate.
+- `none`: purely local implementation/test detail with no stable discovery value. A single-main working-tree candidate still routes Work through the scoped logical checkpoint before Architect/next Task.
 
 Force a Knowledge checkpoint before a new feature, external pull/merge, architecture re-baseline, session handoff that needs the new index, or when pending entries would make discovery stale. This batching avoids a Knowledge handoff after every small Task without losing durable facts.
 
 `none` never clears earlier pending Reviews. Set `knowledge_sync.status=clean` only when its list is empty; use `pending` when entries may be batched and `required` when synchronization must happen before continuing.
+
+Change Brief source roles are revision-scoped orientation, not a permanent file catalog. When a changed file becomes or moves a stable entry point, module owner, public boundary, or repeatedly needed source location, route that durable fact through the existing Knowledge policy. Do not index every private helper merely because it appeared in a walkthrough.
 
 ## Optional worktree and Integration delivery
 
@@ -120,8 +128,8 @@ Do not load either optional procedure during an ordinary single-`main` Review.
 - one Integration Review Result under `.ai/integration/reviews/` when acting at an activated Integration Gate
 - `.ai/integration/queue.yaml` item status and `integration_review` when acting at an activated Integration Gate
 - lane state pointers
-- one metadata-only current-Lane handoff commit after non-`main` PASS when this role is the last pre-integration writer
-- one metadata-only main Integration Review checkpoint commit after integrated PASS
+- one Lane handoff commit after non-`main` PASS when this role is the last pre-integration writer
+- one Integration Review checkpoint commit after integrated PASS
 
 Do not edit production code, redesign by preference, demand unrelated cleanup, or mark unrun checks passed.
 
@@ -132,11 +140,14 @@ VERDICT=<pass|fail|blocked> task=<id>
 findings=<count> artifact=<path>
 verification=<summary> risks=<items|none>
 understanding=<none|brief|deep> change=<summary|none>
-invariants=<summary|none> inspect=<paths/check|none>
+invariants=<summary|none> inspect=<CODE_WALKTHROUGH|scoped diff|none>
+code_inspection=<awaiting_user|shown_no_pause|not_applicable>
 knowledge_sync=<required|defer|none>
 route=<knowledge_maintainer|work|builder|architect|integration|user>
 candidate_status=<sealed|unsealed|not_applicable>
 checkpoint=<commit|commit_ready|none>
 ```
 
-End a cross-role/session route with the exact `DO_NEXT` from `ACTION_CARDS.md`. For a single-main working-tree PASS, set `checkpoint=commit_ready` and route the selected Knowledge action first when required, otherwise Work; Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection. A blocked user gate stays in this Reviewer session and includes that contract's `USER_ACTION` card. An Integration Gate is a procedure, not a target session. For a non-`main` Review-PASS candidate routed to Integration, tell the user in `user_language` to finish this session with the standard close-and-return instruction; `SESSION_CLOSE.md` then emits the normal close result and concrete `RETURN_TO_MAIN` from `MAIN_DESK.md`. Never ask the user to interpret `route=integration` or reuse this Lane session as `main`. For integrated Review PASS, target the already-open `main` Work session for the next candidate or final Knowledge sync.
+Set `code_inspection=awaiting_user` only for an identity-revalidatable ordinary Task PASS with non-trivial hand-written production source under `before_next_task`. Use `shown_no_pause` for that same eligible Task PASS under `no_pause`, a missing preference, or no-Git/unsealed assurance. Use `not_applicable` for Integration Review, `fail`/`blocked`, or a purely mechanical/non-code PASS; those outcomes never create an inspection wait.
+
+End a cross-role/session route with the exact `DO_NEXT` from `ACTION_CARDS.md` only when `code_inspection` is not `awaiting_user`. While it is awaiting, keep the durable Reviewer-owned wait and emit no `DO_NEXT`; after a descriptive inspected/continue reply and unchanged-identity check, apply the already-recorded route. For a single-main working-tree PASS, set `checkpoint=commit_ready` and route the selected Knowledge action first when required, otherwise Work; Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection. A blocked user gate stays in this Reviewer session and includes that contract's `USER_ACTION` card. An Integration Gate is a procedure, not a target session. For a non-`main` Review-PASS candidate routed to Integration, tell the user in `user_language` to finish this session with the standard close-and-return instruction; `SESSION_CLOSE.md` then emits the normal close result and concrete `RETURN_TO_MAIN` from `MAIN_DESK.md`. Never ask the user to interpret `route=integration` or reuse this Lane session as `main`. For integrated Review PASS, target the already-open `main` Work session for the next candidate or final Knowledge sync.

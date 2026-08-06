@@ -49,9 +49,10 @@ Use `source_regression` for canonical release evidence. For that type, provider/
 | integrated existing behavior vs isolated skeleton | | |
 | route + artifact/state contract compliance | | |
 | reviewer independence | | |
-| decision clarity / unnecessary questions or gates | | |
+| intent-gap + decision clarity / unnecessary questions or gates | | |
 | user-language approval and blocker actionability | | |
-| Change Brief level / grounded usefulness | | |
+| Change Brief / bounded expert-note grounding and fatigue | | |
+| Direct Diff/source walkthrough / durable-pause usefulness | | |
 | verification-claim accuracy | | |
 | simplicity / reuse without safety loss | | |
 | human corrections | | |

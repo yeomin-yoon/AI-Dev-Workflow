@@ -68,8 +68,8 @@ Judge every applicable lens as `PASS | PARTIAL | FAIL | N/A`, with the minimum s
 | 4. Responsibility and human gates | Are AI roles, artifacts, and human decisions separated? Does the user intervene only for consequential intent, approval, external effects, or unavailable evidence? |
 | 5. Failure, routing, and recovery | Does every blocker/finding have one owner and a defined repair/resume path? Can session/model replacement restore state without chat memory or restarting everything? |
 | 6. Verification and reproducibility | Are completion, candidate identity, Build/Test/Review/runtime evidence, unverified risk, and release claims independently checkable and truthful? |
-| 7. Authority, context, and portability | Is each fact owned once? Are Knowledge and state compact pointers? Can projects, languages, providers, and sessions change without rewriting Core? |
-| 8. Efficiency and proportionality | Are Context, prompts, questions, approvals, handoffs, retries, and optional procedures proportionate to risk and value without lowering the quality floor? |
+| 7. Authority, context, and portability | Is each fact owned once? Are Knowledge and state compact pointers? Can projects, languages, providers, and sessions change without rewriting Core? Are personal/project defaults prevented from silently becoming universal invariants? |
+| 8. Efficiency and proportionality | Are Context, prompts, questions, approvals, handoffs, retries, optional procedures, and hard-rule volume proportionate to risk and value without lowering the quality floor? Are presentation/default rules prevented from creating false blockers or ceremonial gates? |
 | 9. Documentation and maintenance | Are terminology, names, abstraction level, single-source rules, links, update paths, and change locations consistent? Is README progressively disclosed rather than merely short? |
 | 10. Trust, security, and losslessness | Are repository instructions, secrets, scripts/hooks, write scope, updates, migrations, backups, rollback, project state, and supplied installations safely bounded? |
 
@@ -78,6 +78,7 @@ Interpret common heuristics carefully:
 - A long README is a defect only when first success or navigation requires reading it all.
 - A document may serve several reader needs when its visible quick path stays focused and deeper material is progressively disclosed.
 - More principles than prompts is useful only when principles are stable, non-duplicated contracts; policy volume itself is not quality.
+- Review a new hard rule by enforcement level (`invariant | gate | default | presentation`), general failure surface, normal-path cost, and inverse over-blocking case. One personal observation is discovery evidence, not universal authority, unless a directly evidenced high-severity safety/authority/loss failure justifies immediate protection.
 - Model/tool independence is a design property. Practical parity, token savings, speed, and learning outcomes require separate measured evidence.
 
 ## README quality gate

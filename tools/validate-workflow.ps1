@@ -604,8 +604,16 @@ $contractTokenRequirements = @{
         'workflow-review-summary: canonical-lenses-1-through-10',
         'release-finalizer-session: fresh-non-authoring',
         '| Change Brief |',
+        '| Code Walkthrough |',
         '`DEV_STATUS`',
+        '`CODE_WALKTHROUGH`',
         '`COMMIT_READY`',
+        'readable-choice: recommendation-and-alternatives-together',
+        'checkpoint-repin: mandatory-not-choice',
+        'intent-gap-brief: current-intent-gap-ai-user',
+        'planning-gap-classification: specified-implementation-product-authority',
+        'bounded-expert-note: core-first-one-by-default',
+        'code-walkthrough-default: no-pause-do-next-visible',
         '`RESUME_SAME_LANE`',
         '`FRONT_DESK_RECOVERY`'
     )
@@ -617,10 +625,22 @@ $contractTokenRequirements = @{
         'Decision authority and learning visibility are separate',
         'A user Gate exists only when the user has a real choice',
         'Run a Gate necessity check before every approval request',
-        'independent Review PASS is the default authorization for one exact local checkpoint commit',
+        'independent Review PASS is the default authorization for one exact local logical checkpoint',
+        'When four or more remain, preserve them all but first ask one bounded discriminator with at most three exhaustive groups',
+        'Required deterministic bookkeeping, metadata repinning, and role-owned repair are executed and reported rather than presented as user choices',
+        'evidence-grounded intent-gap trace',
+        'specified | implementation_open | product_open | authority_unknown',
+        'The user should not need a second request for the core problem',
+        'Independent Review removes authoring-session memory and self-confirmation, not approved project context',
+        'add a bounded expert note only when one non-obvious principle',
+        'This is a presentation/default behavior, never a new artifact',
         'A cross-session handoff is transport, not approval',
+        'configured code-inspection pause when applicable',
+        'mechanical/non-code changes never gain a ceremonial pause',
         'at a natural boundary, continue silently when the current session can likely finish the next bounded action and durable checkpoint',
         'Session age, turn count, or an invented token estimate is not evidence',
+        'missing and new-scaffold interaction preferences use `auto_after_pass + one_task + no_pause`',
+        'no-Git/unsealed Review never waits there',
         'The user never needs prerequisite external study merely to understand the current decision',
         'without naming the baseline and the concrete observable invariants that remain true',
         'Candidate manifests, managed files, migration sources, and resolved read links must remain inside the pinned read-only candidate source root',
@@ -674,7 +694,11 @@ $contractTokenRequirements = @{
         'interaction:',
         'checkpoint: auto_after_pass # auto_after_pass | ask',
         'routine_continuation: one_task # one_task | stop',
-        'Missing `interaction` remains backward-compatible and reads as `auto_after_pass + one_task`'
+        'code_inspection: no_pause # no_pause | before_next_task',
+        'Missing `interaction` and a new scaffold both read as `auto_after_pass + one_task + no_pause`',
+        '`before_next_task` is an explicit project opt-in',
+        'It is a pace preference, not a correctness approval or durable claim of understanding',
+        'including a required single-main revision-repin closure'
     )
     '.ai/lanes/_template/architecture.md' = @(
         'requirement_refs: []',
@@ -695,7 +719,13 @@ $contractTokenRequirements = @{
         'Earlier evidence may be reused only after an explicit impact check against that fresh candidate',
         'A generic request such as "review this" or a convenience-driven same-session role switch is not consent',
         'proceed only after the user explicitly accepts that limitation after the disclosure',
-        'Reduced-assurance Review is never canonical release evidence, Integration Gate evidence'
+        'Reduced-assurance Review is never canonical release evidence, Integration Gate evidence',
+        'reviewed diff: <exact base/range/fingerprint and scoped diff command | no-git/unsealed + reviewed changed-file manifest and path/symbol open sequence>',
+        'source roles: <each changed hand-written production path + key symbol + plain role + why changed|omit for none>',
+        'read order: <ordered changed paths/symbols following runtime flow|omit for none>',
+        'new source files: <whole-file paths|omit for none>',
+        'ACTION_CARDS.md#code-walkthrough',
+        'it never invents a Git revision, fingerprint, or Diff command'
     )
     '.ai/contracts/STATE.md' = @(
         'Integration queue',
@@ -716,7 +746,13 @@ $contractTokenRequirements = @{
         'repair preserves candidate bytes, approved intent, Task outcome, public boundary, and applicable Integration contract',
         'apply the canonical interrupted-attempt disposition in `.ai/contracts/TASK_RECORD.md#task-quality-gate`',
         'a Build/Review repair referenced by the active Integration queue `repair` mapping PASSes',
-        'single-main working-tree PASS must reach the `ACTION_CARDS.md` scoped checkpoint commit before another Task is materialized'
+        'single-main working-tree PASS must reach the `ACTION_CARDS.md` scoped logical checkpoint',
+        'await_code_inspection_then_resume_review_route',
+        'emit no `DO_NEXT` yet',
+        'descriptive inspected/continue reply arrives and candidate identity is unchanged',
+        'inspection changes Task-attributed candidate bytes',
+        'all generic accepted, checkpoint, Knowledge, next-Task, and Integration routes are suspended',
+        'Integration Review PASS; Task code-inspection pause is not applicable'
     )
     '.ai/contracts/ARTIFACT_AUTHORITY.md' = @(
         'Approved requirement vs source or observed behavior',
@@ -731,7 +767,14 @@ $contractTokenRequirements = @{
         'Do not block solely because the session is unattended or approval-bypassed',
         'BLOCKED type=context owner=user',
         'emit the `ACTION_CARDS.md` User Action Card',
-        'Product/requirements/planning documents are intent authorities within their approved scope, not implicit coding-Lane write targets'
+        'Product/requirements/planning documents are intent authorities within their approved scope, not implicit coding-Lane write targets',
+        'Silence is not permission to invent a new user-visible outcome',
+        'only the third returns to the user',
+        '## Checkpoint commit vocabulary',
+        '**Lane handoff commit**',
+        '**Single-main revision-repin closure commit**',
+        '**Integration Review checkpoint commit**',
+        'One checkpoint type never inherits another type''s path set'
     )
     '.ai/maintenance/UPDATE.md' = @(
         '## Checked candidate identity',
@@ -790,15 +833,47 @@ $contractTokenRequirements = @{
         'A human-readable label precedes its internal ID',
         '## Developer Status',
         'DEV_STATUS',
+        'content_committed_repin_pending',
+        '## Readable atomic decisions',
+        'show the recommendation and every viable alternative together',
+        'four or more genuinely viable user-owned outcomes remain',
+        'mutually exclusive, collectively exhaustive groups',
+        'exclude an outcome only with evidence that it is not currently viable',
+        'Each choice authorizes one atomic user-owned action',
+        'Required deterministic bookkeeping, exact metadata repinning, and role-owned repair are not choices',
+        'A general decision begins directly with `DECISION`',
+        '### Intent-gap preface',
+        '## Code walkthrough',
+        'CODE_WALKTHROUGH',
+        'current_behavior=<what the user/system does now + strongest evidence>',
+        'user_decision=<the remaining user-visible/product behavior the user can truly choose|none>',
+        'A rejected or previously failed approach belongs under evidence/rejected direction, not under `choices`',
+        '## Bounded expert note',
+        'Default to one; a `deep` explanation may use at most two or three',
+        'When the user says the explanation is unclear or tiring',
+        'Give every Task-touched hand-written production source file one plain-language role',
+        'A summary, raw directory list, Review link, or selected hunk alone never substitutes for opening the actual changed source',
+        'F1. <path>#<symbol>',
+        'R1. <path>#<symbol>',
+        'snapshot=no-git/unsealed',
+        'provide the exact `F#`/`R#` path+symbol open sequence instead of inventing a revision, Diff command, or sealed identity',
+        'Internal enums may be stored in state/result fields but never replace the displayed meaning',
+        'code_inspection=awaiting_user',
+        'purely mechanical/non-code PASS sets `not_applicable`',
+        'a `CODE_WALKTHROUGH` with `code_inspection=awaiting_user` stays in Reviewer',
+        'This pause applies only to an ordinary Task Review whose Git tree or canonical working-tree fingerprint can be revalidated',
+        'Integration Review always sets `code_inspection=not_applicable`',
         '## Single-main commit checkpoint',
         'COMMIT_READY',
         '## Editor/runtime check',
         'effect=<observe_only|candidate_mutating>',
         'independent Review PASS is the default authorization for one exact local checkpoint',
+        'content_revision=<commit> metadata_revision=<commit|none>',
+        'never offers compound `commit and continue` choices',
         'at most one next routine Task already covered by unchanged approved Architecture',
         'Any `candidate_mutating` result invalidates the old Build/Review identity',
-        'Before another Task starts, the accepted single-main change must have a verified checkpoint commit when Git is usable',
-        'The canonical displayed replies for `ask` are descriptive',
+        'Before another Task starts, the accepted single-main change must have a verified logical checkpoint when Git is usable',
+        'Canonical replies are descriptive semantic actions',
         'This never authorizes Push, tag, history rewrite'
     )
     '.ai/contracts/MAIN_DESK.md' = @(
@@ -825,7 +900,9 @@ $contractTokenRequirements = @{
     '.ai/integration/README.md' = @(
         'An Integration blocker must retain the queue item',
         'full range from the retained original `main_before`',
-        'queue `repair` mapping, not chat'
+        'queue `repair` mapping, not chat',
+        '`CODE_WALKTHROUGH` inspection pause is not applicable to this Integration Review',
+        'Integration Review checkpoint commit'
     )
     '.ai/integration/queue.yaml' = @(
         'repair: # optional; absent means no Integration repair is active',
@@ -836,6 +913,8 @@ $contractTokenRequirements = @{
         'Integration blocker repair and resume',
         'Cross-lane requirement revision',
         'pins `Docs/SharedPRD.md#REQ-SHARED-1@R2` once in its canonical `requirement_refs`',
+        'An eligible non-`main` ordinary Task Review may use the configured `CODE_WALKTHROUGH` pause',
+        'the later main Integration Review never creates that pause',
         'All ten cases must agree across:'
     )
     '.ai/evals/README.md' = @(
@@ -874,12 +953,27 @@ $contractTokenRequirements = @{
         'cross-session `DO_NEXT` is transport rather than approval',
         'a foregone, unreadable, or effectively unavoidable confirmation earns no quality credit',
         'a returning or confused user receives a one-screen chat-only `WORKING_SUMMARY`',
+        '`intent-gap-first-brief`',
+        'incomplete planning is decision-ready on the first response',
         'non-obvious reversible technical choices do not create a user Gate but remain learnable',
-        'name the compared baseline and concrete observable invariants'
+        'non-trivial explanations may add one bounded expert note after the core result/action by default',
+        'independent Reviewer freshness removes authoring memory, not approved user/project context',
+        'name the compared baseline and concrete observable invariants',
+        '`diff-first-code-ownership`',
+        '`readable-atomic-decision`',
+        'every non-trivial PASS that changes hand-written production source keeps the exact reviewed Diff directly inspectable',
+        'Reviewer replacement restores that wait',
+        'new and historical projects default to `no_pause`',
+        'no-Git/unsealed or mechanical/non-code PASS never receives an identity-dependent or ceremonial pause',
+        'four-or-more uses at most three exhaustive discriminator groups and no outcome silently disappears',
+        'required deterministic closure is not an option'
     )
     '.ai/evals/SCORECARD.md' = @(
         'eval_type: <source_regression|end_to_end|fixed_contract>',
-        'Use `source_regression` for canonical release evidence'
+        'Use `source_regression` for canonical release evidence',
+        '| intent-gap + decision clarity / unnecessary questions or gates |',
+        '| Change Brief / bounded expert-note grounding and fatigue |',
+        '| Direct Diff/source walkthrough / durable-pause usefulness |'
     )
     '.ai/maintenance/MAINTAIN.md' = @(
         'contract_or_route: <owning contract/path or route name|unknown>',
@@ -889,10 +983,14 @@ $contractTokenRequirements = @{
         'the one contract for an artifact the role will create or change',
         'never combine unrelated outcomes or widen an approved Task merely to reduce messages',
         'A pure same-Lane replacement may use `RESUME_SAME_LANE` only when checkout, Lane, session role/topology, durable route, and active candidate identity are unchanged',
-        'use the stable `WORKING_SUMMARY`, `DEV_STATUS`, or `COMMIT_READY` projection',
+        'readable-decision rules in `ACTION_CARDS.md`',
         'At a natural boundary before a new Architecture decision, Task/Build attempt, Review attempt, or Integration candidate',
         'Never invent an exact token/quota value, interrupt every turn, or replace solely because the chat is old',
-        'Do not require external study for the active decision'
+        'Do not require external study for the active decision',
+        'CODE_WALKTHROUGH',
+        'every changed source file in runtime order',
+        'never silently drop an outcome to satisfy the cap',
+        'Separate AI-owned implementation gaps from user-owned product gaps'
     )
     '.ai/roles/ARCHITECT.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -912,7 +1010,13 @@ $contractTokenRequirements = @{
         'Decision burden and learning are independent',
         '`gate necessity`',
         '`decision readiness`',
-        'An affirmative reply to a brief that fails either check is not durable approval'
+        'An affirmative reply to a brief that fails either check is not durable approval',
+        'ACTION_CARDS.md#readable-atomic-decisions',
+        'The user must not need to ask `explain more` merely to discover the core problem',
+        '`implementation_open`',
+        '`product_open`',
+        'Planning silence never authorizes invented user-visible behavior',
+        'For a non-trivial design, add at most one bounded expert note'
     )
     '.ai/roles/BUILDER.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -932,6 +1036,7 @@ $contractTokenRequirements = @{
         'three-way attribution',
         'never accept a new attempt ID as evidence that inherited Workflow bytes became user work',
         '.ai/contracts/REVIEW_RESULT.md#reduced-assurance-exception',
+        'Independence removes the authoring session''s hidden reasoning and self-confirmation',
         '.ai/contracts/ACTION_CARDS.md#editorruntime-check',
         'a user action that saved a Task-attributed asset/config/source routes Builder for a fresh Build/Review identity',
         'they do not claim to prove long-term maintainability or transfer that ownership',
@@ -939,17 +1044,30 @@ $contractTokenRequirements = @{
         '.ai/contracts/ACTION_CARDS.md#working-summary',
         'checkpoint=commit_ready',
         'route=<knowledge_maintainer|work|builder|architect|integration|user>',
-        'Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection'
+        'Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection',
+        'Give each changed production source file a one-sentence plain role',
+        'code_inspection=<awaiting_user|shown_no_pause|not_applicable>',
+        'Set `code_inspection=awaiting_user` only for an identity-revalidatable ordinary Task PASS with non-trivial hand-written production source under `before_next_task`',
+        'Use `shown_no_pause` for that same eligible Task PASS under `no_pause`, a missing preference, or no-Git/unsealed assurance',
+        'Use `not_applicable` for Integration Review, `fail`/`blocked`, or a purely mechanical/non-code PASS',
+        'documented no-Git/unsealed changed-file manifest and path/symbol open sequence',
+        'only when `code_inspection` is not `awaiting_user`',
+        'direct Diff/source inspection support human code ownership',
+        'The note is optional presentation, not a finding, PASS condition, quiz, scope expansion'
     )
     '.ai/roles/WORK.md' = @(
-        'explicit current-status, Task-diff, commit-readiness, or interaction-preference question',
+        'explicit current-status, Task-diff, source-reading, commit-readiness, or interaction-preference question',
         'without a user-visible Architect handoff or repeated approval',
         'stops at `ready_to_review`',
         'A terse continue signal outside a currently displayed bounded choice',
         'Treat `DO_NEXT` as transport, not a user approval request',
-        'no preference authorizes Push, tag, another commit, or an unreviewed candidate',
+        'no preference authorizes Push, tag, another content checkpoint, or an unreviewed candidate',
         'a feature boundary is only a safe checkpoint, not replacement evidence by itself',
-        'if that threshold is not met, continue silently'
+        'if that threshold is not met, continue silently',
+        '`code_inspection: before_next_task` pauses the already-determined post-PASS route only for a candidate whose immutable Git tree or canonical working-tree fingerprint can be revalidated',
+        'A no-Git/unsealed Review shows the walkthrough with `shown_no_pause` and never enters this wait',
+        'Complete any required single-main revision-repin closure as deterministic checkpoint work instead of asking the user to choose it',
+        'The checkpoint choice never bundles the optional next Task'
     )
     '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
         '.ai/contracts/KNOWLEDGE.md',
@@ -977,6 +1095,8 @@ $contractTokenRequirements = @{
         'Self-check criteria are stable by default',
         '`no_change`: no candidate meets `adopted`',
         'The Reviewer cannot modify its criteria during the Review it is currently judging',
+        'invariant | gate | default | presentation',
+        'One personal observation is discovery evidence, not universal authority',
         'WORKFLOW_REVIEW RESULT=<pass|changes_required|blocked>',
         'independence=<independent_session|reduced_assurance>',
         'self_check=<pass|corrected|blocked> corrections=<n>',
@@ -993,7 +1113,9 @@ $contractTokenRequirements = @{
         'Every counted P2 must have a detailed finding',
         'apply its mode-selection rule',
         'workflow_review_mode: <selected changed|full>',
-        'A canonical PASS record requires every named case to be `pass`'
+        'A canonical PASS record requires every named case to be `pass`',
+        'Before promoting an accepted candidate, classify its enforcement level',
+        'A single personal observation normally remains a project preference'
     )
 }
 foreach ($contractPath in $contractTokenRequirements.Keys) {
@@ -1209,6 +1331,7 @@ Assert-YamlScalar '.ai/shared/SYSTEM_ARCHITECTURE.md' 'requirement_refs' '[]'
 Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'entrypoints' '[]'
 Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'checkpoint' 'auto_after_pass' -AnyIndent
 Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'routine_continuation' 'one_task' -AnyIndent
+Assert-YamlScalar '.ai/shared/knowledge/project.yaml' 'code_inspection' 'no_pause' -AnyIndent
 Assert-YamlScalar '.ai/shared/knowledge/glossary.yaml' 'terms' '[]'
 
 $templateStatePath = Get-RepositoryPath '.ai/lanes/_template/state.yaml'
@@ -1379,6 +1502,9 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             '## Fixture 17',
             '## Fixture 18',
             '## Fixture 19',
+            '## Fixture 20',
+            '## Fixture 21',
+            '## Fixture 22',
             'The canonical trigger list and case routing live there; do not maintain a second list in this file',
             'state transitions directly to `synced/idle`',
             '`base` is the fixed first manifest line',
@@ -1443,7 +1569,38 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'Viability is assessed only at the natural boundary, not reported every turn',
             'Scenario C also continues because chat age or turn count alone is not evidence',
             'Scenarios B and D do not start the next substantial action',
-            'never claims completion or weakens candidate/Review identity to squeeze in another step'
+            'never claims completion or weakens candidate/Review identity to squeeze in another step',
+            'Every changed hand-written production source file receives a one-sentence plain-language role',
+            'The `files` list uses `F#` and the runtime `read_order` uses `R#`',
+            'internal tokens such as `inspected_continue` or an unqualified `explain_2` never replace their meaning',
+            'A Change Brief, Review artifact link, directory list, or selected hunk alone does not satisfy the walkthrough',
+            '`accepted/active + next.role: reviewer + next.action: await_code_inspection_then_resume_review_route`',
+            'A replacement Reviewer reconstructs the same walkthrough and route from state',
+            'A mechanical/generated-only or non-code PASS returns `not_applicable`',
+            'The no-Git variant records `snapshot=no-git/unsealed`',
+            'It returns `shown_no_pause` even when the project opted in',
+            'New-scaffold `no_pause` and historical missing `code_inspection` both return `shown_no_pause`',
+            'The pause applies to ordinary Task Review on `main` or non-`main`; Integration Review returns `not_applicable`',
+            'The reply controls pace only: it does not approve correctness, certify permanent understanding',
+            'If the user edits/saves candidate bytes, the old PASS is not reused',
+            'No exhaustive permanent file catalog, new role/session, quiz, score, or approval Gate is created',
+            'The first decision screen leads with one plain question, marks the recommendation, and shows every currently viable alternative together',
+            'This general checkpoint decision begins directly with `DECISION`',
+            'The four-outcome decision first asks one discriminator with no more than three mutually exclusive, collectively exhaustive groups',
+            'A number or letter may be accepted only as a short alias after the readable atomic choices are displayed',
+            'The untested partial commit is not offered as a selectable strategy',
+            'Required metadata repinning is deterministic checkpoint closure, not another user option',
+            '`DEV_STATUS` reports `checkpoint=content_committed_repin_pending`',
+            '`COMMIT_READY` asks only whether to create the displayed checkpoint',
+            'If only one materially safe path remains, the role reports or executes that predetermined action under existing authority',
+            'The first Architect response begins with `current_behavior`, `intended_behavior`, and `confirmed_gap`',
+            'The unspecified internal mechanism is `implementation_open`',
+            'The unspecified later user-visible behavior is `product_open`',
+            'already disproven technical approach is shown only as rejected evidence',
+            'A fresh independent Reviewer still reconstructs the approved user need from exact requirement refs',
+            'a non-trivial change may add one bounded expert note by default',
+            'The expert note never precedes or obscures the action',
+            'When confusion or fatigue is signaled, the role simplifies the core before adding depth'
         )) {
         if (-not $goldenCoreText.Contains($goldenToken)) {
             Add-Failure "Golden Core Behavior is missing oracle token: $goldenToken"

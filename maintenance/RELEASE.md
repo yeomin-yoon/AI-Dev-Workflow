@@ -109,3 +109,12 @@ Run only on explicit maintenance request. Batch related pending observations, ve
 - a migration only when a preserved schema must change.
 
 Never release solely from popularity, one unsupported observation, or lower token count that loses correctness, safety, verification, or user understanding.
+
+Before promoting an accepted candidate, classify its enforcement level as `invariant | gate | default | presentation`:
+
+- `invariant`: prevents evidenced loss, authority/scope corruption, unsafe external effect, candidate-identity confusion, or quality-floor failure;
+- `gate`: only a real user-owned consequential choice or unavailable mandatory human evidence;
+- `default`: the usual reversible operation, overridable by stronger project evidence or an explicit preference;
+- `presentation`: user-language ordering/readability guidance whose absence alone never invalidates safe Build/Review evidence.
+
+A single personal observation normally remains a project preference, documentation/presentation improvement, or `needs_evidence`; it becomes a Core hard invariant only when one directly evidenced high-severity loss/authority/safety failure justifies immediate protection, or repeated/cross-context evidence demonstrates the same general failure surface. Before adding any hard rule, prove that existing authority does not already cover it, state its cross-domain failure surface, measure normal-path Context/Gate/blocking cost, and add an inverse case that rejects over-blocking. Prefer merging or narrowing an existing rule over adding another one. `no_change` is a successful triage result.
