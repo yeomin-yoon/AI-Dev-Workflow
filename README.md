@@ -221,9 +221,11 @@ Read `.ai/BOOTSTRAP.md`. role=reviewer, lane=main, session_mode=strict, user_lan
 - **Architecture:** 중요한 구조 선택이 있을 때만 Work가 프로젝트 근거와 한국어 Decision Brief를 보여준다. 같은 세션에서 승인하거나 수정 요청하면 되며, 내부 `architecture.md`를 직접 읽을 필요는 없다. 승인 범위 안의 일반 Task는 내부 Architect가 JIT으로 만들 뿐 사용자에게 다시 승인이나 세션 이동을 요구하지 않는다.
 - **선택 화면:** 실제로 결과가 달라지는 선택만 묻는다. 가능한 결과가 2~3개면 첫 화면에 **추천과 가능한 대안 전부**를 함께 보여주고, 각각 `무엇이 달라지는지·실제 대가`를 짧게 적는다. 4개 이상이면 아무 대안도 숨기지 않고 먼저 최대 3개의 상호 배타적·전체 포괄 범주로 판별 질문을 한 뒤, 선택한 범주의 모든 대안을 다음 화면에 보여준다. 긴 파일·테스트·내부 ID 목록은 근거 링크나 scoped Diff로 뒤에 두며, `1/A` 같은 답은 이미 표시된 의미 있는 선택의 단축 입력일 뿐이다. 필수 상태 재고정이나 안전한 내부 정리는 선택지로 만들지 않고 처리 후 보고하며, `커밋 + 다음 Task`처럼 서로 다른 행동도 한 선택에 묶지 않는다. <!-- readable-choice: recommendation-and-alternatives-together; checkpoint-repin: mandatory-not-choice -->
 - **불완전한 기획:** AI는 먼저 `현재 실제 동작 → 기획서의 정확한 의도 → 둘 사이의 빠진 부분`을 쉬운 말로 보여준다. 기획에 명시된 행동은 그대로 지키고, 클래스·함수·내부 책임처럼 사용자 체감이 없는 빈칸은 프로젝트 근거로 되돌리기 쉽게 결정해 설명한다. 반대로 기획에 없는 플레이·제품 동작은 마음대로 만들지 않고 그 부분만 사용자에게 묻는다. 이미 실행 근거로 실패한 기술 방향은 다시 정상 선택지로 올리지 않는다. <!-- intent-gap-brief: current-intent-gap-ai-user; planning-gap-classification: specified-implementation-product-authority -->
+- **진단과 진행:** 이상 동작을 조사할 때는 현재 Task의 합격 기준과 승인된 기획 의도를 먼저 확인한다. AI는 `직접 관찰 / 아직 가설 / 확인 완료`를 구분하고, 다른 원인을 가르는 확인이 끝나기 전에는 원인을 확정했다고 말하지 않는다. 현재 합격을 직접 깨는 문제만 작업을 멈추며, 관련 있지만 비차단인 발견이나 추측은 새 Task·선택·검토 연쇄로 만들지 않는다. 사용자 확인이 필요하면 첫 줄에 **지금 할 일 하나와 저장 여부**를 적고, 같은 화면에서 볼 수 있는 확인은 한 번에 묶는다. 상태·노드·전이처럼 처음 쓰는 화면 용어가 단계에 들어가면 보이는 이름과 현재 작업에서의 역할을 먼저 설명하고, 전체 동작 흐름과 완료된 화면 모양을 단계 전에 보여준다. `지난번과 같다`는 말로 절차를 생략하거나 보지 못한 주변 설정까지 안전하다고 단정하지 않는다. 기획이 이미 정한 결과를 다시 선택지로 묻거나, 확인되지 않은 가설을 Architecture·Task·Knowledge의 사실로 기록하지 않는다. <!-- diagnostic-discipline: intent-evidence-one-action-delivery-focus; manual-authoring-guide: whole-flow-first-use-terms-finished-shape -->
 - **전문가 메모와 피로 제한:** 핵심 문제·추천/결과·다음 행동을 먼저 보여준 뒤, 이번 변경을 유지보수하거나 비슷한 실수를 피하는 데 재사용할 전문 원리 하나만 기본으로 덧붙인다. 쉬운 의미를 먼저 말하고 정확한 용어·현재 코드 위치·다음에도 쓸 판단 기준을 연결한다. 기계적·반복적·관련 없는 지식은 생략하고, 사용자가 어렵거나 피곤하다고 하면 더 가르치기 전에 핵심부터 쉽게 다시 설명한다. 이는 새 수업·퀴즈·승인 Gate가 아니다. <!-- bounded-expert-note: core-first-one-by-default -->
 - **Review:** `RESULT=ready_to_review`이면 Reviewer에서 검증한다. 일반 Task의 `pass`는 실제 reviewed Diff와 변경된 소스파일 역할·읽는 순서를 `CODE_WALKTHROUGH`로 먼저 보여준다. 새 설치와 설정 없는 기존 설치는 기본적으로 Walkthrough를 보여준 뒤 멈추지 않는 `no_pause`이며, 위의 `Task마다 코드 확인 후 계속` 문장으로 프로젝트가 명시적으로 opt-in한 경우에만 identity를 재검증할 수 있는 비자명한 production-source Review에서 답변을 기다린다. Git 없는 `no-git/unsealed` Review는 opt-in 상태여도 동일성 재검증이 불가능하므로 설명만 보여주고 멈추지 않는다. 파일 설명은 `F1`, 읽기 단계는 `R1`처럼 구분해 질문할 수 있다. 기계적·비코드 변경은 확인 대기를 만들지 않으며, main에 적용된 범위를 다시 확인하는 Integration Review도 별도의 코드 확인 대기를 만들지 않는다. `implementation`은 Work/Builder가 자동 수정하고, 구조·외부 공개 계약 변경은 Work/Architect로 보내지만 산출물(artifact) 형식·상태 계약 문제는 해당 산출물의 작성 역할로 보낸다. 사용자는 분류를 다시 해석하지 말고 Reviewer가 생성한 안내를 따른다. `BLOCKED owner=user`이면 같은 Reviewer가 `EDITOR_CHECK`로 열 위치·준비·조작·관찰 위치·PASS/FAIL·복붙 답변을 안내한다.
-- **에디터 검증:** 보기만 하는 검증은 후보가 그대로일 때 같은 Review가 이어진다. 에디터 자산·설정·소스를 저장했다면 후보가 바뀐 것이므로, 동작이 정상이어도 Builder가 변경 경로와 fingerprint를 새 Build Result로 다시 묶은 뒤 Reviewer가 새 후보를 검증한다. Task 범위 밖이나 출처 불명 파일은 자동으로 포함하지 않는다.
+<!-- planned-editor-authoring: builder-before-review -->
+- **에디터 작업·검증:** Task에서 미리 아는 에디터 자산·설정 저장은 구현의 일부이므로 Builder 단계에서 한 번에 안내·반영한 뒤 최종 검증하고 Reviewer에게 넘긴다. 보기만 하는 검증은 후보가 그대로일 때 같은 Review가 이어진다. Review가 시작된 뒤 새로 발견된 저장 작업은 후보를 바꾸므로, 동작이 정상이어도 Builder가 변경 경로와 fingerprint를 새 Build Result로 다시 묶은 뒤 Reviewer가 새 후보를 검증한다. Task 범위 밖이나 출처 불명 파일은 자동으로 포함하지 않는다.
 - **Git 체크포인트:** Git을 쓰는 기본 main 작업에서는 독립 Review PASS가 정확히 검토된 범위의 로컬 체크포인트 시점이자 기본 권한이다. Work는 fingerprint·포함/제외 경로·Hook·서명·자격증명을 다시 확인하고 안전할 때만 검토된 내용 커밋을 만든다. 그 revision을 state/Knowledge에 다시 적어야 하면 해당 메타데이터만 자동 재고정해 별도 closure 커밋으로 남기고 두 revision을 함께 보고한다. 이것은 필수 내부 마무리이지 다시 고를 항목이 아니다. 코드 확인 대기와 체크포인트가 끝나면 새 설치는 승인된 Architecture의 다음 일반 Task 하나까지 진행한다. 코드 확인 정지·커밋 전 확인·커밋 뒤 정지는 위 문장으로 프로젝트 설정을 바꿀 수 있다. 어느 설정도 Push·태그·새 Architecture·외부 작업·다음 내용 커밋을 승인하지 않는다.
 - **설명과 갱신:** 동작이나 구조가 달라진 PASS에는 실제 Diff와 검증 근거를 사용한 `Change Brief`와 `CODE_WALKTHROUGH`가 붙는다. Reviewer는 변경된 손수 작성 production source마다 `이 파일이 맡는 역할·이번에 바뀐 이유`를 한 줄로 적고, 진입점부터 결과까지 읽는 순서와 테스트가 증명하는 범위를 연결한다. Work는 필요한 Knowledge 갱신을 수행하거나 작은 변경을 다음 체크포인트까지 묶는다.
 - **인계:** 다른 세션이 필요하면 `DO_NEXT session=... say="..."`가 생성된다. 병렬 작업에서는 `lane`과 `worktree`도 표시된다. 내부 `route`를 해석하지 말고 안내된 문장만 지정된 세션에 붙여넣는다.
@@ -304,9 +306,9 @@ main Reviewer의 통합 검증이 PASS하면 Review와 통합 Queue 정보만 �
 
 main은 이 카드가 가리키는 파일과 Git을 직접 확인하고 다음 행동 하나를 선택한다. 새 세션이 필요하면 정확한 폴더·역할 Prompt·첫 요청까지 채운 `NEXT_SESSION`을 주므로 사용자는 과거 Prompt나 대화를 보관할 필요가 없다.
 
-종료 시 Workflow 불편사항의 자동 기록 조건도 한 번 확인하지만, 근거가 분명한 문제만 `OBS-*.yaml`로 저장한다. 반드시 남기고 싶다면 빠른 표의 기록 후 복귀 문장을 사용한다.
+종료는 상태와 Git만 정리하고 Workflow 불편을 자동 기록하지 않는다. 불편을 바로 고치고 싶으면 **AI Dev Workflow 배포 저장소** 세션에서 `이 Workflow를 쓰면서 <불편>했어. 어떻게 생각해?`처럼 그냥 말하면 된다. 현재 프로젝트에 로컬 기록을 꼭 남겨야 할 때만 명시적으로 Observation 캡처를 요청한다.
 
-결과의 `RETURN_TO_MAIN`에서 `observation=<path>`이면 현재 Worktree에 저장된 것이다. `none`이면 자동 기록 조건에 해당하지 않은 것이다. Observation만 남아 있는 `dirty` 상태는 봉인된 커밋의 병합을 막지는 않지만 Worktree 삭제는 막는다. AI Dev Workflow 배포 저장소로 자동 전송되지 않으므로 main은 삭제 가능 여부를 안내하기 전에 개선 기록의 보존 여부도 확인한다.
+결과의 `RETURN_TO_MAIN`에서 `observation=<path>`이면 사용자가 명시적으로 요청해 현재 Worktree에 남긴 기록이다. `none`은 로컬 기록이 없다는 뜻일 뿐 자동 판정을 실행했다는 뜻이 아니다. Observation만 남아 있는 `dirty` 상태는 봉인된 커밋의 병합을 막지는 않지만 Worktree 삭제는 막는다. AI Dev Workflow 배포 저장소로 자동 전송되지 않는다.
 
 ### 문제가 생겼을 때
 
@@ -329,7 +331,8 @@ Read `.ai/reference/OPERATIONS.md` and handle this issue:
 
 | 하고 싶은 일 | 입력할 곳 | 입력 |
 |---|---|---|
-| 불편사항 기록 | 아무 세션 | `방금 문제를 Workflow 개선 후보로 기록해줘.` |
+| 불편사항 바로 검토 | 배포 저장소 세션 | `이 Workflow를 쓰면서 <불편>했어. 어떻게 생각해?` |
+| 로컬 기록을 선택적으로 보존 | 현재 프로젝트 세션 | `방금 문제를 Workflow 개선 후보로 기록해줘.` |
 | 여러 설치본 기록 취합 | 배포 저장소 세션 | `다음 설치본들의 Workflow 개선 기록만 이 배포 저장소에 취합해줘. sources: <경로들>` |
 | 취합 기록 검토 | 배포 저장소 세션 | `취합된 Workflow 개선 기록을 검토하고 업데이트 후보를 정리해줘.` |
 | Workflow 자체 검토 | 배포 저장소의 새 세션 | `Read maintenance/WORKFLOW_REVIEW.md and review the current Workflow. mode=changed user_language=ko` |
@@ -338,9 +341,7 @@ Read `.ai/reference/OPERATIONS.md` and handle this issue:
 | 배포용 `.ai` 갱신 | 배포 저장소의 새 세션 | `Read maintenance/RELEASE.md and run BUILD_RELEASE_COPY. sources: <경로들>` |
 | 소스 커밋 후 릴리스 검토·Eval 확정 | 소스를 수정하지 않은 새 배포 저장소 세션 | `Read maintenance/RELEASE.md and run FINALIZE_RELEASE_EVAL for HEAD.` |
 
-사용 중 놓치고 싶지 않은 문제가 있으면 어느 세션에서든 위의 불편사항 기록 문장을 입력한다.
-
-명백한 오경로·가짜 BLOCKED·필수 안내 누락·반복 복구 실패처럼 증거가 있는 Workflow 문제는 역할이 작업을 멈추는 시점에 자동으로 중복 없이 기록한다. 일반 코드 버그나 한 번의 실수는 자동 기록하지 않는다. 기록될 때만 `WORKFLOW_OBSERVATION=<path>` 한 줄이 나온다.
+대부분은 배포 저장소에서 그냥 문제를 이야기하면 된다. 현재 프로젝트 작업을 마치기 전에 증거를 잃을 위험이 있을 때만 로컬 기록을 선택한다. 일반 역할은 세션 종료를 이유로 새 개선 작업을 만들지 않는다.
 
 <!-- workflow-review-summary: canonical-lenses-1-through-10 -->
 `Workflow 자체 검토`는 프로젝트 코드를 리뷰하는 Reviewer와 다르다. 배포 저장소에서 목적·첫 사용·단계·책임·실패 복구·검증·권위·Context·이식성·효율·유지보수·보안을 종합 점검하고, 마지막에 자신의 첫 판정도 한 번 역검증하는 읽기 전용 절차다. 누락·오탐·개수/결론 모순을 고칠 수 있지만 무한 재검토는 하지 않으며, 파일 수정이나 릴리스를 자동으로 수행하지 않는다. 기본 복붙문은 `changed`이고, 첫 기준선·대규모 재설계·정기 감사에만 `mode=full`로 바꾼다. 공개 릴리스에서는 소스를 작성하지 않은 새 `FINALIZE_RELEASE_EVAL` 세션이 깨끗한 커밋을 검토하고 자기검증 결과까지 release Eval에 함께 보존한다.
@@ -429,7 +430,7 @@ Workflow를 변경할 때 사용하는 철학의 단일 기준은 [Design Princi
 이 Workflow의 주인공은 파일이나 Git이 아니라 판단하는 사용자다. 파일·Task·Reviewer·Eval은 AI가 근거를 건너뛰거나 중요한 판단까지 대신하지 못하게 하는 보조 장치다.
 
 <!-- public-philosophy-summary: canonical-design-principles-1-through-11 -->
-<!-- public-philosophy-source-sha256: 2e4e39dabbf9eb9f6ff5ffc77e6e4c1fac72603546eab4b3a7381d57ec699fa8 -->
+<!-- public-philosophy-source-sha256: cf0c1c2d77f5e98ad080dea4090bbc462bac53e876973ef85cab61974052a8f0 -->
 1. **채팅 기억보다 파일과 Git.** 세션은 교체 가능한 작업자이고, 지속 상태·결정·근거·이력은 각 파일과 Git에 남긴다.
 2. **크게 사고하고 작게 구현.** 사람과 Architect는 Feature 규모의 의도와 구조를 판단하고, Builder는 한 번에 작은 승인 Task 하나만 구현한다.
 3. **입력 깊이는 사용자에 맞춘다.** 짧은 요청·상세 명세·참조 문서뿐 아니라 아직 전문적으로 정의되지 않은 문제 감각도 유효한 Seed로 보존한다. 프로젝트에서 알 수 있는 맥락을 찾아 증상과 원인 후보를 먼저 번역하고, 결과를 바꾸는 사용자 소유 불확실성만 질문한다.
@@ -438,7 +439,7 @@ Workflow를 변경할 때 사용하는 철학의 단일 기준은 [Design Princi
 6. **자기 승인보다 독립 검증.** 결과를 만든 세션은 자신의 결과에 독립 PASS를 줄 수 없으며, 문제는 원인을 소유한 역할로 보낸다.
 7. **실제로 선택할 수 있는 중요한 결정만 사람이 통제.** AI는 되돌릴 수 있는 지역 판단과 검증된 반복 작업을 맡는다. 거절해도 다음 행동이 같거나 안전한 선택지가 하나뿐이면 승인받지 않고 이유와 결과만 알린다. 사용자 소유 결과가 달라지는 선택은 첫 화면에 추천과 실제 대안을 함께 놓고, 각각의 결과와 대가가 보일 때만 묻는다. 필수 내부 정리와 선택 가능한 다음 행동을 한 승인에 묶지 않는다. 독립 AI 검토는 부담을 줄일 뿐 코드 소유권을 대신하지 않으며, 낯설거나 중요한 변경은 유지해야 할 핵심 흐름·불변조건과 확인 위치를 보여준다.
 8. **좋은 코드는 패턴 수가 아니라 의도·안전·필요로 판단.** 프로젝트 규칙과 실제 변경 압력을 우선하고, 근거 없는 추상화·다형성·최적화는 요구하지 않는다.
-9. **토큰·시간 절감보다 품질 하한.** 정확성·안전·승인 범위·유지보수성·검증·필요한 사용자 이해를 잃은 절약은 개선으로 인정하지 않는다.
+9. **먼저 품질 하한, 그다음 낭비 제거.** 정확성·안전·승인 범위·유지보수성·필수 검증·필요한 사용자 이해는 지킨다. 그 안에서는 반복할 때마다 새 근거가 있어야 하며, 구현 중에는 좁게 확인하고 안정된 후보를 한 번 제대로 검증한다.
 10. **모델을 바꿀 수 있어도 결과 동등성을 가정하지 않는다.** 같은 파일 계약은 여러 AI 도구에서 사용할 수 있지만, 실질적 동등성은 측정된 Eval로만 주장한다.
 11. **단순한 기본 경로, 복잡성은 필요할 때만.** `main` Work와 독립 Reviewer를 기본으로 하고, 추가 역할·Lane·Worktree·Integration·전체 Eval은 실제 필요가 있을 때만 활성화한다.
 
@@ -530,7 +531,7 @@ Knowledge가 오래됐거나 구조와 충돌하면 자동으로 전체 갱신�
 
 `.ai` 내부 문서는 토큰 효율과 모델 간 일관성을 위해 영어로 유지한다. 사용자가 영어 파일을 읽어야 승인할 수 있게 만들지는 않는다. 채팅의 Decision Brief, 질문, 실패 영향, Change Brief, 수동 검증 안내는 `user_language=ko`에 따라 한국어로 나오며, `RESULT`, `PASS` 같은 기계 판독 값만 영어로 유지된다. 코드와 게임 문구는 프로젝트 규칙을 따른다.
 
-같은 Lane·Worktree·역할의 단순 교체는 파일과 Git을 다시 읽는 `RESUME_SAME_LANE`으로 바로 복원한다. Lane 이동·새 Worktree·후보 복귀·Integration 판단이 필요한 비-main 종료만 `RETURN_TO_MAIN`으로 접수처에 복귀한다. main은 파일과 Git을 근거로 `NEXT_SESSION`, Integration, 사용자 조치 또는 종료 중 하나를 선택한다. 조건을 만족한 Workflow 불편은 별도 Observation 파일에 남고, 전체 대화는 전달하지 않는다.
+같은 Lane·Worktree·역할의 단순 교체는 파일과 Git을 다시 읽는 `RESUME_SAME_LANE`으로 바로 복원한다. Lane 이동·새 Worktree·후보 복귀·Integration 판단이 필요한 비-main 종료만 `RETURN_TO_MAIN`으로 접수처에 복귀한다. main은 파일과 Git을 근거로 `NEXT_SESSION`, Integration, 사용자 조치 또는 종료 중 하나를 선택한다. 세션 종료는 새 Workflow 개선 작업을 자동으로 만들지 않으며, 전체 대화도 전달하지 않는다.
 
 ### Lane과 Worktree
 

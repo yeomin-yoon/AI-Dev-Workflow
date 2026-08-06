@@ -14,7 +14,7 @@ This is the single canonical statement of why the Workflow is designed as it is.
 6. **Independent Review over self-approval.** The author of a candidate cannot silently grant it an independent PASS. Findings route to the role that owns the defect without preference-driven redesign.
 7. **Informed user judgment for consequential decisions.** AI makes reversible local choices and routine verified operations without interruption. A user Gate exists only when the user has a real choice between materially different user-owned outcomes, scope, public compatibility, irreversible/external effects, cost/risk, or mandatory human acceptance. Before that Gate, expose evidence, concrete observable consequences, recommendation, deferral/rejection consequence, uncertainty, and reconsideration conditions in language the user can use; an unexplained or effectively unavoidable approval is ceremony, not valid control. Explanations are intended to support natural learning without quizzes or ceremony; they do not guarantee skill growth. Independent AI Review reduces review burden but never transfers code ownership or proves long-term maintainability; consequential or unfamiliar accepted changes expose a focused path to the flow and invariants the user may need to maintain, without mandatory line-by-line ceremony.
 8. **Engineering quality is intent, safety, and justified change—not pattern count.** Names, types, ownership, and APIs should expose real domain intent and protect invariants. Responsibilities follow reasons to change; extension points and performance work require actual pressure or evidence. Applicable sourced team/project rules outrank these generic heuristics; otherwise prefer simple project-consistent code over ceremonial SOLID, speculative polymorphism, or clever syntax.
-9. **Quality floor before token or time savings.** Correctness, safety, approved scope, maintainability, verification, and necessary user understanding must hold before lower tokens, elapsed time, or human actions count as an improvement.
+9. **Quality floor before token or time savings, then remove waste.** Correctness, safety, approved scope, maintainability, verification, and necessary user understanding must hold first. Within that floor, every repeated check or handoff must add distinct evidence: iterate with focused feedback, verify one coherent candidate, and never duplicate a full suite merely to look rigorous.
 10. **Model-agnostic operation without assumed parity.** Providers and model strengths may change while the same file contracts remain usable. Practical equivalence is an Eval conclusion, never a design claim.
 11. **Simple default path; complexity only on demand.** One `main` Work session plus an independent Reviewer is the default. Strict role topology, extra Lanes, Worktrees, Integration, maintenance, and full Evals activate only for explicit need.
 
@@ -69,7 +69,10 @@ Independent Review removes authoring-session memory and self-confirmation, not a
 - Builder cannot redesign; Reviewer cannot implement; Knowledge Maintainer cannot approve code.
 - Before new code or dependencies, prefer no change/configuration, existing project code, engine/platform/standard-library capability, and approved installed dependencies in that order; then add the minimum correct implementation. Never trade away validation, failure handling, security, accessibility, lifetime safety, or verification for fewer lines.
 - Stop repeated attempts when no new evidence is being produced.
+- Ordinary execution and evidence invalidation follow `.ai/BOOTSTRAP.md#active-delivery-kernel`; a mandatory final check stays mandatory, but unchanged successful evidence is not a reason to rerun it.
 - When evidence shows the approved approach or Task boundary itself is directionally wrong, stop stacking compensating patches. Preserve unrelated work, supersede the affected Task, and return to Architect for re-scope and any required reapproval; cleanup is limited to attributable reversible changes and never uses destructive rollback as an automatic recovery.
+- Keep the current Task's approved observable outcome as the active delivery anchor. Before proposing a cause, user choice, or manual check, reread its exact ACs and applicable approved intent, then apply `.ai/reference/OPERATIONS.md#bounded-diagnosis-during-active-delivery`. A real discovery interrupts only when it is a directly evidenced current blocker; non-blocking follow-up and speculation never start a recursive repair chain or silently replace the intended outcome.
+- Distinguish `observed | inferred | confirmed` evidence. Never call a root cause confirmed until a discriminating check rules out material alternatives, and never store an unconfirmed hypothesis as approved Architecture, Task intent, state truth, or Knowledge. Delivery focus never hides a failed mandatory AC, candidate regression, invalid boundary, unverifiable candidate/required check, or high-severity safety/loss risk.
 
 ## Progressive transparency
 
@@ -131,13 +134,13 @@ Do not require Knowledge integration after every small accepted Task. Reviewer c
 Maintenance is an on-demand procedure, not a fifth role or permanent session.
 
 ```text
-observed friction → local Observation → explicit canonical collection
-→ deduplicated candidate → triage → minimal change
+observed friction → direct canonical discussion or optional local Observation
+→ evidence-scoped triage → minimal change
 → regression Eval → version + migration → managed-path update
 ```
 
-- Manual capture always records the user's report as pending, marking unsupported details `unknown`.
-- Automatic capture runs only at a natural role stop and requires the narrow evidence triggers in `BOOTSTRAP.md`; ordinary project defects and isolated corrected model slips are excluded.
+- A user may simply describe or paste friction in the canonical distribution checkout. Discussion and diagnosis need no Observation artifact or special command; source edits still require an explicit change request and never imply commit/release authority.
+- Optional installed-project capture runs only on an explicit user request, records the report as pending, and marks unsupported details `unknown`. Ordinary project roles never auto-create maintenance work at close.
 - Capture never edits Workflow Core, blocks the current Task, or changes lane state. Triage/release happens only on explicit maintenance request.
 - Records from installed projects/worktrees remain local until an explicit canonical-distribution collection request supplies their roots. Collection reads only Observation YAML, is idempotent by source record, groups exact fingerprints, and never imports project state or starts triage/release.
 - `.ai/maintenance/managed-paths.yaml` separates replaceable Core/templates from preserved project Knowledge, lanes, integration/eval results, observations, and local update state.
@@ -162,4 +165,4 @@ Tool, model, and effort are user-selected; the Workflow never assumes or switche
 
 ## Session close
 
-`.ai/contracts/SESSION_CLOSE.md` owns the close checkpoint, result schema, Observation line, and non-main return route. Do not duplicate or alter that schema here.
+`.ai/contracts/SESSION_CLOSE.md` owns the close checkpoint, result schema, and non-main return route. Do not duplicate or alter that schema here.

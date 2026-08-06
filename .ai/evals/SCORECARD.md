@@ -53,6 +53,7 @@ Use `source_regression` for canonical release evidence. For that type, provider/
 | user-language approval and blocker actionability | | |
 | Change Brief / bounded expert-note grounding and fatigue | | |
 | Direct Diff/source walkthrough / durable-pause usefulness | | |
+| verification cadence / distinct evidence per repeated check | | |
 | verification-claim accuracy | | |
 | simplicity / reuse without safety loss | | |
 | human corrections | | |

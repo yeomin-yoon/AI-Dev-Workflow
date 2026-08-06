@@ -612,6 +612,9 @@ $contractTokenRequirements = @{
         'checkpoint-repin: mandatory-not-choice',
         'intent-gap-brief: current-intent-gap-ai-user',
         'planning-gap-classification: specified-implementation-product-authority',
+        'diagnostic-discipline: intent-evidence-one-action-delivery-focus',
+        'manual-authoring-guide: whole-flow-first-use-terms-finished-shape',
+        'planned-editor-authoring: builder-before-review',
         'bounded-expert-note: core-first-one-by-default',
         'code-walkthrough-default: no-pause-do-next-visible',
         '`RESUME_SAME_LANE`',
@@ -642,17 +645,30 @@ $contractTokenRequirements = @{
         'missing and new-scaffold interaction preferences use `auto_after_pass + one_task + no_pause`',
         'no-Git/unsealed Review never waits there',
         'The user never needs prerequisite external study merely to understand the current decision',
+        'Keep the current Task''s approved observable outcome as the active delivery anchor',
+        'Distinguish `observed | inferred | confirmed` evidence',
+        'Never call a root cause confirmed until',
         'without naming the baseline and the concrete observable invariants that remain true',
+        'every repeated check or handoff must add distinct evidence',
         'Candidate manifests, managed files, migration sources, and resolved read links must remain inside the pinned read-only candidate source root',
         'Passing one boundary never implies passing the other',
         'validates the installed-project profile with itemized evidence'
     )
     '.ai/reference/OPERATIONS.md' = @(
+        '## Bounded diagnosis during active delivery',
+        'Reconstruct the delivery anchor from the current Task''s exact observable ACs',
+        '`observed | inferred | confirmed`',
+        '`current_blocker`',
+        '`follow_up`',
+        '`not_actionable`',
+        'Build one bounded evidence batch before requesting user help',
+        'Architecture, Task, state, and Knowledge contain only confirmed/approved facts',
+        'Only `current_blocker` enters the Exception procedure below',
         'Knowledge required/checkpoint',
         'Git-backed single-main',
         'non-main',
-        'observation-only or candidate-mutating',
-        'any saved candidate byte routes a fresh Build/Review attempt',
+        'Known Task-scoped user/editor authoring that saves candidate bytes is implementation',
+        'A newly discovered candidate-mutating action after handoff invalidates candidate identity',
         'leave `ready_to_build/blocked`, `building/blocked`, `reviewing/blocked`, or `integration/blocked` without a return path'
     )
     '.ai/contracts/BUILD_RESULT.md' = @(
@@ -661,7 +677,10 @@ $contractTokenRequirements = @{
         'fixed first header',
         'For an untracked regular file, use the literal `regular`',
         'unrelated_pre_existing | inherited_task | unknown',
-        'Historical Build Results with the older Baseline bullets remain readable'
+        'Historical Build Results with the older Baseline bullets remain readable',
+        '`Unverified / Risks` may record an `observed` fact or explicitly `inferred` hypothesis',
+        'correct the current Build Result before handoff',
+        'Known user/editor authoring that saves Task-attributed bytes is implementation and must finish inside the active Build attempt'
     )
     '.ai/contracts/TASK_RECORD.md' = @(
         '## Task Quality Gate',
@@ -671,7 +690,10 @@ $contractTokenRequirements = @{
         'Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`',
         'exact requirement ID/section and pinned revision',
         'A replacement Task after an interrupted/superseded single-main attempt classifies every inherited Task path',
-        'It never authorizes deleting unrelated pre-existing or `unknown` work'
+        'It never authorizes deleting unrelated pre-existing or `unknown` work',
+        'Task creation also requires a current delivery reason',
+        'A discovered `follow_up` is not independently READY',
+        'do not knowingly design a Build -> Review -> save -> Build loop'
     )
     '.ai/contracts/ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -725,7 +747,9 @@ $contractTokenRequirements = @{
         'read order: <ordered changed paths/symbols following runtime flow|omit for none>',
         'new source files: <whole-file paths|omit for none>',
         'ACTION_CARDS.md#code-walkthrough',
-        'it never invents a Git revision, fingerprint, or Diff command'
+        'it never invents a Git revision, fingerprint, or Diff command',
+        'Apply `OPERATIONS.md#bounded-diagnosis-during-active-delivery` before a discovery changes verdict or route',
+        'an inference never becomes PASS evidence'
     )
     '.ai/contracts/STATE.md' = @(
         'Integration queue',
@@ -752,7 +776,9 @@ $contractTokenRequirements = @{
         'descriptive inspected/continue reply arrives and candidate identity is unchanged',
         'inspection changes Task-attributed candidate bytes',
         'all generic accepted, checkpoint, Knowledge, next-Task, and Integration routes are suspended',
-        'Integration Review PASS; Task code-inspection pause is not applicable'
+        'Integration Review PASS; Task code-inspection pause is not applicable',
+        'await_user_build_authoring',
+        'reconciles the saved paths into the same Build attempt'
     )
     '.ai/contracts/ARTIFACT_AUTHORITY.md' = @(
         'Approved requirement vs source or observed behavior',
@@ -774,6 +800,7 @@ $contractTokenRequirements = @{
         '**Lane handoff commit**',
         '**Single-main revision-repin closure commit**',
         '**Integration Review checkpoint commit**',
+        '**Knowledge checkpoint commit**',
         'One checkpoint type never inherits another type''s path set'
     )
     '.ai/maintenance/UPDATE.md' = @(
@@ -834,10 +861,12 @@ $contractTokenRequirements = @{
         '## Developer Status',
         'DEV_STATUS',
         'content_committed_repin_pending',
+        'blocked` reports only an `OPERATIONS.md#bounded-diagnosis-during-active-delivery` `current_blocker`',
         '## Readable atomic decisions',
         'show the recommendation and every viable alternative together',
         'four or more genuinely viable user-owned outcomes remain',
         'mutually exclusive, collectively exhaustive groups',
+        'groups=<none|up to three discriminator groups, each followed by every included semantic outcome>',
         'exclude an outcome only with evidence that it is not currently viable',
         'Each choice authorizes one atomic user-owned action',
         'Required deterministic bookkeeping, exact metadata repinning, and role-owned repair are not choices',
@@ -867,11 +896,24 @@ $contractTokenRequirements = @{
         'COMMIT_READY',
         '## Editor/runtime check',
         'effect=<observe_only|candidate_mutating>',
-        'independent Review PASS is the default authorization for one exact local checkpoint',
+        'do_now=<one plain action sentence; include save/do-not-save when relevant>',
+        'do_now=<one plain action sentence + explicit save/do-not-save instruction>',
+        'flow=<for graph/state/lifecycle/data-flow authoring: plain before -> this step -> resulting behavior|none>',
+        'terms=<only first-use visible labels needed in the steps: label = plain behavioral meaning|none>',
+        'for authoring include the exact finished surface/shape before save or report',
+        'batch them into this one card in inspection order',
+        'show the whole behavior flow and the expected finished shape before numbered mechanics',
+        'do not rely on "same as last time"',
+        'Never claim an insertion or wiring position is safe from surrounding references that were not inspected',
+        'When the user reports completion, lead with acknowledgement and the next verification step',
+        '`fallback` defaults to stopping without changing candidate bytes',
+        'Never describe a new save, configuration edit, or source/asset mutation as a safe way to stop',
+        'independent Review PASS is the default authorization for one exact local logical checkpoint',
         'content_revision=<commit> metadata_revision=<commit|none>',
         'never offers compound `commit and continue` choices',
         'at most one next routine Task already covered by unchanged approved Architecture',
-        'Any `candidate_mutating` result invalidates the old Build/Review identity',
+        'A planned pre-candidate `candidate_mutating` action returns to the same active Builder attempt',
+        'any later `candidate_mutating` result invalidates the handed-off Build/Review identity',
         'Before another Task starts, the accepted single-main change must have a verified logical checkpoint when Git is usable',
         'Canonical replies are descriptive semantic actions',
         'This never authorizes Push, tag, history rewrite'
@@ -899,6 +941,7 @@ $contractTokenRequirements = @{
     )
     '.ai/integration/README.md' = @(
         'An Integration blocker must retain the queue item',
+        'Evidence/context or non-material Integration contract repair',
         'full range from the retained original `main_before`',
         'queue `repair` mapping, not chat',
         '`CODE_WALKTHROUGH` inspection pause is not applicable to this Integration Review',
@@ -961,6 +1004,12 @@ $contractTokenRequirements = @{
         'name the compared baseline and concrete observable invariants',
         '`diff-first-code-ownership`',
         '`readable-atomic-decision`',
+        '`intent-anchored-bounded-diagnosis`',
+        '`proportional-verification-cadence`',
+        'active diagnosis starts from exact approved intent and ACs',
+        'iterative verification adds distinct evidence rather than ceremony',
+        'makes structural authoring self-contained with whole-flow/first-use-term/finished-shape guidance',
+        'manual structural authoring shows the whole behavior flow',
         'every non-trivial PASS that changes hand-written production source keeps the exact reviewed Diff directly inspectable',
         'Reviewer replacement restores that wait',
         'new and historical projects default to `no_pause`',
@@ -973,29 +1022,34 @@ $contractTokenRequirements = @{
         'Use `source_regression` for canonical release evidence',
         '| intent-gap + decision clarity / unnecessary questions or gates |',
         '| Change Brief / bounded expert-note grounding and fatigue |',
-        '| Direct Diff/source walkthrough / durable-pause usefulness |'
+        '| Direct Diff/source walkthrough / durable-pause usefulness |',
+        '| verification cadence / distinct evidence per repeated check |'
     )
     '.ai/maintenance/MAINTAIN.md' = @(
         'contract_or_route: <owning contract/path or route name|unknown>',
-        'stage | symptom_class | provider_scope | contract_or_route'
+        'stage | symptom_class | provider_scope | contract_or_route',
+        'Ordinary roles do not open it or create records automatically',
+        'WORKFLOW_OBSERVATION=<path> source=manual'
     )
     '.ai/BOOTSTRAP.md' = @(
         'the one contract for an artifact the role will create or change',
         'never combine unrelated outcomes or widen an approved Task merely to reduce messages',
-        'A pure same-Lane replacement may use `RESUME_SAME_LANE` only when checkout, Lane, session role/topology, durable route, and active candidate identity are unchanged',
+        '## Active delivery kernel',
+        'Do not reread unchanged inputs or rerun a check whose relevant inputs and oracle are unchanged',
+        'one successful final affected suite is enough',
         'readable-decision rules in `ACTION_CARDS.md`',
         'At a natural boundary before a new Architecture decision, Task/Build attempt, Review attempt, or Integration candidate',
         'Never invent an exact token/quota value, interrupt every turn, or replace solely because the chat is old',
         'Do not require external study for the active decision',
         'CODE_WALKTHROUGH',
-        'every changed source file in runtime order',
+        'every changed hand-written production source file',
         'never silently drop an outcome to satisfy the cap',
         'Separate AI-owned implementation gaps from user-owned product gaps'
     )
     '.ai/roles/ARCHITECT.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
         '.ai/contracts/INTEGRATION_REQUEST.md',
-        'Only `READY` may be handed to Builder',
+        'Only `READY` reaches Builder',
         'implementation never silently rewrites product intent',
         'pin it once in `.ai/shared/SYSTEM_ARCHITECTURE.md`',
         'supersede every affected Lane Task before Integration',
@@ -1005,18 +1059,19 @@ $contractTokenRequirements = @{
         'This is inline Architect work, not a new artifact, session, approval gate',
         'make only the needed program shape explicit',
         'Prefer the smallest end-to-end/vertical slice',
-        'Do not expose a redundant Architect stop or approval',
         'Define an unfamiliar technical term at first user-facing use',
         'Decision burden and learning are independent',
         '`gate necessity`',
         '`decision readiness`',
         'An affirmative reply to a brief that fails either check is not durable approval',
         'ACTION_CARDS.md#readable-atomic-decisions',
-        'The user must not need to ask `explain more` merely to discover the core problem',
+        'ACTION_CARDS.md#intent-gap-preface',
         '`implementation_open`',
         '`product_open`',
-        'Planning silence never authorizes invented user-visible behavior',
-        'For a non-trivial design, add at most one bounded expert note'
+        'Planning silence never invents visible behavior',
+        'Before a Decision Brief, prove approved requirements/Architecture/Task/user intent do not already determine the outcome',
+        'Only a requested outcome, approved order, dependency of the next observable result, or diagnosed `current_blocker` becomes a Task now',
+        'ACTION_CARDS.md#bounded-expert-note'
     )
     '.ai/roles/BUILDER.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -1024,7 +1079,12 @@ $contractTokenRequirements = @{
         'Do not silently split, merge, enlarge, or reinterpret a Task that fails the Gate',
         'applicable Task-linked requirement refs that still resolve to their approved pinned revisions',
         'unrelated_pre_existing | inherited_task | unknown',
-        'never relabel interrupted Workflow bytes as pre-existing user work'
+        'never relabel interrupted Workflow bytes as pre-existing user work',
+        'When implementation or user evidence contradicts the current hypothesis',
+        'Use `.ai/BOOTSTRAP.md#active-delivery-kernel` for cadence and evidence invalidation',
+        'a save is not a new attempt and does not by itself require the whole final matrix',
+        'RESULT=<ready_to_review|awaiting_user_authoring|implementation_blocked|architecture_issue|context_issue|integration_issue>',
+        'this is pending implementation, not a blocker or Review handoff'
     )
     '.ai/roles/REVIEWER.md' = @(
         '.ai/contracts/REVIEW_RESULT.md',
@@ -1053,21 +1113,25 @@ $contractTokenRequirements = @{
         'documented no-Git/unsealed changed-file manifest and path/symbol open sequence',
         'only when `code_inspection` is not `awaiting_user`',
         'direct Diff/source inspection support human code ownership',
-        'The note is optional presentation, not a finding, PASS condition, quiz, scope expansion'
+        'Only `current_blocker` changes the current verdict/route',
+        'distinguish `observed`, `inferred`, and `confirmed`',
+        'Use the Action Cards terminology, bounded-expert-note, semantic-label',
+        'Do not repeat the entire Builder suite merely for independence'
     )
     '.ai/roles/WORK.md' = @(
         'explicit current-status, Task-diff, source-reading, commit-readiness, or interaction-preference question',
         'without a user-visible Architect handoff or repeated approval',
         'stops at `ready_to_review`',
-        'A terse continue signal outside a currently displayed bounded choice',
-        'Treat `DO_NEXT` as transport, not a user approval request',
-        'no preference authorizes Push, tag, another content checkpoint, or an unreviewed candidate',
+        'A terse token resumes only the semantic non-mutating action just displayed',
+        'Use the exact executable `DO_NEXT` from `ACTION_CARDS.md` for cross-session transport',
+        'preferences never authorize Push/tag, another content checkpoint, or an unreviewed candidate',
         'a feature boundary is only a safe checkpoint, not replacement evidence by itself',
         'if that threshold is not met, continue silently',
-        '`code_inspection: before_next_task` pauses the already-determined post-PASS route only for a candidate whose immutable Git tree or canonical working-tree fingerprint can be revalidated',
-        'A no-Git/unsealed Review shows the walkthrough with `shown_no_pause` and never enters this wait',
-        'Complete any required single-main revision-repin closure as deterministic checkpoint work instead of asking the user to choose it',
-        'The checkpoint choice never bundles the optional next Task'
+        '`before_next_task` uses the durable Reviewer-owned code-inspection wait only for revalidatable identity',
+        'no-Git/unsealed shows without pausing',
+        'deterministic revision repinning is closure, not another choice',
+        'apply `OPERATIONS.md#bounded-diagnosis-during-active-delivery`',
+        'User-facing status distinguishes the Work shell from the active project role'
     )
     '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
         '.ai/contracts/KNOWLEDGE.md',
@@ -1276,12 +1340,16 @@ if (Test-Path -LiteralPath $workflowReviewPath -PathType Leaf) {
 }
 
 $releaseVersion = Get-YamlScalar '.ai/maintenance/release.yaml' 'workflow_version'
+$releaseDate = Get-YamlScalar '.ai/maintenance/release.yaml' 'released_at'
 $installedVersion = Get-YamlScalar '.ai/maintenance/update-state.yaml' 'installed_version'
 $updateTemplateVersion = Get-YamlScalar '.ai/maintenance/update-state.template.yaml' 'installed_version'
 $scorecardVersion = Get-YamlScalar '.ai/evals/SCORECARD.md' 'workflow_version'
 
 if ($null -ne $releaseVersion -and $releaseVersion -notmatch '^manual-v\d+\.\d+$') {
     Add-Failure "Invalid release version format: $releaseVersion"
+}
+if ($null -ne $releaseDate -and $releaseDate -notmatch '^\d{4}-\d{2}-\d{2}$') {
+    Add-Failure "Invalid released_at date format: $releaseDate"
 }
 if ($null -ne $releaseVersion -and $null -ne $installedVersion -and $releaseVersion -ne $installedVersion) {
     Add-Failure "Version mismatch: release=$releaseVersion installed=$installedVersion"
@@ -1505,6 +1573,8 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             '## Fixture 20',
             '## Fixture 21',
             '## Fixture 22',
+            '## Fixture 23',
+            '## Fixture 24',
             'The canonical trigger list and case routing live there; do not maintain a second list in this file',
             'state transitions directly to `synced/idle`',
             '`base` is the fixed first manifest line',
@@ -1587,6 +1657,7 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'The first decision screen leads with one plain question, marks the recommendation, and shows every currently viable alternative together',
             'This general checkpoint decision begins directly with `DECISION`',
             'The four-outcome decision first asks one discriminator with no more than three mutually exclusive, collectively exhaustive groups',
+            'records every outcome under exactly one group in the explicit `groups` field',
             'A number or letter may be accepted only as a short alias after the readable atomic choices are displayed',
             'The untested partial commit is not offered as a selectable strategy',
             'Required metadata repinning is deterministic checkpoint closure, not another user option',
@@ -1600,7 +1671,24 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'A fresh independent Reviewer still reconstructs the approved user need from exact requirement refs',
             'a non-trivial change may add one bounded expert note by default',
             'The expert note never precedes or obscures the action',
-            'When confusion or fatigue is signaled, the role simplifies the core before adding depth'
+            'When confusion or fatigue is signaled, the role simplifies the core before adding depth',
+            'Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome',
+            'Claims are labeled `observed | inferred | confirmed`',
+            'all observations available in the same surface are batched in inspection order',
+            'A structural authoring card shows the plain whole behavior flow and exact finished screen/graph shape before mechanics',
+            'remains understandable without prior-chat memory or "same as last time"',
+            'It never calls an uninspected insertion/wiring position safe',
+            'A user-facing status distinguishes the Work shell from the active project role',
+            'a mutation is never disguised as the safe-stop fallback',
+            'An evidenced non-blocking issue is `follow_up` behind the current result without a Task, Gate, handoff, or broader Review',
+            'Delivery focus never hides a current blocker merely to reach a checkpoint faster',
+            'Architecture, Task, state, and Knowledge record only confirmed or approved facts',
+            'All planned implementation and authoring stays in one Build attempt until one coherent candidate exists',
+            'the documentation-only correction does not trigger an unchanged build/test suite',
+            'obtains one successful final affected-suite result',
+            'Known Task-scoped user/editor saves return `awaiting_user_authoring`',
+            'Reviewer verifies evidence scope/oracle and candidate identity, then reruns the smallest decisive affordable subset',
+            'Saving tokens never removes a mandatory AC, safety check, release gate, or final evidence'
         )) {
         if (-not $goldenCoreText.Contains($goldenToken)) {
             Add-Failure "Golden Core Behavior is missing oracle token: $goldenToken"
@@ -1698,7 +1786,7 @@ if (Test-Path -LiteralPath $changelogPath -PathType Leaf) {
     $releaseHeadingLines = [regex]::Matches($changelog, '(?m)^##\s+manual-v[^\r\n]*$')
     $releaseHeadings = [regex]::Matches(
         $changelog,
-        '(?m)^##\s+(?<version>manual-v(?<major>\d+)\.(?<minor>\d+))\s+\u2014\s+\d{4}-\d{2}-\d{2}\s*$'
+        '(?m)^##\s+(?<version>manual-v(?<major>\d+)\.(?<minor>\d+))\s+\u2014\s+(?<date>\d{4}-\d{2}-\d{2})\s*$'
     )
 
     if ($releaseHeadings.Count -eq 0) {
@@ -1708,6 +1796,10 @@ if (Test-Path -LiteralPath $changelogPath -PathType Leaf) {
         $latestChangelogVersion = $releaseHeadings[0].Groups['version'].Value
         if ($null -ne $releaseVersion -and $latestChangelogVersion -ne $releaseVersion) {
             Add-Failure "Latest CHANGELOG release must match release.yaml: release=$releaseVersion changelog=$latestChangelogVersion"
+        }
+        $latestChangelogDate = $releaseHeadings[0].Groups['date'].Value
+        if ($null -ne $releaseDate -and $latestChangelogDate -ne $releaseDate) {
+            Add-Failure "Latest CHANGELOG release date must match release.yaml: release=$releaseDate changelog=$latestChangelogDate"
         }
 
         $previousMajor = $null

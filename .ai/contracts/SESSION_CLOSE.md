@@ -14,7 +14,7 @@ Assess viability only at a natural boundary: after a durable handoff/checkpoint 
 
 1. Persist current Architecture/Task/Build/Review pointers, phase/status, blocker, next role/action, and minimum next inputs in lane state. Persist approved decisions, verification, and open risks only in their owning Architecture/Task/Build/Review artifacts; state points to those artifacts instead of copying their prose. Leave no required fact only in chat.
 2. Inspect read-only Git status.
-3. Apply the evidence-gated Workflow Observation trigger once. Explicit manual capture creates/deduplicates its record; automatic capture requires the Bootstrap threshold.
+3. Do not create a Workflow Observation merely because the session is closing. If the user explicitly requested local capture earlier, preserve the resulting file like any other local maintenance path.
 4. Do not erase history, commit, merge, collect Observations into another checkout, delete a worktree, run an unselected Knowledge update, or change session checkout/Lane identity.
 5. Return:
 
@@ -24,8 +24,6 @@ artifacts=<paths>
 verification=<summary>
 risks=<items|none>
 ```
-
-Append `WORKFLOW_OBSERVATION=<path> source=<manual|automatic>` only when a record was created or materially updated.
 
 For a pure replacement in the same absolute checkout and Lane, emit the following only when the requested session role/topology, durable route, and active candidate identity are unchanged, no candidate is being returned, and no Front Desk/Integration decision is pending:
 

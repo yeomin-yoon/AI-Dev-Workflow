@@ -289,14 +289,14 @@ Given:
 
 - Reviewer has completed all available static/build/test inspection but one editor/runtime acceptance condition needs user evidence;
 - scenario A only runs and observes the existing candidate;
-- scenario B requires the user to assign and save an approved Task-owned asset/config value before running;
+- scenario B reveals during Review a required approved Task-owned asset/config assignment that was not known in the Task/Builder handoff and must now be saved before running;
 - scenario C reveals a changed path outside the Task mutation set or with unknown attribution.
 
 Expected:
 
 - Reviewer returns an `EDITOR_CHECK` that names effect, purpose, exact app/project/target/surface, setup, actions, observation location, concrete PASS/FAIL, a copyable per-observation reply with `NOT_CHECKED`/anomaly fields, and a safe fallback.
 - Scenario A is `observe_only`; after the reply, Reviewer first proves candidate bytes/identity are unchanged and then resumes the blocked Review. A vague "works" response is clarified only for missing required observations, not treated as evidence for unreported checks.
-- Scenario B is `candidate_mutating`; the card names every authorized save path. Even when runtime behavior passes, the saved bytes invalidate the old Build/Review identity and route a fresh Build attempt that reconciles Baseline/Changes/fingerprint before a new Review.
+- Scenario B is `candidate_mutating`; the card names every authorized save path. Even when runtime behavior passes, the saved bytes invalidate the old Build/Review identity and route a fresh Build attempt that reconciles Baseline/Changes/fingerprint before a new Review. A known planned assignment would instead have been batched during Builder and would never enter this post-handoff loop.
 - Earlier AC evidence is reused only after the fresh candidate's impact check proves it remains applicable; Reviewer never promises in advance that unaffected-looking checks will be skipped.
 - Scenario C remains blocked as `context`/`contract` or routes design when intent/boundary changed. The unknown or unauthorized path is never absorbed into the candidate by assumption.
 
@@ -394,7 +394,7 @@ Expected:
 
 - The first decision screen leads with one plain question, marks the recommendation, and shows every currently viable alternative together, capped at three; each choice has one semantic action, observable result, and real tradeoff. Exact path/test/ID inventories remain behind the evidence artifact or scoped Diff command.
 - This general checkpoint decision begins directly with `DECISION`; it does not receive the five-line intent-gap preface because no incomplete planning source is being resolved.
-- The four-outcome decision first asks one discriminator with no more than three mutually exclusive, collectively exhaustive groups and lists every outcome under a group. After the answer it shows every viable outcome in the selected group; no outcome is silently dropped, and grouping never changes an outcome's meaning.
+- The four-outcome decision first asks one discriminator with no more than three mutually exclusive, collectively exhaustive groups and records every outcome under exactly one group in the explicit `groups` field; `details` remains only an artifact path or scoped inspection command. After the answer it shows every viable outcome in the selected group; no outcome is silently dropped, and grouping never changes an outcome's meaning.
 - A number or letter may be accepted only as a short alias after the readable atomic choices are displayed; the persisted authorization is the semantic action. A long CLI table or a hidden follow-up alternative does not satisfy the decision contract.
 - The untested partial commit is not offered as a selectable strategy. The split path is offered only as `split and reverify` with its extra verification cost, or remains a blocker until those intermediate trees are proven.
 - Required metadata repinning is deterministic checkpoint closure, not another user option. Work creates the reviewed content commit, repins only role-owned state/Knowledge metadata to that revision, verifies the revision-repin-only Diff, and reports `content_revision` plus `metadata_revision`; it never asks whether to leave known-false pins behind.
@@ -420,3 +420,45 @@ Expected:
 - Unclear approval/applicability/freshness becomes `authority_unknown` and uses the existing `context`/`contract` blocker. It is not silently converted into either implementation freedom or product approval.
 - The already disproven technical approach is shown only as rejected evidence and is absent from viable choices unless a named revalidation step could change its status.
 - The same intent-gap ordering applies to service/API, CLI/library, and editor/runtime work; no domain-specific document type, role, session, artifact, score, or additional approval Gate is introduced.
+
+## Fixture 23 — Intent-anchored bounded diagnosis
+
+Given:
+
+- an active Task has one approved observable outcome and exact ACs, while an applicable approved intent source already determines the user-visible behavior;
+- deterministic checks are green but do not exercise one changing runtime value, and the observed system behavior still fails the corresponding AC;
+- source evidence leaves two materially viable causes, one unavailable editor/binary/device surface can distinguish them, and repairing one cause may expose an unrelated issue;
+- an earlier role confidently stated one inference as the root cause and later evidence disproves it.
+
+Expected:
+
+- Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome from the current Task ACs and applicable intent source. It does not offer a contradictory behavior as a viable user option or ask the user to choose an outcome already specified.
+- Claims are labeled `observed | inferred | confirmed`. Green checks are observed evidence only for their actual oracle; the role calls a root cause confirmed only after one discriminating check rules out every materially viable competing cause, and explicitly corrects a disproved inference.
+- The unavailable surface produces one action-first `EDITOR_CHECK`/`USER_ACTION`: `do_now` and save/do-not-save appear before logs/internal IDs, all observations available in the same surface are batched in inspection order, and the card includes exact open/setup/action/observe/PASS/FAIL/reply/fallback guidance.
+- A structural authoring card shows the plain whole behavior flow and exact finished screen/graph shape before mechanics, defines each first-use visible label by its behavioral role, distinguishes hierarchy from order with a visible cue, and remains understandable without prior-chat memory or "same as last time". It never calls an uninspected insertion/wiring position safe; `inferred`/`unknown` remains visible until one bounded surrounding-structure view confirms it.
+- A user-facing status distinguishes the Work shell from the active project role and explains the role in plain language; an unexplained composite label such as `work(builder)` is not accepted. Choosing to stop preserves candidate bytes by default; a mutation is never disguised as the safe-stop fallback and, when truly necessary, declares its exact paths and fresh Build/Review cost.
+- A failed mandatory AC, candidate regression, invalid approved boundary, untrustworthy candidate/required verification, or high-severity safety/loss risk is `current_blocker` and routes now. An evidenced non-blocking issue is `follow_up` behind the current result without a Task, Gate, handoff, or broader Review; preference/speculation/duplicate/consequence-free cleanup is `not_actionable` and is not persisted.
+- A nested discovery is reclassified against the same active outcome and does not start a recursive audit. Delivery focus never hides a current blocker merely to reach a checkpoint faster.
+- Architecture, Task, state, and Knowledge record only confirmed or approved facts. An open Build/Review attempt may record observed facts and explicitly inferred hypotheses, but corrects disproved hypotheses before handoff and never treats them as authority or PASS evidence.
+- The same discipline applies to service/API, CLI/library, editor/runtime, Git, and no-Git projects without a new role, artifact, session, score, or approval Gate.
+
+## Fixture 24 — Proportional verification across one delivery attempt
+
+Given:
+
+- one approved vertical Task needs several planned source edits, one asset/config save, focused automated checks, one broad affected suite, and one batched runtime observation before Review;
+- the first focused test fails, a later source edit fixes it, a subsequent documentation-only correction changes no candidate behavior, and no Reviewer has started yet;
+- Builder evidence names the final candidate and the specific oracle protected by each check;
+- after Review starts, scenario A changes a reviewed production byte, while scenario B changes nothing and asks Reviewer to independently verify the material risk.
+
+Expected:
+
+- All planned implementation and authoring stays in one Build attempt until one coherent candidate exists. An editor save, failed focused check, or local repair does not create a new Task/Build attempt by itself.
+- During iteration, each check names a distinct failure it can catch. The source edit receives the cheapest relevant compile/focused test, the asset/config batch receives one saved-surface plus focused runtime/contract check, and the documentation-only correction does not trigger an unchanged build/test suite.
+- Builder does not run the broad affected suite after every edit. It runs the Task's required final matrix against the coherent candidate, obtains one successful final affected-suite result, accounts for every Task path, and then records candidate identity.
+- A failed check, relevant byte/environment/oracle change, or named flaky/non-deterministic risk reruns only the invalidated evidence unless an affected shared/public/lifecycle/build/security/migration boundary requires broader verification. Saving tokens never removes a mandatory AC, safety check, release gate, or final evidence.
+- Related manual actions and observations available in one app/device surface are batched in safe inspection order. Review does not begin while planned candidate-mutating authoring remains.
+- Known Task-scoped user/editor saves return `awaiting_user_authoring`, stay under `building/active + await_user_build_authoring`, return to the same Build attempt after authorized-path reconciliation, and complete before final fingerprint/handoff. This is pending implementation, not a false blocker. Only a newly discovered post-handoff mutation takes the fresh Build/Review route.
+- Reviewer verifies evidence scope/oracle and candidate identity, then reruns the smallest decisive affordable subset rather than the Builder's whole suite merely for independence. Scenario B reuses unchanged credible evidence and adds only that distinct independent check.
+- Scenario A invalidates the Review candidate and follows the fresh Build/Review route. An explicit impact check may preserve unaffected evidence, but an old verdict or stale affected check is never reused by assumption.
+- The same cadence applies to service/API, CLI/library, editor/runtime, Git, and no-Git work; it adds no role, artifact, session, score, or user approval Gate.

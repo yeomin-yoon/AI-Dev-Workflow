@@ -1368,6 +1368,14 @@ migrations:
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/contracts/ARTIFACT_AUTHORITY.md token=## Checkpoint commit vocabulary'
 
+    Assert-NegativeFixture 'ambiguous-integration-metadata-only-route' {
+        param($root)
+        $target = Join-Path $root '.ai/integration/README.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Evidence/context or non-material Integration contract repair', 'Evidence/context or metadata-only contract repair')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/integration/README.md token=Evidence/context or non-material Integration contract repair'
+
     Assert-NegativeFixture 'missing-golden-fixture-21-heading' {
         param($root)
         $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
@@ -1648,6 +1656,14 @@ migrations:
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=## Readable atomic decisions'
 
+    Assert-NegativeFixture 'missing-decision-overflow-groups-field' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('groups=<none|up to three discriminator groups, each followed by every included semantic outcome>', 'groups=<internal grouping|none>')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=groups=<none|up to three discriminator groups, each followed by every included semantic outcome>'
+
     Assert-NegativeFixture 'missing-visible-viable-alternatives' {
         param($root)
         $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
@@ -1857,6 +1873,94 @@ regression_cases: []
 '@
         [System.IO.File]::WriteAllText($target, $content, [System.Text.UTF8Encoding]::new($false))
     } 'Completed Eval must name at least one regression case'
+
+    Assert-NegativeFixture 'diagnosis-skips-approved-intent' {
+        param($root)
+        $target = Join-Path $root '.ai/reference/OPERATIONS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Reconstruct the delivery anchor from the current Task''s exact observable ACs', 'Infer the delivery anchor from nearby implementation')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/reference/OPERATIONS.md token=Reconstruct the delivery anchor from the current Task''s exact observable ACs'
+
+    Assert-NegativeFixture 'inference-declared-confirmed' {
+        param($root)
+        $target = Join-Path $root '.ai/WORKFLOW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Never call a root cause confirmed until', 'A likely root cause may be called confirmed before')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/WORKFLOW.md token=Never call a root cause confirmed until'
+
+    Assert-NegativeFixture 'specified-outcome-reasked' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome', 'The role may begin with a new technical choice')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome'
+
+    Assert-NegativeFixture 'nonblocking-discovery-becomes-task' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/TASK_RECORD.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('A discovered `follow_up` is not independently READY', 'A discovered `follow_up` may become independently READY')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/TASK_RECORD.md token=A discovered `follow_up` is not independently READY'
+
+    Assert-NegativeFixture 'unconfirmed-hypothesis-becomes-authority' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Architecture, Task, state, and Knowledge record only confirmed or approved facts', 'Architecture may persist likely hypotheses as facts')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Architecture, Task, state, and Knowledge record only confirmed or approved facts'
+
+    Assert-NegativeFixture 'delivery-focus-hides-blocker' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Delivery focus never hides a current blocker merely to reach a checkpoint faster', 'Delivery focus may defer a current blocker for momentum')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Delivery focus never hides a current blocker merely to reach a checkpoint faster'
+
+    Assert-NegativeFixture 'safe-stop-mutates-candidate' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('`fallback` defaults to stopping without changing candidate bytes', '`fallback` may edit the candidate to stop')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=`fallback` defaults to stopping without changing candidate bytes'
+
+    Assert-NegativeFixture 'uninspected-authoring-position-called-safe' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('It never calls an uninspected insertion/wiring position safe', 'It may call an uninspected insertion/wiring position safe')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: It never calls an uninspected insertion/wiring position safe'
+
+    Assert-NegativeFixture 'token-saving-skips-required-evidence' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Saving tokens never removes a mandatory AC, safety check, release gate, or final evidence', 'Saving tokens may remove mandatory final evidence')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: Saving tokens never removes a mandatory AC, safety check, release gate, or final evidence'
+
+    Assert-NegativeFixture 'planned-editor-save-deferred-until-review' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/TASK_RECORD.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('do not knowingly design a Build -> Review -> save -> Build loop', 'defer known editor saves until Review')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/TASK_RECORD.md token=do not knowingly design a Build -> Review -> save -> Build loop'
+
+    Assert-NegativeFixture 'release-changelog-date-mismatch' {
+        param($root)
+        $target = Join-Path $root '.ai/maintenance/CHANGELOG.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('2026-08-07', '2026-08-06')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Latest CHANGELOG release date must match release.yaml: release=2026-08-07 changelog=2026-08-06'
 }
 finally {
     if (Test-Path -LiteralPath $runRoot) {

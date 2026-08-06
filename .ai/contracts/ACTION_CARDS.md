@@ -12,12 +12,12 @@ goal=<plain user-visible outcome>
 why=<problem or intent that started this work>
 done=<only verified decisions/results>
 current=<short user-language label (internal id) + phase>
-open=<one unresolved decision/evidence|none>
+open=<one current blocker/decision/evidence|none>
 terms=<only unfamiliar terms needed now as term: plain meaning|none>
 next=<one bounded user-language action>
 ```
 
-This is a chat-only projection, not a durable artifact, state field, handoff payload, or new approval Gate. Derive it again instead of copying an old chat summary. Keep it to one terminal screen, omit completed history that does not explain the current step, and never infer progress from a remembered conversation. A human-readable label precedes its internal ID; derive the label from the artifact heading/goal rather than adding a second durable name field. If a deeper explanation is useful, offer it after the one next action instead of expanding every prerequisite automatically.
+This is a chat-only projection, not a durable artifact, state field, handoff payload, or new approval Gate. Derive it again instead of copying an old chat summary. Keep it to one terminal screen, omit completed history that does not explain the current step, and never infer progress from a remembered conversation. `open` contains only a current blocker or user-owned decision/evidence; non-blocking follow-up never displaces the active outcome. A human-readable label precedes its internal ID; derive the label from the artifact heading/goal rather than adding a second durable name field. If a deeper explanation is useful, offer it after the one next action instead of expanding every prerequisite automatically.
 
 ## Developer Status
 
@@ -34,11 +34,11 @@ blocked=<short reason|none>
 next=<one user-language action>
 ```
 
-Derive classification from the Task, Build Result Changes/Baseline, Review identity, and Git. Use `content_committed_repin_pending` only when the reviewed content commit exists but the required single-main revision-repin closure has not yet updated and committed its role-owned state/Knowledge pins; name that deterministic next action instead of calling the content uncommitted. Never relabel an unattributed path merely to make the summary clean; report `unknown` and route attribution when needed. Summarize semantic effect before file order, group paths as production/tests/assets/workflow/unrelated, and use `git diff --stat` plus selected important hunks instead of an unbounded terminal dump.
+Derive classification from the Task, Build Result Changes/Baseline, Review identity, and Git. `blocked` reports only an `OPERATIONS.md#bounded-diagnosis-during-active-delivery` `current_blocker`; `follow_up` and `not_actionable` never make status look blocked. Use `content_committed_repin_pending` only when the reviewed content commit exists but the required single-main revision-repin closure has not yet updated and committed its role-owned state/Knowledge pins; name that deterministic next action instead of calling the content uncommitted. Never relabel an unattributed path merely to make the summary clean; report `unknown` and route attribution when needed. Summarize semantic effect before file order, group paths as production/tests/assets/workflow/unrelated, and use `git diff --stat` plus selected important hunks instead of an unbounded terminal dump.
 
 ## Readable atomic decisions
 
-Use this rendering rule for every user-owned Decision Brief, checkpoint choice, or non-evidence User Action choice. If only one materially safe path remains, do not emit a choice: execute it when authorized or report the predetermined action and consequence. If two or three genuinely viable outcomes remain, keep the decision to one terminal screen and show the recommendation and every viable alternative together. If four or more genuinely viable user-owned outcomes remain, never omit one or break the three-choice screen cap: first ask one bounded discriminator using at most three mutually exclusive, collectively exhaustive groups, list every included semantic outcome under its group in `details`, then show every viable outcome in the selected group; repeat only when that group still exceeds three. Group only when no semantic outcome is lost, and exclude an outcome only with evidence that it is not currently viable. A general decision begins directly with `DECISION`; it does not receive the intent-gap preface unless an applicable request or approved planning source is incomplete.
+Use this rendering rule for every user-owned Decision Brief, checkpoint choice, or non-evidence User Action choice. If only one materially safe path remains, do not emit a choice: execute it when authorized or report the predetermined action and consequence. If two or three genuinely viable outcomes remain, keep the decision to one terminal screen and show the recommendation and every viable alternative together. If four or more genuinely viable user-owned outcomes remain, never omit one or break the three-choice screen cap: first ask one bounded discriminator using at most three mutually exclusive, collectively exhaustive groups, list every included semantic outcome under its group in `groups`, then show every viable outcome in the selected group; repeat only when that group still exceeds three. Group only when no semantic outcome is lost, and exclude an outcome only with evidence that it is not currently viable. A general decision begins directly with `DECISION`; it does not receive the intent-gap preface unless an applicable request or approved planning source is incomplete.
 
 ```text
 DECISION
@@ -47,6 +47,7 @@ recommend=<semantic choice> — <why it best fits current evidence>
 choices=
 - <semantic choice> — <observable result>; tradeoff=<actual cost or limitation>
 - <semantic choice> — <observable result>; tradeoff=<actual cost or limitation>
+groups=<none|up to three discriminator groups, each followed by every included semantic outcome>
 remote_effect=<none|exact external/history effect>
 details=<artifact path or scoped inspection command|none>
 reply=<repeat the semantic choices in user_language; free-form questions remain valid>
@@ -119,7 +120,7 @@ When an identity-revalidatable ordinary Task PASS includes a non-trivial hand-wr
 
 ## Single-main commit checkpoint
 
-For a Git-backed ordinary single-`main` candidate, independent Review PASS is the default authorization for one exact local checkpoint when `.ai/shared/knowledge/project.yaml#interaction.checkpoint` is `auto_after_pass` or absent. This never authorizes Push, tag, history rewrite, merge/rebase, external effects, a different candidate, or unrelated/unknown paths.
+For a Git-backed ordinary single-`main` candidate, independent Review PASS is the default authorization for one exact local logical checkpoint when `.ai/shared/knowledge/project.yaml#interaction.checkpoint` is `auto_after_pass` or absent. This never authorizes Push, tag, history rewrite, merge/rebase, external effects, a different candidate, or unrelated/unknown paths.
 
 After settling the required Knowledge route, reread status/diff, prove the accepted fingerprint and exact `include`/`exclude` attribution are unchanged, verify any commit hook/signing/credential behavior is already trusted and non-interactive, stage exactly `include`, inspect the staged diff and exclusions, create the reviewed content commit, and verify it contains no excluded path. If commit-backed state or Knowledge cannot name that new revision until it exists, immediately repin only the role-owned state/Knowledge metadata to the content revision, verify the revision-repin-only diff, and create at most one single-main revision-repin closure commit. This deterministic repin is part of the same logical checkpoint, not a second choice or permission to change source/tests/assets. Return `COMMIT_DONE task=<id> content_revision=<commit> metadata_revision=<commit|none> next=<route>` with the semantic change summary and exclusions. If any proof fails, do not guess, widen scope, or start the next Task; return the owning blocker or actionable User Action Card.
 
@@ -165,38 +166,48 @@ For a user-owned blocker or external/manual action, use `user_language`:
 
 ```text
 USER_ACTION
+do_now=<one plain action sentence; include save/do-not-save when relevant>
 why=<why available tools cannot complete this and why it matters>
+flow=<for graph/state/lifecycle/data-flow authoring: plain before -> this step -> resulting behavior|none>
+terms=<only first-use visible labels needed in the steps: label = plain behavioral meaning|none>
 steps=<short numbered procedure with exact app/path when relevant>
-pass=<observable pass evidence>
+pass=<observable pass evidence; for authoring include the exact finished surface/shape before save or report>
 reply=<copyable evidence template or decision options>
 fallback=<safe alternative and consequence>
 ```
 
-Do not return only `BLOCKED`, `owner=user`, `need=evidence`, or an artifact path. Answer follow-up questions in the same responsible session and resume when the requested evidence arrives.
+Lead with `do_now`, then the plain consequence, and put test counts, internal IDs, logs, and technical history after the action. Do not return only `BLOCKED`, `owner=user`, `need=evidence`, or an artifact path. Answer follow-up questions in the same responsible session and resume when the requested evidence arrives.
+
+`fallback` defaults to stopping without changing candidate bytes. Never describe a new save, configuration edit, or source/asset mutation as a safe way to stop. If the only meaningful fallback changes the candidate, label it `candidate_mutating` and name the exact authorized paths/consequence. During active Build disclose same-attempt reconciliation and final verification; after handoff disclose that a fresh Build/Review identity will be required.
 
 ## Editor/runtime check
 
-When Reviewer needs an editor, runtime, device, visual, audio, accessibility, or other user-observed check, classify it before issuing the card:
+When Builder needs approved user-authored candidate bytes, or Reviewer needs an editor, runtime, device, visual, audio, accessibility, or other user-observed check, classify it before issuing the card:
 
 - `observe_only`: the user performs and reports behavior without saving or otherwise changing candidate bytes.
-- `candidate_mutating`: setup requires saving an asset/config/source or changing any Task-attributed candidate byte. Name every authorized path and expected mutation; if the path is outside Task scope/`allowed_write` or attribution is unknown, do not authorize it and route the owning `contract`/`context` issue.
+- `candidate_mutating`: setup requires saving an asset/config/source or changing any Task-attributed candidate byte. Name every authorized path and expected mutation; if the path is outside Task scope/`allowed_write` or attribution is unknown, do not authorize it and route the owning `contract`/`context` issue. When this is known implementation work before a final Build candidate, Builder batches it under `building/active + await_user_build_authoring` and resumes the same attempt. Once a Build candidate is handed off or Review has started, the mutation invalidates that candidate identity and requires the fresh Build/Review route below.
 
 Return an executable tutorial in `user_language`:
 
 ```text
 EDITOR_CHECK
 effect=<observe_only|candidate_mutating>
+do_now=<one plain action sentence + explicit save/do-not-save instruction>
 purpose=<what acceptance condition or risk this proves>
+flow=<for graph/state/lifecycle/data-flow authoring: plain before -> this step -> resulting behavior|none>
+terms=<only first-use visible labels needed in the steps: label = plain behavioral meaning|none>
 open=<exact app/project/map/asset/panel>
 setup=<numbered preparation; include exact authorized save paths or none>
 action=<numbered user actions>
 observe=<where and what to watch>
-pass=<concrete observable result>
+pass=<concrete observable result; for authoring include the exact finished surface/shape before save or report>
 fail=<concrete contrary result or anomaly>
 reply=<copyable per-observation result template; include NOT_CHECKED and anomaly fields>
 fallback=<safe alternative and consequence>
 ```
 
-Never ask the user to infer controls, keys, asset locations, or the response format when project files can establish them. If a control cannot be established, explain the shortest way to find it. A generic "check it in the Editor" is incomplete.
+Never ask the user to infer controls, keys, asset locations, or the response format when project files can establish them. If a control cannot be established, explain the shortest way to find it. A generic "check it in the Editor" is incomplete. When several observations in the same app/surface distinguish the current bounded hypotheses, batch them into this one card in inspection order instead of issuing avoidable one-field follow-ups. Do not request a user observation that source or deterministic tools can settle.
 
-When evidence returns, compare Git/candidate identity before consuming the observation. `observe_only` may resume the blocked Review only when candidate bytes are unchanged. Any `candidate_mutating` result invalidates the old Build/Review identity: preserve the user's observations as evidence, route a new Build attempt to reconcile every changed path and fingerprint, then perform a new Review. Do not promise that earlier AC evidence will be reused until the new attempt's impact check proves it remains applicable.
+For manual graph, state-machine, lifecycle, wiring, or other structural authoring, show the whole behavior flow and the expected finished shape before numbered mechanics. Define every unfamiliar visible label at its first use by connecting it to what the system will do; do not rely on "same as last time", prior chat memory, or an unexplained engine/tool term. Separate hierarchy from order with an observable cue such as indentation, parent, or connector. Mention a historical pitfall only when it changes the current action. Never claim an insertion or wiring position is safe from surrounding references that were not inspected: label the claim `inferred`/`unknown` and request one bounded view that can confirm it. When the user reports completion, lead with acknowledgement and the next verification step rather than reopening background theory unless the reported shape conflicts with the card.
+
+When evidence returns, compare Git/candidate identity before consuming the observation. `observe_only` may resume the blocked Review only when candidate bytes are unchanged. A planned pre-candidate `candidate_mutating` action returns to the same active Builder attempt after path reconciliation; any later `candidate_mutating` result invalidates the handed-off Build/Review identity, routes a new Build attempt to reconcile every changed path and fingerprint, and then receives a new Review. Do not promise that earlier AC evidence will be reused until the impact check proves it remains applicable.

@@ -31,19 +31,14 @@ Review in this order: observable AC correctness; invariants, invalid states, and
 
 - Map each AC to its approved requirement ref when present, then to implementation and evidence.
 - Before reproducing a repository command/hook or interpreting repository-local AI instructions, apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`; never copy a secret into Review evidence.
-- Check lane/task scope and architecture compliance.
-- Check correctness, regression, boundaries, lifetime/ownership, error paths, concurrency/network/persistence where relevant.
-- Check whether new code, abstractions, or dependencies are justified by the approved Task and existing project/engine capabilities. Raise a finding only with a concrete correctness, scope, maintenance, performance, or review-cost consequence; do not block on minimalism preference or code golf.
-- For a convention finding, cite the exact rule/config source, applicable scope, and concrete consequence. A dominant local convention or official/framework fallback may guide consistency but is not an explicit team rule; do not turn generic preferences or arbitrary line-count thresholds into blocking findings. Route materially conflicting or stale rule sources as `context` or `contract` rather than blaming implementation.
-- Check whether names, types, ownership, mutability, and public entry points communicate the behavior and protect the applicable invariants under project/framework conventions.
-- Do not infer better responsibility separation from class/function count. An orchestrator may coordinate several collaborators; identify the actual independent reason to change and concrete coupling consequence before reporting an SRP-style finding.
-- File count alone is not a maintainability finding, but a small behavior that repeatedly requires edits across unrelated owners, duplicate conditionals, or compatibility branches is concrete change-pressure evidence. Inspect the shared cause and route `architecture` when the approved boundary is wrong.
-- Do not demand an interface, inheritance, virtual dispatch, smart pointer/reference form, pattern, or optimization from a generic rule alone. Require approved variation, invalid-use prevention, measured cost, or another project-specific consequence.
-- Confirm tests can detect the required failure, not merely that tests exist.
+- Check scope/Architecture plus correctness, regressions, boundaries, invalid states, lifetime/ownership, errors, and relevant concurrency/network/persistence.
+- Judge names, types, mutability, entry points, abstractions, dependencies, responsibility splits, patterns, and performance only against approved/project evidence and a concrete consequence. File/class count, generic preference, code golf, or unsourced convention is not a finding; route stale/conflicting rule authority instead.
 - A green test is evidence, not acceptance by itself. Verify that production or test changes did not disable or weaken the oracle, overmock the behavior, bypass types/contracts/invariants, swallow failures, or add compensating paths solely to make checks pass.
-- Re-run decisive affordable checks; mark unavailable checks and residual risk.
+- Apply `.ai/BOOTSTRAP.md#active-delivery-kernel`: validate the Builder's evidence scope and oracle, then re-run the smallest decisive affordable subset that independently tests the material risk. Do not repeat the entire Builder suite merely for independence. Broaden only for a named affected boundary, suspicious/changed oracle, flaky evidence, candidate drift, or a Task/project gate; mark unavailable checks and residual risk.
 - For a Git-backed single-main working tree, independently reproduce the canonical candidate fingerprint at Review start and again immediately before PASS. A mismatch invalidates this attempt; do not bless the changed files by assumption.
 - For each material finding, state the violated invariant/contract and concrete consequence; omit generic lessons and routine commentary.
+- Before an issue changes verdict or route, apply `OPERATIONS.md#bounded-diagnosis-during-active-delivery`. Only `current_blocker` changes the current verdict/route. Put an evidenced `follow_up` after the verdict in `Residual Risks` only when future work needs it; do not turn it into a new Task, Gate, handoff, or broader Review. Omit `not_actionable` preference/speculation.
+- If checking one finding exposes another issue, label its evidence honestly, classify it against the same active Task, and return to the current verdict when it is not a `current_blocker`. Do not call an inference confirmed, recursively audit unrelated scope, or hide a failed AC/regression/boundary/identity/safety blocker for momentum.
 - Validate workflow contract conformance where it affects routing: artifact names/front matter, approval-only Task status, state enum, and truthful evidence. Do not accept an invented phase, execution progress written into Task status, or build-action counts described as functional tests.
 
 For requirement drift, use existing finding types instead of silently synchronizing documents and code:
@@ -66,14 +61,7 @@ For a non-`main` candidate, apply the exact-range and immutable-candidate rules 
 
 Simplicity never justifies removing required validation, failure handling, security, accessibility, ownership/lifetime safety, or verification.
 
-If a mandatory manual/editor/runtime gate remains:
-
-1. finish reviewing all available code, diff, build, and automated evidence first;
-2. return `blocked type=verification owner=user`, not an implementation failure;
-3. classify the procedure as `observe_only` or `candidate_mutating` and reproduce it through `.ai/contracts/ACTION_CARDS.md#editorruntime-check` with exact app/path/setup/action/observation/PASS/FAIL/reply/fallback guidance in `user_language`;
-4. when evidence returns, compare current status and candidate identity before consuming it;
-5. resume Review only for observation-only evidence against unchanged bytes; a user action that saved a Task-attributed asset/config/source routes Builder for a fresh Build/Review identity, while an unowned, unknown, or unauthorized mutation remains a `context`/`contract` blocker;
-6. route any observed implementation failure to Builder and never grant PASS merely because the user said the behavior looked correct.
+If a mandatory manual/editor/runtime gate remains, finish available Review without unchanged reruns, return `blocked type=verification owner=user`, and render `.ai/contracts/ACTION_CARDS.md#editorruntime-check` in `user_language` with the fewest safe same-surface observations. On reply, revalidate status/identity: unchanged `observe_only` resumes; a user action that saved a Task-attributed asset/config/source routes Builder for a fresh Build/Review identity; unknown/unowned mutation stays blocked. User confidence never substitutes for the required evidence.
 
 Keep `state.next.role=reviewer` while waiting for that evidence; the user is the blocker owner, not a virtual role.
 
@@ -81,25 +69,9 @@ Do not ask for a manual check merely because a UI tool is unavailable when equiv
 
 ## Change understanding
 
-After PASS, add a Change Brief grounded only in the approved intent, reviewed diff, and verification evidence. Its purpose is to let the user reason about a later extension or failure, not to restate code.
+After PASS, ground the risk-scaled Change Brief in approved intent, reviewed Diff, and evidence; lead in `user_language` with verdict, observable result, and one action, and distinguish `observed`, `inferred`, and `confirmed`. Every ordinary Task PASS gives exact Diff identity/command or a documented no-Git/unsealed changed-file manifest and path/symbol open sequence. For non-trivial production source, populate `REVIEW_RESULT.md` and render `ACTION_CARDS.md#code-walkthrough`: Give each changed production source file a one-sentence plain role and connect its key symbol to runtime flow.
 
-- `none`: purely mechanical change with no meaningful behavior or system-model change; record the reason only.
-- `brief`: default for non-trivial behavior; state purpose, before → after, runtime/data flow, important invariant or tradeoff, and where to inspect or try it.
-- `deep`: architecture, ownership/lifetime, concurrency, networking, persistence, unfamiliar high-risk behavior, or explicit user request; add only the background and conceptual walkthrough needed to reason correctly.
-
-Present the compact brief in chat using `user_language`; keep durable artifact fields in English. Explain in conceptual/runtime order before file order, cite paths/symbols, distinguish evidence from inference, and answer follow-up questions from the same evidence. Never require a quiz. If direct manipulation would materially improve understanding, suggest an optional debugger/visualization as a separately approved Architect task; do not build it or make it a PASS condition.
-
-For every ordinary Task PASS on `main` or a non-`main` Lane, provide the exact reviewed Diff identity/command or the documented no-Git/unsealed changed-file manifest and path/symbol open sequence. When hand-written production source changed non-trivially, populate every source-role/read-order/new-file/test field in `REVIEW_RESULT.md`, then render `.ai/contracts/ACTION_CARDS.md#code-walkthrough` in chat. Give each changed production source file a one-sentence plain role and connect its key symbol to the runtime flow; a Change Brief summary or a few selected hunks cannot replace direct Diff and source inspection. If `interaction.code_inspection: before_next_task` and candidate identity can be revalidated through an immutable Git tree or canonical working-tree fingerprint, persist `accepted/active + next.role: reviewer + next.action: await_code_inspection_then_resume_review_route`, return `code_inspection=awaiting_user`, and wait for the user's displayed descriptive read/continue reply or questions before emitting or automatically transporting `DO_NEXT`; this pause controls pace, not PASS or correctness. A no-Git/unsealed Task Review shows the walkthrough with `shown_no_pause` and follows the recorded route without creating or repeating that wait. An Integration Review is not an ordinary Task Review: set `code_inspection=not_applicable`, verify and route its exact Integration range normally, and do not introduce another source-inspection wait.
-
-Layer an unfamiliar change as `observable problem/behavior → plain-language solution → technical term and exact mechanism → optional deeper detail`. Define an unfamiliar technical term once at first use and do not send the user to external study merely to understand the accepted change. For a non-obvious local/reversible technical choice, include the reason, one meaningful alternative/tradeoff, and the reconsider/revert condition without pretending it required a user Gate. Never write `unchanged` or `the same` without naming the compared baseline and the concrete observable invariants preserved by the reviewed candidate.
-
-After the Change Brief's core result and next action are clear, use `ACTION_CARDS.md#bounded-expert-note` for at most one reusable principle or material failure mode by default; a `deep` brief may use at most two or three. Omit mechanical, repeated, speculative, and unrelated knowledge. The note is optional presentation, not a finding, PASS condition, quiz, scope expansion, or proof that the user understood the code; simplify first when the user signals confusion.
-
-User-facing Task, Review, and artifact references use a short semantic label before the internal ID/path. When the user returns confused or related follow-ups have obscured the current thread, use `.ai/contracts/ACTION_CARDS.md#working-summary`; derive it from durable evidence and end with one next action rather than replaying the full history.
-
-Independent AI Review, the Change Brief, and direct Diff/source inspection support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. Use a bounded inspection path through the changed source roles, key symbols, runtime flow, invariant, and runnable observation rather than demanding exhaustive line-by-line review or adding a correctness gate.
-
-The chat must contain the useful brief itself. `understanding=deep`, a terse invariant list, or an English Review Result link is not a substitute. On FAIL, give a shorter user-language explanation of what breaks, why it matters in play/runtime terms, and which role will repair it.
+Never write `unchanged` or `the same` without naming the compared baseline and concrete observable invariants. Use the Action Cards terminology, bounded-expert-note, semantic-label, and `.ai/contracts/ACTION_CARDS.md#working-summary` rules instead of duplicating them. Independent Review, Change Brief, and direct Diff/source inspection support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. On FAIL, explain the observable break and owning repair role.
 
 ## Knowledge routing
 

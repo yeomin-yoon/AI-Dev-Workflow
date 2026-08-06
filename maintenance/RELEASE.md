@@ -2,6 +2,8 @@
 
 This source-only procedure exists in the canonical AI Dev Workflow distribution checkout. It is deliberately outside `.ai`, so ordinary project installations receive only local Observation capture rules. Read `.ai/maintenance/MAINTAIN.md` for the Observation schema and deduplication contract used below.
 
+A user may describe or paste a Workflow inconvenience directly in this checkout in ordinary language. Treat it as discovery evidence and discuss it without first creating or importing an Observation. When the user explicitly asks for a change, edit only the next unreleased candidate and validate it proportionally; this never authorizes commit, push, tag, release finalization, or edits to the source project that exposed the inconvenience. Use the collection procedures below only when local records or installed-copy diffs actually need to be imported.
+
 ## Collect from installed copies
 
 Run only when the user explicitly asks from the canonical AI Dev Workflow distribution checkout and supplies each installation root. This is observation intake, not project/Git integration. Never discover installations by crawling parent directories or drives.
@@ -59,7 +61,7 @@ For one accepted release batch:
 
 1. retain the uninitialized project/Knowledge/Integration scaffold and `_template` as the only Lane;
 2. apply the smallest generic change without weakening correctness, safety, explanation, or verification;
-3. add/update directly affected regression cases;
+3. add/update directly affected regression evidence at the lowest sufficient level: extend an existing case before creating a new one; use deterministic positive/inverse fixtures for authority, state, scope, safety, loss, candidate identity, migration, or release false-acceptance risks, while defaults and presentation changes normally use an existing behavior case plus focused human review rather than wording-lock fixtures;
 4. bump the canonical version exactly once and update Changelog; do not rewrite historical Eval versions;
 5. run affected cases provisionally without creating a completed Eval record;
 6. run `tools/validate-workflow.ps1` without `-RequireReleaseEvidence` from the distribution root;
@@ -117,4 +119,6 @@ Before promoting an accepted candidate, classify its enforcement level as `invar
 - `default`: the usual reversible operation, overridable by stronger project evidence or an explicit preference;
 - `presentation`: user-language ordering/readability guidance whose absence alone never invalidates safe Build/Review evidence.
 
-A single personal observation normally remains a project preference, documentation/presentation improvement, or `needs_evidence`; it becomes a Core hard invariant only when one directly evidenced high-severity loss/authority/safety failure justifies immediate protection, or repeated/cross-context evidence demonstrates the same general failure surface. Before adding any hard rule, prove that existing authority does not already cover it, state its cross-domain failure surface, measure normal-path Context/Gate/blocking cost, and add an inverse case that rejects over-blocking. Prefer merging or narrowing an existing rule over adding another one. `no_change` is a successful triage result.
+A single personal observation normally remains a project preference, documentation/presentation improvement, or `needs_evidence`; it becomes a Core hard invariant only when one directly evidenced high-severity loss/authority/safety failure justifies immediate protection, or repeated/cross-context evidence demonstrates the same general failure surface. Before adding any hard rule, prove that existing authority does not already cover it, state its cross-domain failure surface, and measure normal-path Context/Gate/blocking cost. Add a deterministic inverse case when the rule controls authority, state, scope, safety, loss, candidate identity, migration, or release acceptance; for a default or presentation rule, extend the smallest existing behavior case and use focused human review unless a concrete escaped regression justifies another fixture. Prefer merging or narrowing an existing rule over adding another one. `no_change` is a successful triage result.
+
+For every accepted batch, name the canonical Design Principle it implements, inspect the ordinary single-main one-Task path before and after, and remove superseded rules/tests in the same batch. An increase in always-read files, user stops, cross-session handoffs, broad-suite runs, or durable outputs requires a named failure it uniquely prevents; otherwise keep the behavior on demand or do not add it.

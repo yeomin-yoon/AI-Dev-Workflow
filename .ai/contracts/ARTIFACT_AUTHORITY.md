@@ -33,6 +33,7 @@ Knowledge status: `verified | inferred | stale | unknown | conflict`.
 - **Lane handoff commit** — non-`main`, current-Lane artifacts under `.ai/lanes/<lane>/**` only; never shared/canonical Knowledge.
 - **Single-main revision-repin closure commit** — only role-owned state/Knowledge revision pins required to name the reviewed content commit.
 - **Integration Review checkpoint commit** — only the Integration Review, queue update, and directly required main state pointers.
+- **Knowledge checkpoint commit** — only role-owned canonical Knowledge/project-index updates, synchronized state pointers, and queue Knowledge-sync fields during an activated main Integration loop.
 
 One checkpoint type never inherits another type's path set merely because both contain no production bytes.
 

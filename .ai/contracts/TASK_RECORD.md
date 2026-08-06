@@ -82,6 +82,10 @@ The gate returns exactly one internal planning outcome:
 
 `SPLIT` and `MERGE` are private Architect revisions, not new user gates. Ask the user only when the underlying change requires user-owned intent or an Architecture Gate. Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`; the Task Record fields are the evidence.
 
+Task creation also requires a current delivery reason: an explicit user-requested outcome, the approved Architecture delivery order, a dependency of the next observable outcome, or repair of an `OPERATIONS.md#bounded-diagnosis-during-active-delivery` `current_blocker`. A discovered `follow_up` is not independently READY merely because it is real or convenient to fix, and `not_actionable` evidence never becomes a Task.
+
+When the complete procedure includes known user/editor saves to Task-attributed paths, label that step as candidate-mutating implementation to be batched during Builder's active attempt before final verification. Reserve post-handoff Reviewer gates for observation-only evidence or newly discovered setup that could not be known from the approved Task; do not knowingly design a Build -> Review -> save -> Build loop.
+
 The interrupted-attempt disposition is required only when the replacement Task inherits Workflow-attributed dirty bytes. It never authorizes deleting unrelated pre-existing or `unknown` work; unresolved attribution remains a `context` blocker. Builder and Reviewer verify the disposition against the prior Build Baseline and current diff.
 
 Builder must not start unless the Task satisfies this Gate. Unapproved Task/Architecture, non-observable ACs, incomplete or cross-Lane writes, a missing verification method or unresolved human-gate procedure, unapproved dependencies/contracts, changed or unresolved requirement refs, and source drift are hard blockers.

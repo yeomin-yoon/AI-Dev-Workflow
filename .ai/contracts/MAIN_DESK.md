@@ -58,7 +58,7 @@ After exact-revision independent PASS:
 
 Before emitting a return:
 
-1. Complete the Bootstrap Close checkpoint and Observation trigger.
+1. Complete the Bootstrap Close checkpoint. Preserve any already-created manual Observation, but never create one merely because the session is closing.
 2. Resolve the source repository root/worktree, Lane, current role, Branch, `HEAD`, and read-only Git status.
 3. Read only current lane state and its active artifact pointers.
 4. Resolve the primary/main worktree from approved Parallel Start data when available, otherwise verified Git worktree state. Never guess from a folder name.

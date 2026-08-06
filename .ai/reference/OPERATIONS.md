@@ -33,6 +33,26 @@ This is the single authoritative issue-routing table.
 
 Repair only the responsible artifact; do not restart the whole workflow.
 
+## Bounded diagnosis during active delivery
+
+Use this before a cause, user choice, manual evidence request, new Task, or broader investigation can change an active delivery route:
+
+1. Reconstruct the delivery anchor from the current Task's exact observable ACs, applicable approved Architecture/requirement sections, and latest explicit user intent. State the intended observable behavior before technical hypotheses. Do not ask the user to choose an outcome that this evidence already determines.
+2. Label each claim `observed | inferred | confirmed`. `Observed` is direct source/runtime/diff evidence. `Inferred` is a plausible explanation with named uncertainty. `Confirmed` requires a discriminating check that rules out every materially viable competing cause. Use phrases such as `root cause confirmed` only for `confirmed` evidence, and correct an earlier inference explicitly when evidence disproves it.
+3. Classify each discovery against that same delivery anchor:
+
+| Promotion | Meaning and route |
+|---|---|
+| `current_blocker` | Direct evidence shows a mandatory AC fails, the candidate caused a regression, approved scope/boundary is invalid, candidate identity or required verification is untrustworthy, or a high-severity safety/loss/external-effect risk makes continuation unsafe. Route the owning repair now. |
+| `follow_up` | The issue is evidenced but the active candidate can still be completed and truthfully accepted without hiding material risk. Keep it after the current result in an existing Residual Risk/owned artifact only when future work needs it; do not create a Task, Gate, handoff, or broader Review now. |
+| `not_actionable` | Preference, speculation, duplicate evidence, or consequence-free cleanup. Do not persist or route it as work. |
+
+4. Build one bounded evidence batch before requesting user help. Use source and deterministic tools first. When an editor, device, binary asset, or experiential behavior is unavailable, ask for the smallest user action that distinguishes the remaining hypotheses and batch observations available in the same app/surface. Do not drip-feed avoidable one-field questions or repeat evidence already supplied.
+5. After each repair or observation, reclassify any new discovery against the same anchor and return to the bounded candidate unless it is a `current_blocker`. A discovery being real does not authorize recursive investigation, Task creation, or a changed product outcome.
+6. Record durable truth at the right confidence. Architecture, Task, state, and Knowledge contain only confirmed/approved facts. Build/Review evidence may retain `observed` facts and explicitly `inferred` hypotheses while an attempt is open, but must correct disproved hypotheses and never present them as authoritative truth or PASS evidence.
+
+Only `current_blocker` enters the Exception procedure below. Never downgrade a blocker for momentum; if the available evidence cannot safely distinguish blocker from follow-up, run one bounded probe or use the existing `context`/`verification` route.
+
 ## Cross-lane and integration
 
 - Production writes stay inside lane `owned_paths`; role-owned workflow artifacts stay in their declared `.ai` paths.
@@ -65,9 +85,7 @@ If `owner=user`, immediately follow the outcome with the `ACTION_CARDS.md` User 
 
 Keep `state.next.role` as the AI role that will consume the reply. Do not store `user` or `integration` as a role, and do not add a redundant cross-session handoff when the user replies in the current responsible session.
 
-For unavailable manual verification after implementation is complete, route the Build candidate to Reviewer first. Reviewer evaluates all available evidence and owns the user observation gate; do not repeatedly send the user back to Builder just to explain how to perform the check. Reviewer classifies the procedure as observation-only or candidate-mutating. Observation-only evidence may resume only against unchanged candidate identity; any saved candidate byte routes a fresh Build/Review attempt, while unowned/unknown mutation remains blocked for attribution.
-
-After the operational outcome is secured, apply the Bootstrap observation trigger once. Record only a supported Workflow-level cause such as a false blocker, invalid route/state, missing required actionability, recurring recovery failure, or provider contract incompatibility. Do not turn the underlying project failure into a Workflow observation. Observation capture is supplementary and never changes the outcome or lane state.
+Known Task-scoped user/editor authoring that saves candidate bytes is implementation: Builder batches it before final verification and Review, keeps the same active Build attempt, and reconciles every authorized save. For unavailable observation-only verification after implementation is complete, route the Build candidate to Reviewer. Reviewer evaluates available evidence and owns that observation gate; do not repeatedly send the user back to Builder merely to explain the check. A newly discovered candidate-mutating action after handoff invalidates candidate identity and routes a fresh Build/Review attempt, while unowned/unknown mutation remains blocked for attribution.
 
 ## Direct edits or external merges
 
@@ -80,7 +98,7 @@ If structure changed, Architect resolves intended architecture before Knowledge 
 
 ## Session replacement
 
-Before closing, persist decisions, artifact paths, verification, risks/blockers, next role/action, and minimum next inputs; inspect read-only Git status. Apply the evidence-gated Observation trigger once, but do not treat close as a Git commit, merge, observation collection, worktree deletion, or unselected Knowledge update. Never pass a chat summary.
+Before closing, persist decisions, artifact paths, verification, risks/blockers, next role/action, and minimum next inputs; inspect read-only Git status. Do not treat close as a Git commit, merge, observation capture/collection, worktree deletion, or unselected Knowledge update. Never pass a chat summary.
 
 A pure same-Lane replacement with unchanged absolute checkout, Lane, role/topology, durable route, and candidate identity emits `RESUME_SAME_LANE` directly from `.ai/contracts/SESSION_CLOSE.md`. Every cross-Lane, new-worktree, candidate-return, or Integration-sensitive non-`main` close emits `RETURN_TO_MAIN`; the user pastes its single instruction into main Work Front Desk, which verifies the referenced files/Git and issues any `NEXT_SESSION`. Do not make the user retain or edit old Lane prompts. A main Front Desk replacement uses `FRONT_DESK_RECOVERY` and verifies main Git/queue state before acting.
 
