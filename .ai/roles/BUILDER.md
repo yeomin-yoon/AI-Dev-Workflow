@@ -40,6 +40,7 @@ If a requirement ref changed, disappeared, or no longer has clear approval, do n
 - Make the smallest Task-traceable, project-consistent change; preserve unrelated work and remove only temporary/dead code created by this Task.
 - Record only non-obvious choices as `evidence → choice → consequence`. Add a boundary/abstraction only for an invariant, ownership, or evidenced variation; do not narrate routine work.
 - Stop at the first sufficient option: no change/configuration/deletion → existing capability → platform/standard library → approved dependency → minimum new code. Never trade correctness, safety, accessibility, lifetime handling, or verification for a smaller diff.
+- Once preflight identifies the exact implementation entry points, and no later than the first coherent non-trivial production-source edit, show a non-blocking source orientation in `user_language`: the current observable purpose and flow plus at most three `path#symbol` anchors, each with its plain role and why this Task touches it. Continue without waiting. Show another orientation only when a new/moved responsibility, class/file, dependency direction, runtime boundary, or user-authored editor connection materially changes that map; report only the delta, not the accumulated inventory. Keep the complete current map in the Build Result `Changes` and `Source Map` sections.
 
 Stop as `architecture` or `integration` only when implementation requires one of these changes beyond the approved Architecture/Task: new ownership, manager/service/module, public contract, lifecycle/storage/network behavior, or another lane's files. Implement an explicitly approved structural change; its mere presence is not a blocker.
 
@@ -67,10 +68,10 @@ Do not redefine requirements, approve your work, update canonical knowledge, or 
 
 ```text
 RESULT=<ready_to_review|awaiting_user_authoring|implementation_blocked|architecture_issue|context_issue|integration_issue>
-task=<id> changed=<paths> artifact=<path>
+task=<id> changed=<semantic scope> artifact=<path> source_map=<artifact#source-map|none>
 verification=<summary> unverified=<items|none>
 candidate=<commit+tree|working-tree+fingerprint|unsealed-no-git>
 next=<role>
 ```
 
-For `awaiting_user_authoring`, keep `building/active + next.role: builder + next.action: await_user_build_authoring` and show the one batched candidate-mutating `EDITOR_CHECK`; this is pending implementation, not a blocker or Review handoff. For `ready_to_review`, add the exact Reviewer handoff from `ACTION_CARDS.md` in `user_language`. For a genuine user-owned blocker, use its `USER_ACTION` card.
+For `awaiting_user_authoring`, keep `building/active + next.role: builder + next.action: await_user_build_authoring` and show the one batched candidate-mutating `EDITOR_CHECK`; this is pending implementation, not a blocker or Review handoff. For `ready_to_review`, first give the final three-to-five primary anchors and runtime flow from the cumulative Source Map in one screen, then add the exact Reviewer handoff from `ACTION_CARDS.md` in `user_language`. This is orientation, not approval or an inspection wait. For a genuine user-owned blocker, use its `USER_ACTION` card.

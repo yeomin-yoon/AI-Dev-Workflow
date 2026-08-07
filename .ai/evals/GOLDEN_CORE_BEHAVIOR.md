@@ -92,9 +92,10 @@ Given a Git-backed single-main Task changes tracked `Source/Game/New.cpp`, delet
 - `base` is the fixed first manifest line and is excluded from sorting;
 - only normalized repository-relative `path` rows are ordinal-sorted, so `!Generated/Local.txt` sorts before `Source/**` without moving the header;
 - tracked files use their exact Git mode, the untracked regular file uses literal `regular`, and deleted endpoints use `deleted` for both final fields;
-- Builder and Reviewer use the identical reconciled path set, UTF-8/LF bytes, `/` separators, tabs, and one final LF.
+- Builder and Reviewer use the identical reconciled path set, UTF-8/LF bytes, `/` separators, tabs, and one final LF;
+- a separate attempt has only an `unsealed` working-tree result and later creates a commit with the same path names but no preserved content fingerprint linking its earlier manual/runtime evidence to those committed bytes.
 
-Expected: both independently produce byte-identical manifests and the same SHA-256 fingerprint. An unsupported untracked special file type makes the candidate `unsealed`; neither role guesses a mode.
+Expected: both independently produce byte-identical manifests and the same SHA-256 fingerprint. An unsupported untracked special file type makes the candidate `unsealed`; neither role guesses a mode. Matching path names, timestamps, a Changes-table inventory, or a later commit do not upgrade an earlier unsealed candidate or transfer its evidence: Reviewer establishes and reviews the commit as a fresh exact candidate, and any mandatory manual/runtime evidence is reused only when a preserved content identity or explicit impact check proves it applies.
 
 ## Fixture 6 — Task Quality Gate and bounded batching
 
@@ -359,7 +360,7 @@ Expected:
 Given:
 
 - an independently reviewed non-trivial Task changes two existing hand-written production source files, adds one new production source file, changes focused tests, and also touches one generated/mechanical file;
-- the exact candidate/range and Build Result Changes table are available;
+- Builder identifies implementation entry points before or during its first coherent source edit, later adds one responsibility boundary, and the exact candidate/range plus cumulative Build Result `Changes`/`Source Map` are available;
 - a new project and a historical project without the field both resolve to `interaction.code_inspection: no_pause`, while another Git-backed project explicitly opts in to `before_next_task`;
 - another PASS changes only mechanical/generated or non-code content;
 - a supported no-Git Task Review has a reconciled changed-file manifest but no revision, fingerprint, or Git Diff command;
@@ -367,17 +368,19 @@ Given:
 
 Expected:
 
-- Reviewer records and shows the exact reviewed snapshot/range plus a scoped Diff command or Git UI range. It starts with a stat and proceeds one file/symbol at a time instead of dumping an unbounded terminal Diff.
-- Every changed hand-written production source file receives a one-sentence plain-language role, key symbol, and Task-specific reason for change. The newly added source appears under `new_files` and is opened as a whole file; generated/mechanical content is grouped separately and never hides a production file.
-- The `files` list uses `F#` and the runtime `read_order` uses `R#`, so a follow-up names one unambiguous item. Displayed replies are descriptive sentences in `user_language`; internal tokens such as `inspected_continue` or an unqualified `explain_2` never replace their meaning.
-- The read order follows observable runtime flow—entry point, important state/decision, effect—then maps invariants to their enforcement points and tests to what they prove and do not prove. Unchanged context files are labeled `context`, not presented as changed.
+- Builder gives one non-blocking source orientation no later than the first coherent non-trivial production edit: current purpose/flow plus at most three `path#symbol` anchors with plain roles and Task reasons. It continues without a reply and reports only the later responsibility-boundary delta, not the accumulated inventory again.
+- The Build Result `Changes`/`Source Map` is the one complete revision-scoped inventory. Every changed hand-written production source file receives a plain role, key symbol, and Task-specific reason there; the new source is marked for whole-file reading, and generated/mechanical content is grouped without hiding production paths.
+- Reviewer independently reconciles that map with the exact candidate, stores a validated pointer plus corrections instead of rewriting the inventory, and shows the exact snapshot/range plus a scoped Diff command or Git UI range. The chat `primary_read` contains only three-to-five `R#` anchors in observable runtime order—entry, important state/decision, effect—and points to the complete map.
+- Displayed replies are descriptive sentences in `user_language`; internal tokens such as `inspected_continue` or an unqualified `explain_2` never replace their meaning. A complete-map follow-up uses its exact path/symbol.
+- The primary read maps invariants to enforcement points and tests to what they prove and do not prove. Unchanged context files are labeled `context`, not presented as changed.
 - A Change Brief, Review artifact link, directory list, or selected hunk alone does not satisfy the walkthrough; the user is directed to open the actual reviewed Diff and source files.
-- The no-Git variant records `snapshot=no-git/unsealed`, keeps reduced attribution assurance visible, and uses the reviewed changed-file manifest plus exact `F#`/`R#` path+symbol open sequence; it never invents a Git revision, fingerprint, or Diff command. It returns `shown_no_pause` even when the project opted in, follows the recorded route once, and never enters or repeats an identity-dependent inspection wait.
+- The no-Git variant records `snapshot=no-git/unsealed`, keeps reduced attribution assurance visible, and uses the reviewed changed-file manifest plus exact `R#` path+symbol open sequence; it never invents a Git revision, fingerprint, or Diff command. It returns `shown_no_pause` even when the project opted in, follows the recorded route once, and never enters or repeats an identity-dependent inspection wait.
 - Explicit `before_next_task` on an identity-revalidatable Git-backed candidate stores `accepted/active + next.role: reviewer + next.action: await_code_inspection_then_resume_review_route`, returns `code_inspection=awaiting_user`, and emits no `DO_NEXT` before the displayed descriptive read/continue reply. A replacement Reviewer reconstructs the same walkthrough and route from state, the accepted Review, and candidate identity rather than silently continuing.
 - The pause applies to ordinary Task Review on `main` or non-`main`; Integration Review returns `not_applicable` and follows its exact range/queue route without another source-inspection wait.
 - The reply controls pace only: it does not approve correctness, certify permanent understanding, or repeat Architecture approval. New-scaffold `no_pause` and historical missing `code_inspection` both return `shown_no_pause` and may follow the normal route after showing the walkthrough. A mechanical/generated-only or non-code PASS returns `not_applicable`, may show a compact scoped Diff, and never waits for an inspection reply.
 - Read-only inspection preserves candidate identity. If the user edits/saves candidate bytes, the old PASS is not reused and a fresh Build/Review identity is required.
-- The Review keeps revision-scoped file roles for later reconstruction; only stable entry points, module owners, public boundaries, or repeatedly needed source locations enter existing Knowledge. No exhaustive permanent file catalog, new role/session, quiz, score, or approval Gate is created.
+- The existing Build Result keeps revision-scoped file roles for later reconstruction; only stable entry points, module owners, public boundaries, or repeatedly needed source locations enter existing Knowledge. No second inventory, exhaustive permanent catalog, new role/session/card, quiz, score, or approval Gate is created.
+- Completed historical Build/Review Results with inline Review source roles or no Build Source Map remain readable without migration. Only a still-active historical candidate must have Builder reconstruct its Source Map from the exact candidate before first Review under the new contract; accepted history is not rewritten.
 - The same contract applies to service/API, CLI/library, and editor/runtime projects; it does not assume a specific language, engine, IDE, or Git UI.
 
 ## Fixture 21 — Readable atomic decision and checkpoint closure

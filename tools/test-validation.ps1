@@ -1256,21 +1256,21 @@ migrations:
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=## Code walkthrough'
 
-    Assert-NegativeFixture 'missing-code-walkthrough-source-coverage' {
+    Assert-NegativeFixture 'missing-build-source-map-coverage' {
         param($root)
-        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $target = Join-Path $root '.ai/contracts/BUILD_RESULT.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('Give every Task-touched hand-written production source file one plain-language role', 'Describe a few important files')
+        $text = $text.Replace('For every Task-touched hand-written production source path in `Changes`', 'Describe a few important files')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=Give every Task-touched hand-written production source file one plain-language role'
+    } 'Contract is missing a required invariant token: path=.ai/contracts/BUILD_RESULT.md token=For every Task-touched hand-written production source path in `Changes`'
 
-    Assert-NegativeFixture 'missing-review-source-role-schema' {
+    Assert-NegativeFixture 'missing-reviewed-source-map-pointer' {
         param($root)
         $target = Join-Path $root '.ai/contracts/REVIEW_RESULT.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('source roles: <each changed hand-written production path + key symbol + plain role + why changed|omit for none>', 'important files: <paths|none>')
+        $text = $text.Replace('reviewed source map: <Build Result#source-map validated against exact Diff + corrections|omit for none>', 'important files: <paths|none>')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Contract is missing a required invariant token: path=.ai/contracts/REVIEW_RESULT.md token=source roles: <each changed hand-written production path + key symbol + plain role + why changed|omit for none>'
+    } 'Contract is missing a required invariant token: path=.ai/contracts/REVIEW_RESULT.md token=reviewed source map: <Build Result#source-map validated against exact Diff + corrections|omit for none>'
 
     Assert-NegativeFixture 'ambiguous-code-walkthrough-numbering' {
         param($root)
@@ -1320,13 +1320,13 @@ migrations:
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/roles/REVIEWER.md token=Use `not_applicable` for Integration Review, `fail`/`blocked`, or a purely mechanical/non-code PASS'
 
-    Assert-NegativeFixture 'inconsistent-review-brief-none-policy' {
+    Assert-NegativeFixture 'inconsistent-reviewed-source-map-none-policy' {
         param($root)
         $target = Join-Path $root '.ai/contracts/REVIEW_RESULT.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('new source files: <whole-file paths|omit for none>', 'new source files: <whole-file paths|none>')
+        $text = $text.Replace('reviewed source map: <Build Result#source-map validated against exact Diff + corrections|omit for none>', 'reviewed source map: <Build Result#source-map validated against exact Diff + corrections|none>')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Contract is missing a required invariant token: path=.ai/contracts/REVIEW_RESULT.md token=new source files: <whole-file paths|omit for none>'
+    } 'Contract is missing a required invariant token: path=.ai/contracts/REVIEW_RESULT.md token=reviewed source map: <Build Result#source-map validated against exact Diff + corrections|omit for none>'
 
     Assert-NegativeFixture 'missing-code-walkthrough-no-git-form' {
         param($root)

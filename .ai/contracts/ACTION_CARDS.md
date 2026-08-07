@@ -88,31 +88,30 @@ Define the meaning before the term. Do not turn the note into a history lecture,
 
 ## Code walkthrough
 
-After every PASS, keep the exact reviewed Diff directly inspectable. A purely mechanical or non-code change may use one compact scoped Diff reference. A non-trivial change to hand-written production source must also produce this chat-only walkthrough from the approved intent, Review Result Change Brief, exact reviewed candidate/range, and source/tests—not from remembered chat:
+After every PASS, keep the exact reviewed Diff directly inspectable. A purely mechanical or non-code change may use one compact scoped Diff reference. A non-trivial change to hand-written production source must also produce this chat-only walkthrough from the approved intent, the Builder-owned Source Map after Reviewer validation, the exact reviewed candidate/range, and source/tests—not from remembered chat:
 
 ```text
 CODE_WALKTHROUGH
 change=<plain outcome + semantic label before internal Task id>
 snapshot=<base..reviewed revision | base revision + reviewed fingerprint | no-git/unsealed + reviewed changed-file manifest>
-diff=<exact per-file git diff/show command or preferred Git UI range | no-git direct F#/R# path+symbol open sequence>
-new_files=<paths that must be opened as whole files|none>
-files=
-F1. <path>#<symbol> — <plain-language role of this source file> — <why this Task changed it>
-read_order=
-R1. <path>#<symbol> — <what to follow here>
+diff=<exact per-file git diff/show command or preferred Git UI range | no-git direct R# path+symbol open sequence>
+new_files=<primary-read paths that must be opened as whole files|none>
+primary_read=
+R1. <path>#<symbol> — <what this file owns> — <what to follow here>
+full_map=<Build Result#changes + #source-map, validated by Review Result>
 flow=<entry -> important decision/state -> observable effect>
 invariants=<what must remain true and where it is enforced>
 tests=<test path/case -> what it proves and does not prove>
-reply=<descriptive user_language choices meaning "I inspected the reviewed source; continue the existing route" or "explain F#/R#/path/symbol", plus free-form questions>
+reply=<descriptive user_language choices meaning "I inspected the primary reviewed source path; continue the existing route" or "explain R#/path/symbol", plus free-form questions>
 ```
 
-Give every Task-touched hand-written production source file one plain-language role, including headers/interfaces that own a public boundary. Group generated/vendor files and purely mechanical assets separately; do not make the user infer a source file's purpose from its filename. Mark unchanged context files as `context`, never as part of the Diff. A newly added source file has no prior hunk, so name it under `new_files` and ask the user to open the whole file.
+The Build Result `Changes` and `Source Map` are the one cumulative revision-scoped inventory: every Task-touched hand-written production source path has a key symbol, plain-language role, and Task reason there; generated/vendor/mechanical paths are grouped, and new source files are marked for whole-file reading. Reviewer independently validates that map against the exact candidate and records its pointer plus corrections instead of copying it. The chat walkthrough selects only three-to-five anchors that explain entry, important decision/state, and observable effect, then points to the complete map. Mark unchanged context as `context`, never as part of the Diff.
 
-Make direct inspection practical rather than dumping code: for Git-backed work, start with `--stat`, then provide one exact file/symbol at a time in runtime order and the corresponding scoped `git diff`/`git show` command or Git UI range. For a supported no-Git Review, write `snapshot=no-git/unsealed`, use the reconciled Build/Review changed-file manifest as the bounded reviewed set, and provide the exact `F#`/`R#` path+symbol open sequence instead of inventing a revision, Diff command, or sealed identity. Keep its reduced attribution assurance visible. A summary, raw directory list, Review link, or selected hunk alone never substitutes for opening the actual changed source. Keep the first pass bounded; answer numbered or free-form follow-ups from the same reviewed snapshot and expand only the requested file, symbol, flow, or prerequisite term.
+Make direct inspection practical rather than dumping code: for Git-backed work, start with `--stat`, then provide the primary file/symbols in runtime order and the corresponding scoped `git diff`/`git show` command or Git UI range. For a supported no-Git Review, write `snapshot=no-git/unsealed`, use the reconciled Build/Review changed-file manifest as the bounded reviewed set, and provide the exact `R#` path+symbol open sequence instead of inventing a revision, Diff command, or sealed identity. Keep its reduced attribution assurance visible. A summary, raw directory list, Review link, or selected hunk alone never substitutes for opening the actual changed source. Keep the first pass to the primary path; answer numbered or free-form follow-ups from the same reviewed snapshot and expand only the requested file, symbol, flow, complete-map entry, or prerequisite term.
 
 This is not a quiz, correctness approval, or claim that the user permanently understands the code. Read-only inspection does not change the candidate. If the user edits or saves any candidate byte while inspecting, apply the candidate-mutation Build/Review rule before reusing PASS.
 
-Use `F#` only for the `files` list and `R#` only for `read_order`; a follow-up such as `explain 2` without that namespace is not a deterministic reference. Render reply choices as descriptive sentences in `user_language`, for example `검토된 소스를 확인했어. 기존 경로로 계속해.` or `F2 파일을 더 설명해줘.` Internal enums may be stored in state/result fields but never replace the displayed meaning.
+Use `R#` only for the visible primary read; a follow-up such as `explain 2` without that namespace is not a deterministic reference. Complete-map follow-ups use an exact path/symbol. Render reply choices as descriptive sentences in `user_language`, for example `핵심 검토 소스를 확인했어. 기존 경로로 계속해.` or `R2 파일을 더 설명해줘.` Internal enums may be stored in state/result fields but never replace the displayed meaning.
 
 This pause applies only to an ordinary Task Review whose Git tree or canonical working-tree fingerprint can be revalidated, whether the Task is on `main` or a non-`main` Lane. A no-Git/unsealed Task Review always sets `code_inspection=shown_no_pause` after showing the walkthrough, even when the project preference says `before_next_task`; without a durable identity it must not enter or repeat an inspection wait. Integration Review always sets `code_inspection=not_applicable` and follows the exact Integration range/queue route without creating this user wait; its already reviewed Lane source is not presented as a new Task walkthrough.
 

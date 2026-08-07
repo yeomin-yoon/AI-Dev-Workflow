@@ -69,7 +69,7 @@ Do not ask for a manual check merely because a UI tool is unavailable when equiv
 
 ## Change understanding
 
-After PASS, ground the risk-scaled Change Brief in approved intent, reviewed Diff, and evidence; lead in `user_language` with verdict, observable result, and one action, and distinguish `observed`, `inferred`, and `confirmed`. Every ordinary Task PASS gives exact Diff identity/command or a documented no-Git/unsealed changed-file manifest and path/symbol open sequence. For non-trivial production source, populate `REVIEW_RESULT.md` and render `ACTION_CARDS.md#code-walkthrough`: Give each changed production source file a one-sentence plain role and connect its key symbol to runtime flow.
+After PASS, ground the risk-scaled Change Brief in approved intent, reviewed Diff, and evidence; lead in `user_language` with verdict, observable result, and one action, and distinguish `observed`, `inferred`, and `confirmed`. Every ordinary Task PASS gives exact Diff identity/command or a documented no-Git/unsealed changed-file manifest and path/symbol open sequence. For non-trivial production source, independently verify the Build Result's complete per-path roles and Source Map against the exact candidate, record only the validated pointer and corrections in `REVIEW_RESULT.md`, and render `ACTION_CARDS.md#code-walkthrough`. Chat shows the verified three-to-five primary anchors and full-map pointer; it does not rewrite or dump the complete inventory.
 
 Never write `unchanged` or `the same` without naming the compared baseline and concrete observable invariants. Use the Action Cards terminology, bounded-expert-note, semantic-label, and `.ai/contracts/ACTION_CARDS.md#working-summary` rules instead of duplicating them. Independent Review, Change Brief, and direct Diff/source inspection support human code ownership; they do not claim to prove long-term maintainability or transfer that ownership. On FAIL, explain the observable break and owning repair role.
 
@@ -85,7 +85,7 @@ Force a Knowledge checkpoint before a new feature, external pull/merge, architec
 
 `none` never clears earlier pending Reviews. Set `knowledge_sync.status=clean` only when its list is empty; use `pending` when entries may be batched and `required` when synchronization must happen before continuing.
 
-Change Brief source roles are revision-scoped orientation, not a permanent file catalog. When a changed file becomes or moves a stable entry point, module owner, public boundary, or repeatedly needed source location, route that durable fact through the existing Knowledge policy. Do not index every private helper merely because it appeared in a walkthrough.
+Build Result Source Map entries are revision-scoped orientation, not a permanent file catalog. When a changed file becomes or moves a stable entry point, module owner, public boundary, or repeatedly needed source location, route that durable fact through the existing Knowledge policy. Do not index every private helper merely because it appeared in a walkthrough.
 
 ## Optional worktree and Integration delivery
 
@@ -111,7 +111,7 @@ Do not edit production code, redesign by preference, demand unrelated cleanup, o
 VERDICT=<pass|fail|blocked> task=<id>
 findings=<count> artifact=<path>
 verification=<summary> risks=<items|none>
-understanding=<none|brief|deep> change=<summary|none>
+change_brief=<none|brief|deep> change=<summary|none>
 invariants=<summary|none> inspect=<CODE_WALKTHROUGH|scoped diff|none>
 code_inspection=<awaiting_user|shown_no_pause|not_applicable>
 knowledge_sync=<required|defer|none>
