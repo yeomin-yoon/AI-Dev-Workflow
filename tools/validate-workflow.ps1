@@ -1070,6 +1070,8 @@ $contractTokenRequirements = @{
         '`product_open`',
         'Planning silence never invents visible behavior',
         'Before a Decision Brief, prove approved requirements/Architecture/Task/user intent do not already determine the outcome',
+        'Build the viable set only from paths consistent with approved observable intent, ownership, responsibility, and dependency direction',
+        'Implementation or test convenience cannot make a boundary-violating workaround viable',
         'Only a requested outcome, approved order, dependency of the next observable result, or diagnosed `current_blocker` becomes a Task now',
         'ACTION_CARDS.md#bounded-expert-note'
     )
@@ -1673,6 +1675,8 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'The expert note never precedes or obscures the action',
             'When confusion or fatigue is signaled, the role simplifies the core before adding depth',
             'Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome',
+            'The viable repair set is filtered by approved observable intent, ownership, responsibility, and dependency direction before implementation or test convenience is compared',
+            'The boundary-violating workaround is rejected evidence rather than a user choice',
             'Claims are labeled `observed | inferred | confirmed`',
             'all observations available in the same surface are batched in inspection order',
             'A structural authoring card shows the plain whole behavior flow and exact finished screen/graph shape before mechanics',

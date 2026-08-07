@@ -428,11 +428,13 @@ Given:
 - an active Task has one approved observable outcome and exact ACs, while an applicable approved intent source already determines the user-visible behavior;
 - deterministic checks are green but do not exercise one changing runtime value, and the observed system behavior still fails the corresponding AC;
 - source evidence leaves two materially viable causes, one unavailable editor/binary/device surface can distinguish them, and repairing one cause may expose an unrelated issue;
+- two repairs appear technically possible: one preserves the approved owner and dependency boundary, while the other moves behavior into the wrong layer only because it is easier to implement or unit-test;
 - an earlier role confidently stated one inference as the root cause and later evidence disproves it.
 
 Expected:
 
 - Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome from the current Task ACs and applicable intent source. It does not offer a contradictory behavior as a viable user option or ask the user to choose an outcome already specified.
+- The viable repair set is filtered by approved observable intent, ownership, responsibility, and dependency direction before implementation or test convenience is compared. The boundary-violating workaround is rejected evidence rather than a user choice; verification strength, simplicity, reversibility, and cost rank only the remaining boundary-consistent repairs.
 - Claims are labeled `observed | inferred | confirmed`. Green checks are observed evidence only for their actual oracle; the role calls a root cause confirmed only after one discriminating check rules out every materially viable competing cause, and explicitly corrects a disproved inference.
 - The unavailable surface produces one action-first `EDITOR_CHECK`/`USER_ACTION`: `do_now` and save/do-not-save appear before logs/internal IDs, all observations available in the same surface are batched in inspection order, and the card includes exact open/setup/action/observe/PASS/FAIL/reply/fallback guidance.
 - A structural authoring card shows the plain whole behavior flow and exact finished screen/graph shape before mechanics, defines each first-use visible label by its behavioral role, distinguishes hierarchy from order with a visible cue, and remains understandable without prior-chat memory or "same as last time". It never calls an uninspected insertion/wiring position safe; `inferred`/`unknown` remains visible until one bounded surrounding-structure view confirms it.
