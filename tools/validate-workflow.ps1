@@ -1139,8 +1139,6 @@ $contractTokenRequirements = @{
         'Before a Decision Brief, prove approved requirements/Architecture/Task/user intent do not already determine the outcome',
         'Build the viable set only from paths consistent with approved observable intent, ownership, responsibility, and dependency direction',
         'Implementation or test convenience cannot make a boundary-violating workaround viable',
-        '## Decision evidence ladder',
-        '## Feature convergence',
         'Before inventing a design or repair direction, use the strongest applicable evidence in this order',
         'Reuse an already verified finding while its relevant inputs and constraints remain unchanged',
         'Skip external research and experiments for trivial, mechanical, or already-determined choices',
@@ -1280,6 +1278,108 @@ foreach ($contractPath in $contractTokenRequirements.Keys) {
         foreach ($requiredToken in $contractTokenRequirements[$contractPath]) {
             if (-not $contractText.Contains($requiredToken)) {
                 Add-Failure "Contract is missing a required invariant token: path=$contractPath token=$requiredToken"
+            }
+        }
+    }
+}
+
+# Token existence alone cannot tell whether an Architect section still owns its
+# own rules, so the Architect contract is checked as ordered sections with
+# explicit content ownership instead.
+$architectRolePath = Get-RepositoryPath '.ai/roles/ARCHITECT.md'
+if (Test-Path -LiteralPath $architectRolePath -PathType Leaf) {
+    $architectRoleText = Read-Utf8Text $architectRolePath
+    $architectSectionBodies = @{}
+    $architectSectionIndex = @{}
+    $architectSectionPosition = 0
+    foreach ($architectSectionMatch in [regex]::Matches(
+            $architectRoleText,
+            '(?ms)^##[ \t]+(?<title>[^\r\n]+?)[ \t]*\r?$\r?\n(?<body>.*?)(?=^##[ \t]|\z)'
+        )) {
+        $architectSectionTitle = $architectSectionMatch.Groups['title'].Value
+        if (-not $architectSectionBodies.ContainsKey($architectSectionTitle)) {
+            $architectSectionBodies[$architectSectionTitle] = $architectSectionMatch.Groups['body'].Value
+            $architectSectionIndex[$architectSectionTitle] = $architectSectionPosition
+        }
+        $architectSectionPosition++
+    }
+
+    $architectSectionSequence = @(
+        'Decision evidence ladder',
+        'Feature convergence',
+        'Requirement changes and cross-lane ownership',
+        'Parallel lanes and Main Front Desk routing',
+        'Decision transparency'
+    )
+    $previousArchitectSection = $null
+    foreach ($architectSectionName in $architectSectionSequence) {
+        if (-not $architectSectionBodies.ContainsKey($architectSectionName)) {
+            Add-Failure "ARCHITECT.md is missing a required section heading: section=## $architectSectionName"
+            continue
+        }
+        if ($null -ne $previousArchitectSection -and
+            $architectSectionIndex[$architectSectionName] -lt $architectSectionIndex[$previousArchitectSection]) {
+            Add-Failure "ARCHITECT.md sections are out of order: section=## $architectSectionName must follow ## $previousArchitectSection"
+        }
+        $previousArchitectSection = $architectSectionName
+    }
+
+    $architectLadderContent = @(
+        'Before inventing a design or repair direction, use the strongest applicable evidence in this order',
+        'Reuse an already verified finding while its relevant inputs and constraints remain unchanged',
+        'A bounded experiment names one question',
+        'Do not make the user read the research history to find the decision',
+        'Within the decision evidence ladder, research current external information only when'
+    )
+    $architectConvergenceContent = @(
+        'perform one bounded convergence pass before `synced/idle` or a completion claim',
+        'Only all-`implemented|excluded` coverage supports a Feature-complete claim',
+        'This convergence does not write production source'
+    )
+    $architectRequirementContent = @(
+        'If a referenced approved product requirement changes',
+        'pin it once in `.ai/shared/SYSTEM_ARCHITECTURE.md`',
+        'supersede every affected Lane Task before Integration'
+    )
+    $architectParallelContent = @(
+        '.ai/contracts/PARALLEL_START.md',
+        'Main Front Desk is always the compact'
+    )
+
+    $architectSectionOwnership = @(
+        @{
+            Section = 'Decision evidence ladder'
+            Owns = $architectLadderContent
+            Foreign = $architectConvergenceContent + $architectRequirementContent + $architectParallelContent
+        },
+        @{
+            Section = 'Feature convergence'
+            Owns = $architectConvergenceContent
+            Foreign = $architectLadderContent + $architectRequirementContent + $architectParallelContent
+        },
+        @{
+            Section = 'Requirement changes and cross-lane ownership'
+            Owns = $architectRequirementContent
+            Foreign = $architectLadderContent + $architectConvergenceContent + $architectParallelContent
+        },
+        @{
+            Section = 'Parallel lanes and Main Front Desk routing'
+            Owns = $architectParallelContent
+            Foreign = $architectLadderContent + $architectConvergenceContent + $architectRequirementContent
+        }
+    )
+    foreach ($architectOwnershipRule in $architectSectionOwnership) {
+        $architectSectionName = $architectOwnershipRule.Section
+        if (-not $architectSectionBodies.ContainsKey($architectSectionName)) { continue }
+        $architectSectionBody = $architectSectionBodies[$architectSectionName]
+        foreach ($ownedToken in $architectOwnershipRule.Owns) {
+            if (-not $architectSectionBody.Contains($ownedToken)) {
+                Add-Failure "ARCHITECT.md section is missing its owned rule: section=## $architectSectionName token=$ownedToken"
+            }
+        }
+        foreach ($foreignToken in $architectOwnershipRule.Foreign) {
+            if ($architectSectionBody.Contains($foreignToken)) {
+                Add-Failure "ARCHITECT.md section must not absorb another section's rule: section=## $architectSectionName token=$foreignToken"
             }
         }
     }

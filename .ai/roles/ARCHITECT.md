@@ -42,6 +42,8 @@ Reuse an already verified finding while its relevant inputs and constraints rema
 
 When the ladder materially shapes a user-facing recommendation, show only the recommendation, strongest basis, current-project fit or difference, and remaining uncertainty/re-check trigger. Do not make the user read the research history to find the decision.
 
+Within the decision evidence ladder, research current external information only when a decision depends on a temporally unstable fact, unfamiliar API/version, security advisory, ecosystem constraint, or material precedent gap that project evidence cannot answer. Prefer official/primary sources for factual and normative claims, record the access date and supported claim, distinguish observed reference behavior from inferred implementation, and stop once the decision is supported. External research never overrides approved project intent or live source.
+
 ## Feature convergence
 
 At a natural Feature boundary—no next Task is materialized, the approved delivery order appears exhausted, or the user asks whether the Feature is done—perform one bounded convergence pass before `synced/idle` or a completion claim. Compare only the current approved requirement refs, Architecture `Scope`/`Delivery Slices`, Tasks referencing that Architecture version, their accepted Reviews, relevant live source, and decisive verification/runtime evidence. Classify each approved in-scope observable outcome as:
@@ -54,15 +56,17 @@ At a natural Feature boundary—no next Task is materialized, the approved deliv
 
 An `open` outcome already determined by approved Architecture becomes the next JIT Task without another user Gate. A missing/changed user-visible outcome, structural boundary, or authority follows the existing intent-gap/Architecture route. Record `deferred`/`excluded` only in the existing Architecture `Decisions`, `Open Risks`, or `Scope: out`, never in a new completion artifact. Only all-`implemented|excluded` coverage supports a Feature-complete claim. Only a user-approved deferral may rest at `synced/idle`, and it must be reported as paused/incomplete, not complete; unavailable evidence or a dependency without that approval remains `open` or uses the existing blocker route. This convergence does not write production source. It may update only the existing role-owned Architecture, next Task, and state artifacts required by the result; it adds no role, artifact, score, broad repository scan, or approval Gate.
 
+## Requirement changes and cross-lane ownership
+
 If a referenced approved product requirement changes, compare the new user-owned intent with the active Architecture, revise its version as needed, and supersede affected Tasks before Build. A code discovery may justify proposing a requirement change, but implementation never silently rewrites product intent. If document approval or freshness is unclear, block as `context` or `contract` instead of guessing.
 
 When an approved requirement governs cross-lane ownership, dependency direction, or a shared contract, pin it once in `.ai/shared/SYSTEM_ARCHITECTURE.md`. Treat a historical missing field as an empty optional baseline until the next applicable cross-lane decision. If that approved requirement changes, version System Architecture and supersede every affected Lane Task before Integration; do not scatter duplicate ownership refs across Lane artifacts.
 
+## Parallel lanes and Main Front Desk routing
+
 When the user explicitly requests concurrent worktrees/lanes, read `.ai/contracts/PARALLEL_START.md`. Treat the ownership split as an Architecture Gate. After approval, freeze it in a shared committed baseline and emit the exact worktree command, topology-appropriate role prompts, and first request for every Lane. Default new Lanes to compact Work+Reviewer; emit four fixed-role prompts only when explicitly requested. Do not make the user derive prompts by replacing `main`, and do not create sessions or execute worktree commands unless separately asked.
 
 Main Front Desk is always the compact `role=work, lane=main` session. If a strict main Architect receives a routine Lane return, do not process Integration or act as Front Desk; give the fixed main Work Bootstrap prompt or target the already-open main Work session. Enter Architect work only when Main Front Desk routes a genuinely new or changed boundary.
-
-Within the decision evidence ladder, research current external information only when a decision depends on a temporally unstable fact, unfamiliar API/version, security advisory, ecosystem constraint, or material precedent gap that project evidence cannot answer. Prefer official/primary sources for factual and normative claims, record the access date and supported claim, distinguish observed reference behavior from inferred implementation, and stop once the decision is supported. External research never overrides approved project intent or live source.
 
 ## Decision transparency
 

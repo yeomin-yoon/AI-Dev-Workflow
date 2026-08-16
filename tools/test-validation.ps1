@@ -1958,9 +1958,32 @@ regression_cases: []
         param($root)
         $target = Join-Path $root '.ai/roles/ARCHITECT.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('## Feature convergence', 'Feature convergence')
+        $text = [regex]::Replace(
+            $text,
+            '(?ms)^## Feature convergence\r?\n\r?\n(?<body>At a natural Feature boundary.*?)(?=\r?\n\r?\n)',
+            ('${body}' + "`n`n" + '## Feature convergence')
+        )
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=## Feature convergence'
+    } 'ARCHITECT.md section must not absorb another section''s rule: section=## Decision evidence ladder token=perform one bounded convergence pass before `synced/idle` or a completion claim'
+
+    Assert-NegativeFixture 'external-research-qualification-outside-ladder' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $qualification = [regex]::Match($text, '(?m)^Within the decision evidence ladder,[^\r\n]*$').Value
+        $text = $text.Replace($qualification + "`n`n", '')
+        $text = $text.Replace('## Decision transparency', $qualification + "`n`n" + '## Decision transparency')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'ARCHITECT.md section is missing its owned rule: section=## Decision evidence ladder token=Within the decision evidence ladder, research current external information only when'
+
+    Assert-NegativeFixture 'feature-convergence-absorbs-requirement-and-parallel-routing' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Requirement changes and cross-lane ownership', 'Requirement changes and cross-lane ownership')
+        $text = $text.Replace('## Parallel lanes and Main Front Desk routing', 'Parallel lanes and Main Front Desk routing')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'ARCHITECT.md section must not absorb another section''s rule: section=## Feature convergence token=If a referenced approved product requirement changes'
 
     Assert-NegativeFixture 'nonblocking-discovery-becomes-task' {
         param($root)
