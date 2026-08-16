@@ -800,6 +800,7 @@ $contractTokenRequirements = @{
         'only its four attribution-recovery rows above may leave `accepted/blocked`',
         'all generic accepted, checkpoint, Knowledge, next-Task, and Integration routes are suspended',
         'Integration Review PASS; Task code-inspection pause is not applicable',
+        'otherwise Architect with `reconcile_feature_boundary` when no next Task or active work remains',
         'await_user_build_authoring',
         'reconciles the saved paths into the same Build attempt',
         'reconcile_feature_boundary',
@@ -965,7 +966,10 @@ $contractTokenRequirements = @{
         'Recovery does not depend on the exhausted chat',
         'Read .ai/BOOTSTRAP.md. role=work, lane=main, session_mode=compact',
         'A Front Desk is event-driven',
-        '## Post-integration Lane disposition'
+        '## Post-integration Lane disposition',
+        'it routes Architect through `STATE.md`''s `reconcile_feature_boundary` before choosing a disposition',
+        'only after Feature convergence reaches `synced/idle`',
+        'Feature convergence returns `design/active` with a specified open outcome materialized for delivery'
     )
     '.ai/contracts/SESSION_CLOSE.md' = @(
         '## Replacement timing',
@@ -985,7 +989,9 @@ $contractTokenRequirements = @{
         'full range from the retained original `main_before`',
         'queue `repair` mapping, not chat',
         '`CODE_WALKTHROUGH` inspection pause is not applicable to this Integration Review',
-        'Integration Review checkpoint commit'
+        'Integration Review checkpoint commit',
+        'After the last candidate, when no next Task or active work remains, route Architect through `reconcile_feature_boundary`',
+        'Feature-converged complete/paused rest'
     )
     '.ai/integration/queue.yaml' = @(
         'repair: # optional; absent means no Integration repair is active',
@@ -998,6 +1004,8 @@ $contractTokenRequirements = @{
         'pins `Docs/SharedPRD.md#REQ-SHARED-1@R2` once in its canonical `requirement_refs`',
         'An eligible non-`main` ordinary Task Review may use the configured `CODE_WALKTHROUGH` pause',
         'the later main Integration Review never creates that pause',
+        'the last Integration PASS and required Knowledge checkpoint still route Architect through `reconcile_feature_boundary`',
+        'An open-only or mixed open plus user-approved-deferred outcome returns `design/active`',
         'All ten cases must agree across:'
     )
     '.ai/evals/README.md' = @(
@@ -1017,6 +1025,7 @@ $contractTokenRequirements = @{
         'Apply revalidates the exact checked revision/tree/input manifest before its first write',
         'records exactly seven mandatory `pass|fail` installed-profile rows with concrete observations and evidence paths/outputs',
         '`ready_to_build/blocked`, `building/blocked`, `ready_to_review/blocked`, `reviewing/blocked`, code-inspection `accepted/blocked`, and `integration/blocked` have explicit identity-sensitive repair/resume paths',
+        'terminal Task or Integration PASS without remaining Knowledge work reaches Architect Feature convergence before any `synced/idle` disposition',
         'replacement single-main Task explicitly disposes every inherited Task path',
         'System Architecture owns cross-lane requirement refs',
         'a tacit signal triggers one bounded evidence-based diagnosis before questions or Task creation',

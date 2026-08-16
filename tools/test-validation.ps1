@@ -2041,6 +2041,30 @@ regression_cases: []
         $text = $text.Replace('resolve_code_inspection_attribution_then_resume_reviewer_inspection_wait', 'resolve_context_as_needed')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=resolve_code_inspection_attribution_then_resume_reviewer_inspection_wait'
+
+    Assert-NegativeFixture 'integration-completion-skips-feature-convergence' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/MAIN_DESK.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('it routes Architect through `STATE.md`''s `reconcile_feature_boundary` before choosing a disposition', 'it chooses a terminal disposition directly after Integration PASS')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/MAIN_DESK.md token=it routes Architect through `STATE.md`''s `reconcile_feature_boundary` before choosing a disposition'
+
+    Assert-NegativeFixture 'missing-integration-pass-feature-convergence-route' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('otherwise Architect with `reconcile_feature_boundary` when no next Task or active work remains', 'otherwise Main Front Desk chooses the terminal route')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=otherwise Architect with `reconcile_feature_boundary` when no next Task or active work remains'
+
+    Assert-NegativeFixture 'stale-terminal-pass-quality-floor' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/README.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('terminal Task or Integration PASS without remaining Knowledge work reaches Architect Feature convergence before any `synced/idle` disposition', 'terminal PASS without Knowledge work reaches synced idle')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/evals/README.md token=terminal Task or Integration PASS without remaining Knowledge work reaches Architect Feature convergence before any `synced/idle` disposition'
 }
 finally {
     if (Test-Path -LiteralPath $runRoot) {

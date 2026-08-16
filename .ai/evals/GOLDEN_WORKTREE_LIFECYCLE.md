@@ -123,6 +123,7 @@ Expected:
 - The new Work session performs targeted Knowledge/state validation, updates Lane `source_revision`, and resumes Architect without replaying the completed Task or broad-scanning the repository.
 - A changed purpose, ownership, shared contract, or dependency order routes Architect through a new boundary decision.
 - No remaining work leaves the Lane at `synced/idle`; `retired` and worktree removal remain separate explicit decisions.
+- In the terminal variant, the last Integration PASS and required Knowledge checkpoint still route Architect through `reconcile_feature_boundary` before any `synced/idle` disposition. An open-only or mixed open plus user-approved-deferred outcome returns `design/active`; only all-implemented/excluded coverage, or explicitly approved deferred work reported as paused/incomplete, may rest at `synced/idle`.
 
 ## Case 9 — Integration blocker repair and resume
 

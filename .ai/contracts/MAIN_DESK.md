@@ -151,10 +151,10 @@ If a new worktree/Lane is required, Main Front Desk routes Architect through `PA
 
 ## Post-integration Lane disposition
 
-After a Lane candidate is integrated, independently reviewed, and any required canonical Knowledge checkpoint is complete, Main Front Desk chooses one explicit disposition:
+After a Lane candidate is integrated, independently reviewed, and any required canonical Knowledge checkpoint is complete, Main Front Desk first inspects whether a next approved Task or active work remains. If none remains, it routes Architect through `STATE.md`'s `reconcile_feature_boundary` before choosing a disposition; Integration PASS alone never establishes Feature completion or authorizes `synced/idle`. It then records one explicit disposition from the returned state:
 
-- `complete`: leave the Lane `active` and resting at `synced/idle`; `retired` requires a separate explicit user decision. Report whether the old worktree is safe to remove, but never delete it.
-- `continue`: reuse the same Lane ID and approved ownership only sequentially from the current clean main baseline. Do not continue in the old worker worktree/Branch: merge, cherry-pick, and squash can leave its history or Knowledge behind main even when its candidate was accepted.
+- `complete`: only after Feature convergence reaches `synced/idle`; report Feature complete only for all-`implemented|excluded` coverage, otherwise report the user-approved deferral as paused/incomplete. Leave the Lane `active`; `retired` requires a separate explicit user decision. Report whether the old worktree is safe to remove, but never delete it.
+- `continue`: only when a next approved Task already exists or Feature convergence returns `design/active` with a specified open outcome materialized for delivery. Reuse the same Lane ID and approved ownership only sequentially from the current clean main baseline. Do not continue in the old worker worktree/Branch: merge, cherry-pick, and squash can leave its history or Knowledge behind main even when its candidate was accepted.
 - `redesign`: route Architect before another worktree when ownership, shared contracts, dependency order, or purpose changes.
 
 For `continue`, verify that main contains the accepted Lane artifacts, no source-Lane `pending_reviews` needed by the next work remain unsynchronized, the prior candidate is integrated, and no second active worktree is bound to the same Lane. Then read `PARALLEL_START.md#post-integration-continuation` and emit its fresh worktree/Branch card pinned to current main. The new Work session performs targeted Knowledge/state validation, updates the Lane `source_revision`, and resumes Architect; it does not broad-scan or replay the integrated Task.
