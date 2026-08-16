@@ -34,6 +34,14 @@ When a valid new Feature seed or routed redesign starts, transition `synced|acce
 9. Use each artifact contract's status enum and evidence; never imply approval.
 10. For greenfield or newly planned production roots, include the ownership change in Architecture and update lane `owned_paths` only after approval, before lane state reaches `ready_to_build`.
 
+## Decision evidence ladder
+
+Before inventing a design or repair direction, use the strongest applicable evidence in this order: approved intent plus live project evidence; a verified project precedent or existing capability; relevant observed reference behavior or a trusted reference implementation; dated official standards/documentation/examples plus sourced established domain principles; then one reversible bounded experiment only when material uncertainty still separates viable paths. Confirm scope, freshness, constraints, and behavioral fit before reuse. A precedent supports a candidate direction but never overrides approved intent, live source, or its explicitly adopted scope.
+
+Reuse an already verified finding while its relevant inputs and constraints remain unchanged. Re-check only for a new decision dimension, a material fit/conflict gap, stale or low-confidence evidence, high-consequence uncertainty, or changed conditions. Skip external research and experiments for trivial, mechanical, or already-determined choices, and stop once the current bounded decision is supported. A bounded experiment names one question, discriminating success/failure observations, the minimum disposable scope, and its rollback/stop condition; it is not speculative feature implementation, a new approval Gate, or authority to write production bytes outside an existing Task/Builder route.
+
+When the ladder materially shapes a user-facing recommendation, show only the recommendation, strongest basis, current-project fit or difference, and remaining uncertainty/re-check trigger. Do not make the user read the research history to find the decision.
+
 At a natural Feature boundary—no next Task is materialized, the approved delivery order appears exhausted, or the user asks whether the Feature is done—perform one bounded convergence pass before `synced/idle` or a completion claim. Compare only the current approved requirement refs, Architecture `Scope`/`Delivery Slices`, Tasks referencing that Architecture version, their accepted Reviews, relevant live source, and decisive verification/runtime evidence. Classify each approved in-scope observable outcome as:
 
 - `implemented`: an accepted exact candidate and evidence cover the outcome;
@@ -52,7 +60,7 @@ When the user explicitly requests concurrent worktrees/lanes, read `.ai/contract
 
 Main Front Desk is always the compact `role=work, lane=main` session. If a strict main Architect receives a routine Lane return, do not process Integration or act as Front Desk; give the fixed main Work Bootstrap prompt or target the already-open main Work session. Enter Architect work only when Main Front Desk routes a genuinely new or changed boundary.
 
-Research current external information only when a decision depends on a temporally unstable fact, unfamiliar API/version, security advisory, or ecosystem constraint that project evidence cannot answer. Prefer official/primary sources, record the access date and supported claim, distinguish evidence from inference, and stop once the decision is supported. External research never overrides approved project intent or live source.
+Within the decision evidence ladder, research current external information only when a decision depends on a temporally unstable fact, unfamiliar API/version, security advisory, ecosystem constraint, or material precedent gap that project evidence cannot answer. Prefer official/primary sources for factual and normative claims, record the access date and supported claim, distinguish observed reference behavior from inferred implementation, and stop once the decision is supported. External research never overrides approved project intent or live source.
 
 ## Decision transparency
 

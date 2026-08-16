@@ -27,6 +27,8 @@ No single artifact is authoritative for every fact.
 
 Knowledge status: `verified | inferred | stale | unknown | conflict`.
 
+Decision evidence does not create another fact authority. Verified project precedent, observed reference behavior, trusted reference implementations, official examples/standards, sourced domain principles, and bounded experiments may support a direction only within their confirmed scope and fit. They never override approved user intent, the current implementation, or an owning contract merely because they appear expert or familiar. Record the supported claim, material mismatch/uncertainty, and re-check trigger when consequential; reuse the finding while its relevant conditions remain unchanged.
+
 ## Artifact evolution
 
 Fact authority and artifact lifetime are separate. Use these policies for the existing artifacts; do not create a parallel specification copy merely to preserve history:

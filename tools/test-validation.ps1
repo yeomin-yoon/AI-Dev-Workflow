@@ -1938,6 +1938,22 @@ regression_cases: []
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Golden Core Behavior is missing oracle token: Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome'
 
+    Assert-NegativeFixture 'available-precedent-ignored-before-invention' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Before inventing a design or repair direction, use the strongest applicable evidence in this order', 'Invent a design or repair direction before checking precedent')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=Before inventing a design or repair direction, use the strongest applicable evidence in this order'
+
+    Assert-NegativeFixture 'bounded-experiment-becomes-default-strategy' {
+        param($root)
+        $target = Join-Path $root '.ai/reference/OPERATIONS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('A probe is the last evidence step, not a default implementation strategy', 'A probe is the default implementation strategy')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/reference/OPERATIONS.md token=A probe is the last evidence step, not a default implementation strategy'
+
     Assert-NegativeFixture 'nonblocking-discovery-becomes-task' {
         param($root)
         $target = Join-Path $root '.ai/contracts/TASK_RECORD.md'
@@ -1994,13 +2010,18 @@ regression_cases: []
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/contracts/TASK_RECORD.md token=do not knowingly design a Build -> Review -> save -> Build loop'
 
+    $releaseDateFixtureText = [System.IO.File]::ReadAllText((Join-Path $RepositoryRoot '.ai/maintenance/release.yaml'), [System.Text.Encoding]::UTF8)
+    $releaseDateFixtureMatch = [regex]::Match($releaseDateFixtureText, '(?m)^released_at:\s*(?<value>\d{4}-\d{2}-\d{2})\s*$')
+    if (-not $releaseDateFixtureMatch.Success) { throw 'Release date fixture could not resolve released_at' }
+    $releaseDateFixture = $releaseDateFixtureMatch.Groups['value'].Value
+    $mismatchedReleaseDateFixture = '1900-01-01'
     Assert-NegativeFixture 'release-changelog-date-mismatch' {
         param($root)
         $target = Join-Path $root '.ai/maintenance/CHANGELOG.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('2026-08-07', '2026-08-06')
+        $text = $text.Replace($releaseDateFixture, $mismatchedReleaseDateFixture)
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Latest CHANGELOG release date must match release.yaml: release=2026-08-07 changelog=2026-08-06'
+    } "Latest CHANGELOG release date must match release.yaml: release=$releaseDateFixture changelog=$mismatchedReleaseDateFixture"
 
     Assert-NegativeFixture 'missing-historical-delivery-slice-compatibility' {
         param($root)
