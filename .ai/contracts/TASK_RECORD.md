@@ -61,14 +61,16 @@ This is the single canonical Task-splitting gate. Before a Task becomes `approve
 
 Prefer a narrow end-to-end/vertical slice that can be exercised at its approved boundary. A horizontal layer or scaffold is a separate Task only when it has a standalone approved outcome/oracle or must land atomically; otherwise merge it with the first observable behavior.
 
+The Gate includes a proportional cross-artifact consistency check over only this Task's exact lineage: applicable approved intent/requirement refs -> current Architecture scope or delivery slice -> Task Goal/ACs -> verification. Reject an orphan Task outcome, a contradicted constraint, a claimed slice with omitted observable or terminal behavior, or an AC with no approved intent/Architecture basis. Inspect broader sibling slices only when meaningful ambiguity or dependency evidence requires it; do not scan an entire specification or generate another checklist for a small already-determined Task.
+
 | Check | Evidence required for `READY` |
 |---|---|
-| One outcome | Goal names one observable behavior or deliverable and one primary reason to change. |
+| One outcome | Goal names one observable behavior or deliverable and one primary reason to change, grounded in the approved request or one current Architecture scope/delivery slice. |
 | Independent delivery | Builder can implement it and Reviewer can PASS/FAIL it without a future Task or unapproved redesign. |
 | Narrow, complete writes | `allowed_write` contains every required atomic edit, stays within the Lane boundary, and excludes unrelated cleanup. A replacement Task after an interrupted/superseded single-main attempt classifies every inherited Task path as `retain | adapt | remove` in Scope or Constraints and keeps each retained/adapted/removed path inside `allowed_write`. |
-| Observable acceptance | Every mandatory result has an objective AC; labels such as `improve`, `refactor`, or `implement system` are insufficient by themselves. |
+| Observable acceptance | Every mandatory result—including relevant finish/exit behavior—has an objective AC; labels such as `improve`, `refactor`, or `implement system` are insufficient by themselves. |
 | Executable verification | Every mandatory AC maps to a feasible method and required evidence; any human gate has the complete procedure below. |
-| Ready dependencies | Required source, contracts, decisions, predecessor results, and applicable requirement refs exist at their approved or verified revisions. |
+| Ready dependencies | Required source, contracts, decisions, predecessor results, and applicable requirement refs exist at their approved or verified revisions, and the exact intent -> Architecture -> Task lineage has no material gap or contradiction. |
 | Worth the handoff | Split only when reduced context, risk, or review ambiguity repays another handoff; merge a fragment that has no standalone oracle or must land atomically with adjacent work. |
 
 The gate returns exactly one internal planning outcome:

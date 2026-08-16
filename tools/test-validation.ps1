@@ -802,6 +802,22 @@ migrations:
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=Treat evaluative or tacit seeds as valid problem signals, not failed requirements'
 
+    Assert-NegativeFixture 'missing-collaborative-design-altitude' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('the current design altitude', 'the current topic')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=the current design altitude'
+
+    Assert-NegativeFixture 'missing-needed-now-design-check' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('`needed now`', '`possible detail`')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=`needed now`'
+
     Assert-NegativeFixture 'missing-program-shape-scope' {
         param($root)
         $target = Join-Path $root '.ai/roles/ARCHITECT.md'
@@ -893,9 +909,9 @@ migrations:
         param($root)
         $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('state transitions directly to `synced/idle`', 'state completes')
+        $text = $text.Replace('A Task PASS is not by itself a Feature-completion claim', 'The final Task PASS completes the Feature')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Golden Core Behavior is missing oracle token: state transitions directly to `synced/idle`'
+    } 'Golden Core Behavior is missing oracle token: A Task PASS is not by itself a Feature-completion claim'
 
     Assert-NegativeFixture 'missing-tacit-seed-oracle' {
         param($root)
@@ -1743,6 +1759,30 @@ migrations:
         $text = $text.Replace('Scenario C does not accept an uninformed affirmative reply', 'Scenario C accepts any affirmative reply')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Golden Core Behavior is missing oracle token: Scenario C does not accept an uninformed affirmative reply'
+
+    Assert-NegativeFixture 'surrender-treated-as-product-approval' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('An explicit surrender signal never becomes product authority', 'An explicit surrender signal accepts the recommended product outcome')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=An explicit surrender signal never becomes product authority'
+
+    Assert-NegativeFixture 'overbroad-concise-assent-rejected' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Repeated concise replies alone are not evidence of fatigue', 'Every repeated concise reply requires another confirmation')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=Repeated concise replies alone are not evidence of fatigue'
+
+    Assert-NegativeFixture 'missing-collaborative-design-oracle' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/GOLDEN_CORE_BEHAVIOR.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('The broad collaborative seed first receives one compact collaboration frame', 'The broad collaborative seed expands directly into detailed documents')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Golden Core Behavior is missing oracle token: The broad collaborative seed first receives one compact collaboration frame'
 
     Assert-NegativeFixture 'missing-handoff-transport-boundary' {
         param($root)

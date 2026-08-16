@@ -6,7 +6,8 @@ No single artifact is authoritative for every fact.
 |---|---|
 | user goal | latest explicit request / approved spec |
 | approved product requirement | latest explicit user-owned intent or applicable approved product/requirements/specification section at its recorded revision; unapproved or generated document edits are candidate context, not approval |
-| scope and completion | approved task |
+| Task scope and completion | approved Task + its exact accepted Review/evidence |
+| Feature intent coverage and completion | approved requirement/explicit intent + current Architecture Scope/Delivery Slices reconciled by Architect against accepted Reviews, live implementation, and decisive evidence |
 | intended structure | approved architecture/ADR |
 | current implementation | live source/config/assets/schema |
 | observed behavior | build/test/runtime evidence |
@@ -25,6 +26,17 @@ No single artifact is authoritative for every fact.
 | history | Git |
 
 Knowledge status: `verified | inferred | stale | unknown | conflict`.
+
+## Artifact evolution
+
+Fact authority and artifact lifetime are separate. Use these policies for the existing artifacts; do not create a parallel specification copy merely to preserve history:
+
+- **Reference-only intent** — user/team-owned product, requirements, specification, and planning documents remain outside ordinary coding-Lane writes. Pin the applicable approved section/revision. Edit one only through an explicit document-authoring Task owned by its real team/user authority.
+- **Living current views** — System/Lane Architecture, lane state, canonical Knowledge/project indexes, and glossary describe the current approved structure, route, or sourced discovery state. Their owning role updates the current view when its authoritative fact changes; version/revision pins and Git preserve lineage. A live implementation discovery may trigger reconciliation but never silently rewrites approved intent or Architecture.
+- **Flow-forward evidence** — approved or superseded Task Records and completed Build, Review, Integration, and Eval records remain revision-bound evidence. Correct an active draft/result before its handoff or verdict when evidence changes; after completion, create the next attempt, replacement, or superseding artifact instead of rewriting history.
+- **Live implementation** — source, config, assets, and schema remain the current implementation truth. They are not regenerated wholesale from prose. A code discovery flows back only to the artifact that owns the affected fact: intent to the user/requirement owner, structure to Architect, delivery scope to Task, observed result to evidence, and durable discovery to Knowledge.
+
+When artifacts disagree, first classify the disputed fact, then update or supersede only its owner and reconcile downstream references. A lower-level artifact never becomes co-equal authority merely because it changed later. This is an evolution policy for existing artifacts, not another role, artifact, approval Gate, or synchronization pass on every Task.
 
 ## Checkpoint commit vocabulary
 

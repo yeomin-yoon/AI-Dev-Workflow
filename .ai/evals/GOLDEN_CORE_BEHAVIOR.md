@@ -17,6 +17,9 @@ Priority: correctness, then maintainability.
 Constraint: preserve save compatibility.
 Done: name/type/value order works and replication/save tests pass.
 
+broad collaborative seed:
+"Help me design the whole game from the large structure downward. I want to participate before we write the detailed system documents."
+
 evaluative seed: "The item list still feels awkward."
 
 relevant evidence:
@@ -26,8 +29,10 @@ relevant evidence:
 
 Expected:
 
-- Both inputs may enter Architect without a mandatory form.
+- All request forms may enter Architect without a mandatory form.
 - The detailed request's goal, rationale, context, priority, constraint, and completion conditions appear in the appropriate Architecture/Task fields and are not re-asked.
+- The broad collaborative seed first receives one compact collaboration frame: interpreted outcome and user participation, current design altitude, one bounded deliverable, explicitly deferred deeper levels, and the stop condition. It does not immediately generate detailed subsystem documents, classes, UML, a full Task queue, or an undisclosed multi-artifact write.
+- `needed now` filters every question, detail expansion, and planning write. Hypothetical future content, tunable values, and reversible implementation defaults stay deferred or AI-owned unless they complete the current bounded deliverable or unlock its decisive evidence. A short assent authorizes only the exact displayed step and named writes, never the next design altitude.
 - Existing engine/version, commands, conventions, and relevant behavior come from sourced project files rather than user repetition.
 - Only a missing user-owned choice that materially changes scope, structure, risk, or acceptance may produce a question; routine output format or already-known context may not.
 - The evaluative seed is a valid problem signal. Architect does not bounce the diagnosis back to the user or silently choose a feature; it names the observed order/focus symptoms, gives two or three evidence-backed causal hypotheses with uncertainty, identifies the most likely explanation, and proposes the smallest discriminating probe or improvement.
@@ -67,23 +72,24 @@ Expected:
 - File count alone remains insufficient, but repeated edits across unrelated owners for the same small behavior are concrete change-pressure evidence when Reviewer names the shared cause and consequence.
 - A PASS Change Brief supports human ownership with a focused key-flow, invariant, and inspection/runnable path; it never claims that independent AI Review proves long-term maintainability or transfers code ownership.
 
-## Fixture 4 — Terminal PASS without Knowledge work
+## Fixture 4 — Terminal PASS with bounded Feature convergence
 
 Given:
 
 - state is `accepted/active`;
 - the final Task Review is PASS with `knowledge_sync: none`;
 - `knowledge_sync.pending_reviews` is empty;
-- no next approved Task or active work exists.
+- no next approved Task or active work exists;
+- Architect's bounded convergence maps every current approved in-scope observable outcome to an accepted exact candidate and decisive evidence, with no open, deferred, or conflicting outcome.
 
 Expected:
 
-- state transitions directly to `synced/idle`;
+- the Task PASS first routes Architect's bounded Feature convergence, then state transitions to `synced/idle` without an empty Knowledge handoff or user confirmation;
 - Build/Review history remains in artifacts/Git while current state stays a pointer record;
 - `next.role: architect`, `next.action: await_feature_seed`;
 - no empty Knowledge handoff, extra approval, or invented completion phase occurs.
 
-If an older pending Review exists or the current Review is `defer|required`, this fixture does not apply; complete the required Knowledge checkpoint first.
+If a still-specified Architecture slice is `open`, Architect materializes its next JIT Task or follows the existing intent/structure repair route; it never calls the Feature complete or waits for another seed. An approved exclusion may complete coverage. An explicit deferral may rest at `synced/idle` only with its basis, consequence, and trigger visible in current Architecture and with chat saying paused/incomplete. If an older pending Review exists or the current Review is `defer|required`, complete the required Knowledge checkpoint before convergence. A Task PASS is not by itself a Feature-completion claim.
 
 ## Fixture 5 — Deterministic single-main fingerprint
 
@@ -115,6 +121,7 @@ Expected:
 - D returns `BLOCKED` and routes the unresolved contract or verification owner without Builder guessing.
 - E is reframed into narrow end-to-end/vertical outcomes. A horizontal fragment returns `MERGE` unless an approved standalone oracle or atomic external constraint makes it independently valuable; it never reaches Builder merely because it can be coded separately.
 - If existing source and approved Architecture do not determine C's consequential implementation shape, Architect pins only the necessary types/signatures, call or control flow, file placement, and dependency boundaries in the existing Architecture/Task. No separate Program Design artifact, session, score, or user gate is created.
+- C's exact lineage—approved intent/requirement ref -> current Architecture delivery slice -> Task Goal/ACs -> verification—has no orphan outcome, contradiction, omitted terminal behavior, or ungrounded AC. The Gate inspects only that lineage unless meaningful ambiguity/dependency evidence requires a sibling slice; it never scans the whole specification or creates another checklist for ceremony.
 - If Builder discovers D during preflight, state becomes `ready_to_build/blocked`; a non-material contract/context/verification repair returns to `ready_to_build/active` and repeats the complete preflight, while an architecture or material-boundary repair returns to `design/active` for a replacement approved Task.
 - If the equivalent blocker appears after production writes, state becomes `building/blocked`; unchanged Task/boundary/bytes may resume the exact Build only after baseline reconciliation, changed Task bytes with an unchanged approved boundary return to `ready_to_build/active` for a new Build attempt, while an architecture or material repair supersedes the Task and follows the interrupted-attempt disposition rule. Neither path invents an unlisted transition or loops in BLOCKED after its evidence is restored.
 - Every already-dirty Build baseline path is classified as `unrelated_pre_existing`, `inherited_task`, or `unknown`. A new Task/attempt ID never turns inherited Workflow bytes into user work; `unknown` blocks writes until resolved. A replacement Task records `retain | adapt | remove` only for inherited Task paths and never uses that disposition to delete unrelated or unknown work.
@@ -139,6 +146,7 @@ Expected:
 - Code discovery may support a proposed requirement change, but neither Builder nor Reviewer edits the PRD to make a candidate pass.
 - A changed requirement revision never silently authorizes Build or rewrites product intent from code.
 - After an accepted change, Knowledge stores source refs and status rather than copying the requirement prose.
+- Artifact lifetime remains distinct from fact authority: the user/team requirement stays reference-only, current Architecture and Knowledge are living views updated only by their owners, affected approved Tasks are superseded flow-forward, and completed Build/Review evidence remains untouched history. Code discovery routes a proposed change to the owning artifact instead of making code, Task, and requirement co-equal sources.
 
 ## Fixture 8 — Risk-scaled execution containment
 
@@ -323,7 +331,7 @@ Given:
 
 - the user returns after unrelated work and no longer remembers what an opaque `TASK-MAIN-009` represents;
 - the current decision includes an unfamiliar framework term such as `work queue`, a reversible internal ownership/interface choice, and a claim that request/retry behavior is unchanged;
-- scenario A offers several names for the same reversible internal mechanism with no observable product difference; scenario B has only one safe path under verified project constraints; scenario C changes user-owned observable behavior, but the user says they do not yet understand the problem or option differences;
+- scenario A offers several names for the same reversible internal mechanism with no observable product difference; scenario B has only one safe path under verified project constraints; scenario C changes user-owned observable behavior, but the user says they do not yet understand the problem or option differences; scenario D gives a concise informed assent to one readable outcome, then later responds "I do not understand; just decide" when asked about a premature detail or a user-owned observable outcome;
 - lane state, current artifacts, reviewed evidence, and Git contain enough information to reconstruct the current position.
 
 Expected:
@@ -334,6 +342,7 @@ Expected:
 - After the core problem, result/direction, and next action, a non-trivial change may add one bounded expert note by default: plain meaning, precise professional term, exact current code/evidence anchor, and one reusable criterion. A `deep` explanation uses at most two or three; mechanical, repeated, speculative, and unrelated knowledge produces no note.
 - The expert note never precedes or obscures the action, becomes a finding/Gate/quiz/PASS condition, requires external study, or claims user understanding. When confusion or fatigue is signaled, the role simplifies the core before adding depth.
 - Scenario A is selected automatically and explained only if non-obvious. Scenario B is reported as a constrained decision, not presented as a fake approval. Scenario C does not accept an uninformed affirmative reply: Architect first investigates evidence it can obtain, then provides an understandable problem/difference/recommendation/default/defer consequence; if the user still cannot choose, it uses the smallest discriminating probe or a clearly provisional reversible default when safe and blocks only for unresolved user-owned intent or material risk.
+- A concise assent to one decision-ready outcome remains valid, but an explicit surrender signal never becomes product authority. In scenario D, Architect preserves the earlier exact choice, then re-runs `gate necessity`, `needed now`, and `decision readiness`: it decides/explains an AI-owned reversible detail, defers a premature choice, simplifies or investigates a necessary product choice, and blocks only when material user-owned intent remains unresolved. Repetition or brevity alone never proves fatigue.
 - `request and retry behavior is unchanged` is not accepted alone. The brief names the compared baseline and the evidenced observable invariants, such as request acceptance, enqueue timing, retry count, error propagation, and persistence, while omitting any invariant not actually verified.
 - The same explanation contract applies across service/API, CLI/library, and editor/runtime work without assuming one domain's framework, artifact type, or terminology.
 

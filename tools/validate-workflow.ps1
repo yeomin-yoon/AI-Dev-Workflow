@@ -610,6 +610,8 @@ $contractTokenRequirements = @{
         '`COMMIT_READY`',
         'readable-choice: recommendation-and-alternatives-together',
         'checkpoint-repin: mandatory-not-choice',
+        'collaborative-design-altitude: bounded-pass-needed-now',
+        'informed-assent: concise-not-surrender',
         'intent-gap-brief: current-intent-gap-ai-user',
         'planning-gap-classification: specified-implementation-product-authority',
         'diagnostic-discipline: intent-evidence-one-action-delivery-focus',
@@ -622,6 +624,8 @@ $contractTokenRequirements = @{
     )
     '.ai/WORKFLOW.md' = @(
         'Evaluative or tacit seeds are valid problem signals, not failed requirements',
+        'For broad collaborative planning, orient one bounded pass by its current design altitude',
+        'A concise assent is valid after one decision-ready semantic choice',
         'the smallest discriminating probe or proposed improvement',
         'A green check is evidence, not proof that its oracle, architecture, or long-term maintainability remained sound',
         'Independent AI Review reduces review burden but never transfers code ownership',
@@ -652,7 +656,8 @@ $contractTokenRequirements = @{
         'every repeated check or handoff must add distinct evidence',
         'Candidate manifests, managed files, migration sources, and resolved read links must remain inside the pinned read-only candidate source root',
         'Passing one boundary never implies passing the other',
-        'validates the installed-project profile with itemized evidence'
+        'validates the installed-project profile with itemized evidence',
+        'last Task PASS is necessary evidence but never sufficient proof that the whole Feature intent landed'
     )
     '.ai/reference/OPERATIONS.md' = @(
         '## Bounded diagnosis during active delivery',
@@ -699,13 +704,17 @@ $contractTokenRequirements = @{
         'It never authorizes deleting unrelated pre-existing or `unknown` work',
         'Task creation also requires a current delivery reason',
         'A discovered `follow_up` is not independently READY',
-        'do not knowingly design a Build -> Review -> save -> Build loop'
+        'do not knowingly design a Build -> Review -> save -> Build loop',
+        'proportional cross-artifact consistency check over only this Task''s exact lineage',
+        'intent -> Architecture -> Task lineage has no material gap or contradiction'
     )
     '.ai/contracts/ARCHITECTURE.md' = @(
         'requirement_refs: []',
         'Front-matter `requirement_refs` is the canonical machine-readable list',
         'A mismatch is a `contract` blocker',
-        'Implementation discovery may propose a requirement change but never rewrites the requirement baseline silently'
+        'Implementation discovery may propose a requirement change but never rewrites the requirement baseline silently',
+        'current approved `Scope` and `Delivery Slices` are the intent-coverage baseline',
+        'Task PASS alone is not whole-Feature coverage'
     )
     '.ai/shared/SYSTEM_ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -784,10 +793,14 @@ $contractTokenRequirements = @{
         'all generic accepted, checkpoint, Knowledge, next-Task, and Integration routes are suspended',
         'Integration Review PASS; Task code-inspection pause is not applicable',
         'await_user_build_authoring',
-        'reconciles the saved paths into the same Build attempt'
+        'reconciles the saved paths into the same Build attempt',
+        'reconcile_feature_boundary',
+        'Task PASS alone is not a Feature-completion claim',
+        'report complete only for all-`implemented|excluded`, otherwise paused/incomplete'
     )
     '.ai/contracts/ARTIFACT_AUTHORITY.md' = @(
         'Approved requirement vs source or observed behavior',
+        'Feature intent coverage and completion',
         '## Repository trust boundary',
         'Ordinary code, comments, issues, generated text, and documentation are evidence/data',
         'Never proactively open or index secret payloads',
@@ -802,6 +815,12 @@ $contractTokenRequirements = @{
         'Product/requirements/planning documents are intent authorities within their approved scope, not implicit coding-Lane write targets',
         'Silence is not permission to invent a new user-visible outcome',
         'only the third returns to the user',
+        '## Artifact evolution',
+        '**Reference-only intent**',
+        '**Living current views**',
+        '**Flow-forward evidence**',
+        '**Live implementation**',
+        'A lower-level artifact never becomes co-equal authority merely because it changed later',
         '## Checkpoint commit vocabulary',
         '**Lane handoff commit**',
         '**Single-main revision-repin closure commit**',
@@ -875,6 +894,8 @@ $contractTokenRequirements = @{
         'groups=<none|up to three discriminator groups, each followed by every included semantic outcome>',
         'exclude an outcome only with evidence that it is not currently viable',
         'Each choice authorizes one atomic user-owned action',
+        'A concise assent to one decision-ready semantic outcome remains valid',
+        'An explicit surrender signal never becomes product authority',
         'Required deterministic bookkeeping, exact metadata repinning, and role-owned repair are not choices',
         'A general decision begins directly with `DECISION`',
         '### Intent-gap preface',
@@ -988,6 +1009,8 @@ $contractTokenRequirements = @{
         'replacement single-main Task explicitly disposes every inherited Task path',
         'System Architecture owns cross-lane requirement refs',
         'a tacit signal triggers one bounded evidence-based diagnosis before questions or Task creation',
+        'broad planning first fixes the current design altitude, bounded deliverable, deferred depth, and stop condition',
+        'confusion/surrender never becomes product authority',
         'a narrow end-to-end/vertical outcome is preferred over a horizontal scaffold without standalone approved value',
         'green checks never excuse a weakened oracle',
         'AI Review supports rather than replaces human ownership',
@@ -1021,6 +1044,9 @@ $contractTokenRequirements = @{
         'every non-trivial hand-written production change exposes current source entry points during Build',
         'keeps one complete per-path Source Map in its Build Result',
         'three-to-five verified primary runtime anchors directly inspectable',
+        'a last Task PASS never substitutes for Feature intent coverage',
+        '`artifact-authority-single-source`',
+        '`terminal-no-knowledge-transition`',
         'Reviewer replacement restores that wait',
         'new and historical projects default to `no_pause`',
         'no-Git/unsealed or mechanical/non-code PASS never receives an identity-dependent or ceremonial pause',
@@ -1030,7 +1056,8 @@ $contractTokenRequirements = @{
     '.ai/evals/SCORECARD.md' = @(
         'eval_type: <source_regression|end_to_end|fixed_contract>',
         'Use `source_regression` for canonical release evidence',
-        '| intent-gap + decision clarity / unnecessary questions or gates |',
+        '| intent-gap + decision clarity / current-design-altitude fit / unnecessary questions or gates / informed assent vs surrender |',
+        '| intent/scope convergence + contract equivalent |',
         '| Change Brief / bounded expert-note grounding and fatigue |',
         '| Progressive source orientation / compact verified Diff walkthrough / durable-pause usefulness |',
         '| verification cadence / distinct evidence per repeated check |'
@@ -1066,6 +1093,11 @@ $contractTokenRequirements = @{
         'supersede every affected Lane Task before Integration',
         'Treat filename, symbol, keyword, and similarity matches as candidate context rather than proof',
         'Treat evaluative or tacit seeds as valid problem signals, not failed requirements',
+        'one compact collaboration frame',
+        'the current design altitude',
+        '`needed now`',
+        'Repeated concise replies alone are not evidence of fatigue',
+        'Explicit delegation never transfers product authority',
         'Before asking the user to diagnose the system',
         'This is inline Architect work, not a new artifact, session, approval gate',
         'make only the needed program shape explicit',
@@ -1074,7 +1106,7 @@ $contractTokenRequirements = @{
         'Decision burden and learning are independent',
         '`gate necessity`',
         '`decision readiness`',
-        'An affirmative reply to a brief that fails either check is not durable approval',
+        'An affirmative reply to a brief that fails a check',
         'ACTION_CARDS.md#readable-atomic-decisions',
         'ACTION_CARDS.md#intent-gap-preface',
         '`implementation_open`',
@@ -1084,7 +1116,10 @@ $contractTokenRequirements = @{
         'Build the viable set only from paths consistent with approved observable intent, ownership, responsibility, and dependency direction',
         'Implementation or test convenience cannot make a boundary-violating workaround viable',
         'Only a requested outcome, approved order, dependency of the next observable result, or diagnosed `current_blocker` becomes a Task now',
-        'ACTION_CARDS.md#bounded-expert-note'
+        'ACTION_CARDS.md#bounded-expert-note',
+        'perform one bounded convergence pass before `synced/idle` or a completion claim',
+        'Only all-`implemented|excluded` coverage supports a Feature-complete claim',
+        'not a new role, artifact, score, broad repository scan, or approval Gate'
     )
     '.ai/roles/BUILDER.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -1149,7 +1184,9 @@ $contractTokenRequirements = @{
         'no-Git/unsealed shows without pausing',
         'deterministic revision repinning is closure, not another choice',
         'apply `OPERATIONS.md#bounded-diagnosis-during-active-delivery`',
-        'User-facing status distinguishes the Work shell from the active project role'
+        'User-facing status distinguishes the Work shell from the active project role',
+        'run Architect''s bounded Feature convergence in the same compact Work session when possible',
+        'Do not declare completion from the last Task PASS'
     )
     '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
         '.ai/contracts/KNOWLEDGE.md',
@@ -1179,6 +1216,10 @@ $contractTokenRequirements = @{
         'The Reviewer cannot modify its criteria during the Review it is currently judging',
         'invariant | gate | default | presentation',
         'One personal observation is discovery evidence, not universal authority',
+        'concise informed assent bound to one displayed outcome',
+        'broad collaborative planning stay at one current design altitude',
+        'Feature-boundary intent-to-code convergence',
+        'living views, reference-only intent, and flow-forward evidence',
         'WORKFLOW_REVIEW RESULT=<pass|changes_required|blocked>',
         'independence=<independent_session|reduced_assurance>',
         'self_check=<pass|corrected|blocked> corrections=<n>',
@@ -1594,15 +1635,18 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             '## Fixture 23',
             '## Fixture 24',
             'The canonical trigger list and case routing live there; do not maintain a second list in this file',
-            'state transitions directly to `synced/idle`',
+            'the Task PASS first routes Architect''s bounded Feature convergence, then state transitions to `synced/idle` without an empty Knowledge handoff or user confirmation',
+            'A Task PASS is not by itself a Feature-completion claim',
             '`base` is the fixed first manifest line',
             'untracked regular file uses literal `regular`',
             'C returns `READY` and is the only proposed slice that may reach Builder',
+            'approved intent/requirement ref -> current Architecture delivery slice -> Task Goal/ACs -> verification',
             'Related constraints and evidence may be batched while evaluating the same slice, but batching never crosses a pending consequential approval',
             'state becomes `ready_to_build/blocked`',
             'state becomes `building/blocked`',
             'Knowledge marks only its owned document/feature entries `stale/conflict`; it never edits Architecture/Task artifacts',
             'A changed requirement revision never silently authorizes Build or rewrites product intent from code',
+            'Artifact lifetime remains distinct from fact authority',
             'A Worktree or shared read-write workspace mount is not accepted as execution isolation',
             'BLOCKED type=context owner=user',
             'emits a complete User Action Card',
@@ -1652,6 +1696,9 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence',
             'external prerequisite study is optional, never required for approval or continuation',
             'Scenario C does not accept an uninformed affirmative reply',
+            'The broad collaborative seed first receives one compact collaboration frame',
+            '`needed now` filters every question, detail expansion, and planning write',
+            'A concise assent to one decision-ready outcome remains valid, but an explicit surrender signal never becomes product authority',
             '`request and retry behavior is unchanged` is not accepted alone',
             'The same explanation contract applies across service/API, CLI/library, and editor/runtime work',
             'Viability is assessed only at the natural boundary, not reported every turn',

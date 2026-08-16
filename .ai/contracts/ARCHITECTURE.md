@@ -45,7 +45,12 @@ Ownership, errors, concurrency, network, persistence, and compatibility only whe
 ## Verification Strategy
 
 ## Delivery Slices
-For multi-Task work only: ordered observable outcomes and dependencies, without implementation-detail Task duplication.
+For multi-Task work only:
+
+| Slice | Approved observable outcome | Intent/requirement ref | Depends on |
+|---|---|---|---|
+
+Keep this as a compact current-scope outcome map, not a pre-generated Task queue or implementation checklist. Use stable semantic slice labels within the Architecture version. Record an intentionally excluded outcome under `Scope: out`; record a consequential deferral with its basis and consequence under `Decisions` or `Open Risks`. Never make an approved in-scope behavior disappear merely because no Task has been materialized for it yet.
 
 ## Open Risks
 ```
@@ -62,4 +67,5 @@ Rules:
 - Keep implementation detail in source and rejected alternatives only when they affected the decision.
 - Record only consequential decisions; include viable alternatives in the rationale when they materially differ.
 - Materialize only the next Task; keep future delivery order compact here.
+- At a natural Feature boundary, the current approved `Scope` and `Delivery Slices` are the intent-coverage baseline. Architect reconciles them against Tasks, accepted Reviews, live implementation, and decisive evidence before claiming Feature completion or resting with explicitly deferred work; Task PASS alone is not whole-Feature coverage.
 - Shared contracts require Integration approval.
