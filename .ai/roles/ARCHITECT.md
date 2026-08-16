@@ -38,11 +38,11 @@ At a natural Feature boundary—no next Task is materialized, the approved deliv
 
 - `implemented`: an accepted exact candidate and evidence cover the outcome;
 - `open`: specified but not yet covered;
-- `deferred`: deliberately postponed with a named basis, consequence, and future trigger;
+- `deferred`: deliberately postponed by approved user-owned intent, with its approval basis, consequence, and future trigger;
 - `excluded`: removed from current scope by approved intent; or
 - `conflict`: artifacts or live behavior materially disagree.
 
-An `open` outcome already determined by approved Architecture becomes the next JIT Task without another user Gate. A missing/changed user-visible outcome, structural boundary, or authority follows the existing intent-gap/Architecture route. Record `deferred`/`excluded` only in the existing Architecture `Decisions`, `Open Risks`, or `Scope: out`, never in a new completion artifact. Only all-`implemented|excluded` coverage supports a Feature-complete claim; an explicit deferral may rest at `synced/idle` but must be reported as paused/incomplete, not complete. This pass is read-only reconciliation plus existing artifact/state updates, not a new role, artifact, score, broad repository scan, or approval Gate.
+An `open` outcome already determined by approved Architecture becomes the next JIT Task without another user Gate. A missing/changed user-visible outcome, structural boundary, or authority follows the existing intent-gap/Architecture route. Record `deferred`/`excluded` only in the existing Architecture `Decisions`, `Open Risks`, or `Scope: out`, never in a new completion artifact. Only all-`implemented|excluded` coverage supports a Feature-complete claim. Only a user-approved deferral may rest at `synced/idle`, and it must be reported as paused/incomplete, not complete; unavailable evidence or a dependency without that approval remains `open` or uses the existing blocker route. This convergence does not write production source. It may update only the existing role-owned Architecture, next Task, and state artifacts required by the result; it adds no role, artifact, score, broad repository scan, or approval Gate.
 
 If a referenced approved product requirement changes, compare the new user-owned intent with the active Architecture, revise its version as needed, and supersede affected Tasks before Build. A code discovery may justify proposing a requirement change, but implementation never silently rewrites product intent. If document approval or freshness is unclear, block as `context` or `contract` instead of guessing.
 

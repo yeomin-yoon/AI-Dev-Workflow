@@ -2001,6 +2001,30 @@ regression_cases: []
         $text = $text.Replace('2026-08-07', '2026-08-06')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Latest CHANGELOG release date must match release.yaml: release=2026-08-07 changelog=2026-08-06'
+
+    Assert-NegativeFixture 'missing-historical-delivery-slice-compatibility' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ARCHITECTURE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('A historical approved Architecture without `Delivery Slices` remains readable', 'A historical approved Architecture must already contain `Delivery Slices`')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ARCHITECTURE.md token=A historical approved Architecture without `Delivery Slices` remains readable'
+
+    Assert-NegativeFixture 'unapproved-feature-deferral-reaches-idle' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Only a user-approved deferral may rest at `synced/idle`', 'Any named deferral may rest at `synced/idle`')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=Only a user-approved deferral may rest at `synced/idle`'
+
+    Assert-NegativeFixture 'feature-convergence-production-write-ambiguity' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('This convergence does not write production source', 'This convergence is read-only plus updates')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=This convergence does not write production source'
 }
 finally {
     if (Test-Path -LiteralPath $runRoot) {

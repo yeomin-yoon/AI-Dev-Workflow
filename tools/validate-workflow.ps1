@@ -626,6 +626,8 @@ $contractTokenRequirements = @{
         'Evaluative or tacit seeds are valid problem signals, not failed requirements',
         'For broad collaborative planning, orient one bounded pass by its current design altitude',
         'A concise assent is valid after one decision-ready semantic choice',
+        'distinguishes complete from user-approved deferred work',
+        'A historical Architecture without a slice map is reconstructed only from already-approved evidence',
         'the smallest discriminating probe or proposed improvement',
         'A green check is evidence, not proof that its oracle, architecture, or long-term maintainability remained sound',
         'Independent AI Review reduces review burden but never transfers code ownership',
@@ -714,7 +716,9 @@ $contractTokenRequirements = @{
         'A mismatch is a `contract` blocker',
         'Implementation discovery may propose a requirement change but never rewrites the requirement baseline silently',
         'current approved `Scope` and `Delivery Slices` are the intent-coverage baseline',
-        'Task PASS alone is not whole-Feature coverage'
+        'Task PASS alone is not whole-Feature coverage',
+        'A historical approved Architecture without `Delivery Slices` remains readable',
+        'Backfill the living Architecture without a new Gate only when that map is lossless'
     )
     '.ai/shared/SYSTEM_ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -796,7 +800,9 @@ $contractTokenRequirements = @{
         'reconciles the saved paths into the same Build attempt',
         'reconcile_feature_boundary',
         'Task PASS alone is not a Feature-completion claim',
-        'report complete only for all-`implemented|excluded`, otherwise paused/incomplete'
+        'report complete only for all-`implemented|excluded`, otherwise paused/incomplete',
+        'explicit user-owned approval basis plus its consequence/trigger',
+        'Without that authority it remains `open` or follows the existing blocker route'
     )
     '.ai/contracts/ARTIFACT_AUTHORITY.md' = @(
         'Approved requirement vs source or observed behavior',
@@ -1119,7 +1125,9 @@ $contractTokenRequirements = @{
         'ACTION_CARDS.md#bounded-expert-note',
         'perform one bounded convergence pass before `synced/idle` or a completion claim',
         'Only all-`implemented|excluded` coverage supports a Feature-complete claim',
-        'not a new role, artifact, score, broad repository scan, or approval Gate'
+        'Only a user-approved deferral may rest at `synced/idle`',
+        'This convergence does not write production source',
+        'It may update only the existing role-owned Architecture, next Task, and state artifacts required by the result'
     )
     '.ai/roles/BUILDER.md' = @(
         '.ai/contracts/TASK_RECORD.md#task-quality-gate',
@@ -1637,6 +1645,9 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'The canonical trigger list and case routing live there; do not maintain a second list in this file',
             'the Task PASS first routes Architect''s bounded Feature convergence, then state transitions to `synced/idle` without an empty Knowledge handoff or user confirmation',
             'A Task PASS is not by itself a Feature-completion claim',
+            'The historical variant reconstructs a candidate outcome map from approved Scope, intent/requirement refs, Tasks, and accepted Reviews',
+            'Only a user-approved deferral may rest at `synced/idle`',
+            'Convergence reads production source but writes only its existing role-owned Architecture, next Task, and state artifacts',
             '`base` is the fixed first manifest line',
             'untracked regular file uses literal `regular`',
             'C returns `READY` and is the only proposed slice that may reach Builder',

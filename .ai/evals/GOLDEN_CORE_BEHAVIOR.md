@@ -81,6 +81,7 @@ Given:
 - `knowledge_sync.pending_reviews` is empty;
 - no next approved Task or active work exists;
 - Architect's bounded convergence maps every current approved in-scope observable outcome to an accepted exact candidate and decisive evidence, with no open, deferred, or conflicting outcome.
+- a historical variant has an approved Architecture created before `Delivery Slices` existed.
 
 Expected:
 
@@ -89,7 +90,7 @@ Expected:
 - `next.role: architect`, `next.action: await_feature_seed`;
 - no empty Knowledge handoff, extra approval, or invented completion phase occurs.
 
-If a still-specified Architecture slice is `open`, Architect materializes its next JIT Task or follows the existing intent/structure repair route; it never calls the Feature complete or waits for another seed. An approved exclusion may complete coverage. An explicit deferral may rest at `synced/idle` only with its basis, consequence, and trigger visible in current Architecture and with chat saying paused/incomplete. If an older pending Review exists or the current Review is `defer|required`, complete the required Knowledge checkpoint before convergence. A Task PASS is not by itself a Feature-completion claim.
+If a still-specified Architecture slice is `open`, Architect materializes its next JIT Task or follows the existing intent/structure repair route; it never calls the Feature complete or waits for another seed. An approved exclusion may complete coverage. Only a user-approved deferral may rest at `synced/idle`, with its approval basis, consequence, and trigger visible in current Architecture and chat saying paused/incomplete; an AI-only deferral remains open or blocked. The historical variant reconstructs a candidate outcome map from approved Scope, intent/requirement refs, Tasks, and accepted Reviews, then backfills it only when lossless; missing or ambiguous coverage never becomes completion evidence. Convergence reads production source but writes only its existing role-owned Architecture, next Task, and state artifacts. If an older pending Review exists or the current Review is `defer|required`, complete the required Knowledge checkpoint before convergence. A Task PASS is not by itself a Feature-completion claim.
 
 ## Fixture 5 — Deterministic single-main fingerprint
 
