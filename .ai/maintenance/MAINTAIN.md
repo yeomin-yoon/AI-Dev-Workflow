@@ -1,33 +1,10 @@
 # Workflow Observation Maintenance
 
-Read only for explicit observation capture or after a Bootstrap automatic trigger. This installed-project procedure is not a project role and never changes lane state. Observation collection, Core release work, and release Eval finalization exist only in the canonical distribution checkout under `maintenance/RELEASE.md`; they are intentionally not installed with `.ai`.
+Read only when the user explicitly asks to preserve a Workflow problem inside the installed project. This installed-project procedure is optional, is not a project role, and never changes lane state. Ordinary roles do not open it or create records automatically. A user may instead describe or paste the inconvenience directly in the canonical distribution checkout without creating a local record first. Observation collection, Core release work, and release Eval finalization exist only there under `maintenance/RELEASE.md`; they are intentionally not installed with `.ai`.
 
-## Capture modes
-
-### Manual
+## Manual capture
 
 When the user asks to record a problem, always create or deduplicate a pending observation. Use current artifacts and concise user evidence; do not require proof or a questionnaire. Mark unsupported fields `unknown` and `confidence: low`. Manual capture may record a suspected issue that triage later rejects.
-
-### Automatic
-
-Capture only when all are true:
-
-1. concrete evidence exists in an artifact, state/diff, Eval, command result, or user correction;
-2. the symptom concerns Workflow routing, role/gate/scope enforcement, state/artifact contract, required user-language actionability, provider compatibility, or Eval quality floor;
-3. at least one Bootstrap automatic trigger is met; and
-4. the issue affected an artifact, handoff, user action, retry, or accepted-result quality.
-
-Do not auto-capture:
-
-- production code bugs, normal Review findings, or failed project tests;
-- a new architecture/product decision or the user changing intent;
-- an expected unavailable tool already routed correctly;
-- evidence-driven context expansion that follows the Task budget policy;
-- a one-off model slip corrected before it affected an artifact/handoff;
-- stylistic preference without measurable impact;
-- a duplicate open fingerprint without materially new evidence.
-
-When uncertain, do not auto-record. The manual path covers missed cases.
 
 ## Deduplicate
 
@@ -46,7 +23,7 @@ schema_version: 1
 id: OBS-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug>
 created_at: <ISO-8601>
 updated_at: <ISO-8601>
-source: <manual|automatic>
+source: manual
 workflow_version: <version>
 provider: <codex|claude|gemini|other|unknown>
 role: <work|architect|builder|reviewer|knowledge_maintainer|operations|unknown>
@@ -73,14 +50,14 @@ source_records:
     occurrences: 1
 ```
 
-`source_records` makes collection from several installed copies idempotent while retaining provider/version provenance. A legacy three-part fingerprint remains readable and uses `contract_or_route=unknown`; do not merge it with a four-part record unless triage proves the root contract/route is the same. A legacy observation without `source_records` is valid; synthesize one source record from its top-level `id`, `provider`, `workflow_version`, `updated_at`, and `occurrences`.
+`source_records` makes collection from several installed copies idempotent while retaining provider/version provenance. Historical records with `source: automatic` remain readable but are never created by this version. A legacy three-part fingerprint remains readable and uses `contract_or_route=unknown`; do not merge it with a four-part record unless triage proves the root contract/route is the same. A legacy observation without `source_records` is valid; synthesize one source record from its top-level `id`, `provider`, `workflow_version`, `updated_at`, and `occurrences`.
 
 Never store secrets, full chat transcripts, full logs, or copied source. Capture does not edit Core, update state, create a blocker, or interrupt the current route.
 
 If written or materially updated, add one chat line:
 
 ```text
-WORKFLOW_OBSERVATION=<path> source=<manual|automatic>
+WORKFLOW_OBSERVATION=<path> source=manual
 ```
 
-Otherwise say nothing about capture during ordinary work. A `RETURN_TO_MAIN` card may use `observation=none` as a compact close-safety status; this does not claim that capture ran beyond the normal trigger or create a record.
+Otherwise say nothing about capture during ordinary work. A `RETURN_TO_MAIN` card may use `observation=none` as a compact close-safety status; this reports only that no local Observation path is present and never runs capture.

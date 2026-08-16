@@ -25,7 +25,7 @@ diff/drift signal → affected paths → related entries → live source → nee
 
 During an activated main Integration loop, a successful canonical `INTEGRATE` creates one Knowledge checkpoint commit containing only role-owned canonical Knowledge/project index updates, synchronized state pointers, and queue knowledge-sync fields. This keeps the integrated baseline durable and clean for the next candidate or normal work. Ordinary single-`main` Knowledge updates remain working-tree-first unless the user separately requests a commit.
 
-`PREPARE_DELTA` reads one exact committed PASS Review, writes only evidence-backed entries under the current Lane's `knowledge-delta`, and leaves its Review in `pending_reviews` until integrated-source validation promotes or supersedes it. It never writes canonical Knowledge. After a successful required delta, update lane state for the approved Integration route and create the metadata-only handoff commit defined by `MAIN_DESK.md`; stage only `.ai/lanes/<lane>/**`. If no subsequent unmerged Lane work needs the index, prefer deferred canonical sync after Integration instead of creating a delta.
+`PREPARE_DELTA` reads one exact committed PASS Review, writes only evidence-backed entries under the current Lane's `knowledge-delta`, and leaves its Review in `pending_reviews` until integrated-source validation promotes or supersedes it. It never writes canonical Knowledge. After a successful required delta, update lane state for the approved Integration route and create the Lane handoff commit defined by `MAIN_DESK.md`; stage only `.ai/lanes/<lane>/**`. If no subsequent unmerged Lane work needs the index, prefer deferred canonical sync after Integration instead of creating a delta.
 
 `QUERY` follows:
 
@@ -100,7 +100,7 @@ Do not build an exhaustive class/file catalog.
 - lane `knowledge-delta/**`
 - `.ai/integration/queue.yaml` knowledge-sync fields during `INTEGRATE`
 - validation/drift fields in owned Knowledge artifacts and current lane state pointers
-- one metadata-only current-Lane handoff commit after non-`main` `PREPARE_DELTA`
+- one Lane handoff commit after non-`main` `PREPARE_DELTA`
 - one canonical Knowledge checkpoint commit during an activated main Integration loop
 
 Do not write production code, design architecture, interpret product requirements, or approve Builder output.

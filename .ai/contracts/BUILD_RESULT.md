@@ -26,8 +26,15 @@ builder: <session-id|unknown>
 | <path|none> | <unrelated_pre_existing|inherited_task|unknown> | <status/diff/Build ref> |
 
 ## Changes
-| Path | Change | AC/reason |
-|---|---|---|
+| Path | Change | AC/reason | Source role / key symbol |
+|---|---|---|---|
+| <path or none> | <add/modify/delete> | <AC/reason> | <plain role + path#symbol; whole file; generated/mechanical; or n/a> |
+
+## Source Map
+- primary read: <three-to-five path#symbol anchors in runtime order|none>
+- runtime flow: <entry -> important decision/state -> observable effect|none>
+- new source files: <whole-file paths|none>
+- generated/mechanical group: <paths or category|none>
 
 ## AC Evidence
 | AC | Result | Evidence |
@@ -55,6 +62,9 @@ Rules:
 - List only executed checks; use `not_run/unavailable` explicitly.
 - Keep only decisive output excerpts and link the full log.
 - Every changed path maps to the task or an AC.
+- For every Task-touched hand-written production source path in `Changes`, record its key symbol, plain-language role, and Task-specific reason in that row. The `Source Map` selects only the three-to-five anchors that best explain entry, important decision/state, and observable effect; it never repeats the full inventory. Mark a newly added source as `whole file`, group generated/vendor/mechanical paths, and omit the map only when no hand-written production source changed.
+- Builder owns this revision-scoped Source Map while implementing. It exposes at most three current anchors after the first coherent edit, reports only material map deltas during Build, and gives the final primary read before Review handoff. The map is orientation rather than architecture or permanent Knowledge; Reviewer independently checks it against the exact candidate.
+- Historical completed Build Results with the three-column `Changes` table and no `Source Map` remain readable and are never rewritten merely for this presentation change. Before a still-active historical candidate first enters Review under this contract, Builder reconstructs the missing role/symbol column and Source Map from the exact current candidate; accepted historical evidence needs no migration.
 - `unrelated_pre_existing` requires evidence that the path predates the applicable Workflow attempt and is not attributable to it. Preserve it and never claim it as this Task's work.
 - `inherited_task` means bytes attributable to an interrupted or superseded Workflow attempt. Preserve that attribution across Task/attempt IDs and reconcile it against the active Task's explicit `retain | adapt | remove` disposition when one is required.
 - Use `unknown` when evidence cannot distinguish the two. Route the attribution gap as `context`; do not relabel the path as user work or silently include it in a candidate. Historical Build Results with the older Baseline bullets remain readable, but they cannot support an interrupted-attempt resume or supersession when attribution is ambiguous.
@@ -64,7 +74,8 @@ Rules:
 - A no-Git candidate uses `base_revision: no-git`, `result_revision: no-git`, `result_tree: unsealed`, and `candidate_fingerprint: unsealed`; disclose reduced attribution assurance.
 - If a non-`main` candidate cannot be isolated and committed safely, record it as unsealed, disclose the exact cause, and route an actionable prerequisite. Do not present a working-tree result as mergeable.
 - Do not implement around an architecture/integration blocker.
-- If implementation and available deterministic checks are complete, an unavailable user-observed/manual gate stays in `Unverified / Risks` and the candidate routes Reviewer; it does not by itself keep Builder blocked.
+- If implementation and available deterministic checks are complete, an unavailable observation-only user/manual gate stays in `Unverified / Risks` and the candidate routes Reviewer; it does not by itself keep Builder blocked. Known user/editor authoring that saves Task-attributed bytes is implementation and must finish inside the active Build attempt before this Result becomes `ready_to_review`.
+- `Unverified / Risks` may record an `observed` fact or explicitly `inferred` hypothesis needed to continue the current attempt. It never labels an inference `confirmed`, rewrites approved intent, or turns a hypothesis into Architecture/Task/state/Knowledge truth. When later evidence disproves it, correct the current Build Result before handoff and preserve only the evidence needed to explain the resulting route.
 - Review PASS is required before acceptance.
 
 `candidate_fingerprint` exists only to bind a mutable single-main working tree. Its authoritative path set is the Build Result `Changes` table after Builder reconciles it with the Task `allowed_write`, baseline, Git status/diff, and untracked Task files. Every rename contributes its old endpoint as `deleted` and its new endpoint as content. If that complete Task-attributed set cannot be established, use `unsealed` and disclose reduced assurance.

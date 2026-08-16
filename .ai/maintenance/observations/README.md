@@ -1,6 +1,6 @@
 # Workflow Observations
 
-Pending evidence-backed improvement candidates live here and follow `.ai/maintenance/MAINTAIN.md`.
+Explicitly preserved user-reported or evidence-backed improvement candidates live here and follow `.ai/maintenance/MAINTAIN.md`. Ordinary project roles never populate this directory automatically.
 
 One compact YAML file represents one deduplicated fingerprint. These files are preserved across Workflow updates. They are not project blockers, lane history, or authority for a Core change.
 

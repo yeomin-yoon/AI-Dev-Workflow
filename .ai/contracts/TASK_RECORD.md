@@ -61,14 +61,16 @@ This is the single canonical Task-splitting gate. Before a Task becomes `approve
 
 Prefer a narrow end-to-end/vertical slice that can be exercised at its approved boundary. A horizontal layer or scaffold is a separate Task only when it has a standalone approved outcome/oracle or must land atomically; otherwise merge it with the first observable behavior.
 
+The Gate includes a proportional cross-artifact consistency check over only this Task's exact lineage: applicable approved intent/requirement refs -> current Architecture scope or delivery slice -> Task Goal/ACs -> verification. Reject an orphan Task outcome, a contradicted constraint, a claimed slice with omitted observable or terminal behavior, or an AC with no approved intent/Architecture basis. Inspect broader sibling slices only when meaningful ambiguity or dependency evidence requires it; do not scan an entire specification or generate another checklist for a small already-determined Task.
+
 | Check | Evidence required for `READY` |
 |---|---|
-| One outcome | Goal names one observable behavior or deliverable and one primary reason to change. |
+| One outcome | Goal names one observable behavior or deliverable and one primary reason to change, grounded in the approved request or one current Architecture scope/delivery slice. |
 | Independent delivery | Builder can implement it and Reviewer can PASS/FAIL it without a future Task or unapproved redesign. |
 | Narrow, complete writes | `allowed_write` contains every required atomic edit, stays within the Lane boundary, and excludes unrelated cleanup. A replacement Task after an interrupted/superseded single-main attempt classifies every inherited Task path as `retain | adapt | remove` in Scope or Constraints and keeps each retained/adapted/removed path inside `allowed_write`. |
-| Observable acceptance | Every mandatory result has an objective AC; labels such as `improve`, `refactor`, or `implement system` are insufficient by themselves. |
+| Observable acceptance | Every mandatory result—including relevant finish/exit behavior—has an objective AC; labels such as `improve`, `refactor`, or `implement system` are insufficient by themselves. |
 | Executable verification | Every mandatory AC maps to a feasible method and required evidence; any human gate has the complete procedure below. |
-| Ready dependencies | Required source, contracts, decisions, predecessor results, and applicable requirement refs exist at their approved or verified revisions. |
+| Ready dependencies | Required source, contracts, decisions, predecessor results, and applicable requirement refs exist at their approved or verified revisions, and the exact intent -> Architecture -> Task lineage has no material gap or contradiction. |
 | Worth the handoff | Split only when reduced context, risk, or review ambiguity repays another handoff; merge a fragment that has no standalone oracle or must land atomically with adjacent work. |
 
 The gate returns exactly one internal planning outcome:
@@ -81,6 +83,10 @@ The gate returns exactly one internal planning outcome:
 | `BLOCKED` | A required decision, dependency, boundary, or verification method is unresolved. Route the owning issue and do not hand off. |
 
 `SPLIT` and `MERGE` are private Architect revisions, not new user gates. Ask the user only when the underlying change requires user-owned intent or an Architecture Gate. Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`; the Task Record fields are the evidence.
+
+Task creation also requires a current delivery reason: an explicit user-requested outcome, the approved Architecture delivery order, a dependency of the next observable outcome, or repair of an `OPERATIONS.md#bounded-diagnosis-during-active-delivery` `current_blocker`. A discovered `follow_up` is not independently READY merely because it is real or convenient to fix, and `not_actionable` evidence never becomes a Task.
+
+When the complete procedure includes known user/editor saves to Task-attributed paths, label that step as candidate-mutating implementation to be batched during Builder's active attempt before final verification. Reserve post-handoff Reviewer gates for observation-only evidence or newly discovered setup that could not be known from the approved Task; do not knowingly design a Build -> Review -> save -> Build loop.
 
 The interrupted-attempt disposition is required only when the replacement Task inherits Workflow-attributed dirty bytes. It never authorizes deleting unrelated pre-existing or `unknown` work; unresolved attribution remains a `context` blocker. Builder and Reviewer verify the disposition against the prior Build Baseline and current diff.
 

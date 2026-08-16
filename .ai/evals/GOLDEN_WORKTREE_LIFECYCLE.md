@@ -11,7 +11,7 @@ Use this deterministic scenario before accepting a Workflow release that changes
 - committed common base: `B0`
 - Task candidate commit: `C1`
 - `tree(C1)`: `T1`
-- metadata-only handoff commit: `H1`, with `C1` as ancestor
+- Lane handoff commit: `H1`, with `C1` as ancestor
 - main before Integration: `M0`
 - main after Integration: `M1`
 - independent Lane and main Reviewer sessions
@@ -63,7 +63,7 @@ Given Main cannot read the sibling worktree but can resolve its Branch and `H1` 
 Expected:
 
 - Main reads the committed Review/state from `H1`.
-- Main verifies `B0`, `C1`, `T1`, ancestry, and the metadata-only range from Git.
+- Main verifies `B0`, `C1`, `T1`, ancestry, and the Lane-handoff-only range from Git.
 - No chat summary is treated as authority.
 
 If neither the source path nor `H1` is available, Main emits one User Action Card with exact evidence/steps/reply/fallback.
@@ -92,7 +92,8 @@ Expected:
 - Main applies at most one candidate ending at `H1`; merge/fast-forward targets `H1`, while cherry-pick/squash applies the complete `B0..H1` range. It then records `main_after=M1`, actual `merge_strategy`, and `review_range=M0..M1`.
 - Main stops and routes independent main Reviewer.
 - Reviewer checks the exact range and candidate identity before PASS.
-- Reviewer PASS creates a metadata-only Integration Review/queue checkpoint commit.
+- An eligible non-`main` ordinary Task Review may use the configured `CODE_WALKTHROUGH` pause before its Lane handoff route; the later main Integration Review never creates that pause and records `code_inspection=not_applicable`.
+- Reviewer PASS creates an Integration Review checkpoint commit containing only its Review, queue update, and required main state pointers.
 - Only after integrated PASS may canonical Knowledge synchronize; an activated sync creates a separate role-owned Knowledge checkpoint commit.
 - The next candidate never starts over uncommitted Integration tracking, canonical Knowledge, production, or unexplained paths.
 
@@ -122,6 +123,7 @@ Expected:
 - The new Work session performs targeted Knowledge/state validation, updates Lane `source_revision`, and resumes Architect without replaying the completed Task or broad-scanning the repository.
 - A changed purpose, ownership, shared contract, or dependency order routes Architect through a new boundary decision.
 - No remaining work leaves the Lane at `synced/idle`; `retired` and worktree removal remain separate explicit decisions.
+- In the terminal variant, the last Integration PASS and required Knowledge checkpoint still route Architect through `reconcile_feature_boundary` before any `synced/idle` disposition. An open-only or mixed open plus user-approved-deferred outcome returns `design/active`; only all-implemented/excluded coverage, or explicitly approved deferred work reported as paused/incomplete, may rest at `synced/idle`.
 
 ## Case 9 — Integration blocker repair and resume
 

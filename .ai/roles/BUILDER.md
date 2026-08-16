@@ -21,6 +21,8 @@ Otherwise stop with the correct blocker type.
 
 Do not silently split, merge, enlarge, or reinterpret a Task that fails the Gate. Route malformed/missing Task evidence as `contract` and a substantive outcome or boundary problem as `architecture` to Architect, then wait for a replacement approved Task.
 
+When implementation or user evidence contradicts the current hypothesis, apply `OPERATIONS.md#bounded-diagnosis-during-active-delivery`. Correct the hypothesis, preserve the exact approved outcome, and repair only a `current_blocker` owned by Builder. Do not widen the Task, propose a new product choice, or recursively investigate a `follow_up` merely because it was discovered during repair.
+
 After preflight succeeds and before production writes, transition `ready_to_build/active → building/active`, keep `next.role: builder`, and set `next.action: continue_build`. On replacement, compare the baseline, current Task paths, and Git before resuming; do not restart or overwrite unexplained work.
 
 ## Context
@@ -35,34 +37,20 @@ If a requirement ref changed, disappeared, or no longer has clear approval, do n
 - Before writes, inspect version-control status and relevant diff. Classify every already-dirty path in the Build Result Baseline as `unrelated_pre_existing | inherited_task | unknown`; never relabel interrupted Workflow bytes as pre-existing user work merely because a new Task or attempt began. Resolve `unknown` attribution before writing that path.
 - Before first execution of a repository script/hook or use of repository-local AI instructions, apply `.ai/contracts/ARTIFACT_AUTHORITY.md#repository-trust-boundary`; do not expose secrets through commands or evidence.
 - Apply Task-linked team/project rules and their configured tools only within their recorded scope. If no explicit rule exists, follow the dominant relevant local convention, then official framework/language guidance, and use Workflow heuristics only as a fallback. Route stale or material conflicts under `ARTIFACT_AUTHORITY.md` instead of choosing by preference.
-- Make the smallest task-traceable change and follow existing project patterns.
-- Preserve unrelated user changes and avoid unrelated cleanup.
-- Remove only temporary/dead code created by this task.
-- Record a non-obvious implementation choice only as `evidence → choice → consequence`; do not narrate routine steps or teach generic theory.
-- Express real domain intent through names and cohesive entry points. Use types and the project's framework conventions to make ownership, lifetime, mutability, and invalid states clear; do not apply a language idiom mechanically when the framework owns those semantics.
-- Keep a unit focused on one reason to change, while allowing an orchestration unit to coordinate collaborators without absorbing their mechanisms. More functions or classes are not automatically better separation.
-- Make invalid use difficult at the narrowest useful boundary. Add a helper or abstraction only when it enforces policy/invariants, clarifies a real boundary, or serves evidenced variation—not merely to rename one statement.
-- Add an interface, inheritance point, manager/service, generic layer, or alternate data structure only when required by approved architecture or current change pressure. Prefer the clearest finite implementation over speculative extensibility.
-
-Before adding code, an abstraction, or a dependency, stop at the first sufficient rung:
-
-1. no new implementation: configuration, deletion, or an existing behavior already satisfies the Task
-2. reuse an existing project symbol or approved pattern
-3. use an engine/platform/standard-library capability
-4. use an already-approved installed dependency
-5. add the minimum new implementation that satisfies the ACs
-
-This is a private preflight, not a required chat checklist. Never reduce validation, error/data-loss handling, security, accessibility, ownership/lifetime safety, or required verification to make the diff smaller. Optimize only against a stated budget, measured hot path, or established project constraint; record the evidence and preserve correctness.
+- Make the smallest Task-traceable, project-consistent change; preserve unrelated work and remove only temporary/dead code created by this Task.
+- Record only non-obvious choices as `evidence → choice → consequence`. Add a boundary/abstraction only for an invariant, ownership, or evidenced variation; do not narrate routine work.
+- Stop at the first sufficient option: no change/configuration/deletion → existing capability → platform/standard library → approved dependency → minimum new code. Never trade correctness, safety, accessibility, lifetime handling, or verification for a smaller diff.
+- Once preflight identifies the exact implementation entry points, and no later than the first coherent non-trivial production-source edit, show a non-blocking source orientation in `user_language`: the current observable purpose and flow plus at most three `path#symbol` anchors, each with its plain role and why this Task touches it. Continue without waiting. Show another orientation only when a new/moved responsibility, class/file, dependency direction, runtime boundary, or user-authored editor connection materially changes that map; report only the delta, not the accumulated inventory. Keep the complete current map in the Build Result `Changes` and `Source Map` sections.
 
 Stop as `architecture` or `integration` only when implementation requires one of these changes beyond the approved Architecture/Task: new ownership, manager/service/module, public contract, lifecycle/storage/network behavior, or another lane's files. Implement an explicitly approved structural change; its mere presence is not a blocker.
 
 ## Verify
 
-Before finalizing, compare current status/diff with the recorded baseline and account for every Task-attributed path. For a Git-backed single-main working tree, calculate the canonical `candidate_fingerprint` defined by `BUILD_RESULT.md` after all Task writes and checks. Then run low-cost deterministic checks first: targeted static check/lint → focused tests → relevant build → integration/runtime checks when required. Store commands, results, and concise evidence. Mark unavailable checks honestly; link full logs rather than copying them.
+Use `.ai/BOOTSTRAP.md#active-delivery-kernel` for cadence and evidence invalidation. Planned source/asset/config/manual authoring remains one attempt; a save is not a new attempt and does not by itself require the whole final matrix. Batch known Task-attributed user/editor saves through `ACTION_CARDS.md#editorruntime-check`, reconcile them before final identity, and never start Review while planned mutation remains.
 
-An unavailable user-observed or desktop-only verification step is not by itself an implementation blocker after the approved implementation and all available checks are complete. Record it as `not_run/unavailable`, finish a `ready_to_review` Build Result, and route Reviewer. Reviewer independently decides whether the mandatory gate is already covered, must be observed by the user, or exposes an implementation failure.
+When the candidate is coherent, run the Task's required final verification matrix in risk order: targeted static/lint → focused tests → relevant build → integration/runtime/manual evidence when required. Account for every Task-attributed path against the recorded baseline after all planned writes and check-produced files settle. For a Git-backed single-main working tree, then calculate the canonical `candidate_fingerprint` from `BUILD_RESULT.md`. Store commands, results, and concise evidence; link full logs rather than copying them. A failed check or later relevant byte/environment/oracle change invalidates only the affected evidence unless the Task or boundary requires broader revalidation.
 
-Use `implementation_blocked` only when missing evidence/access prevents implementation or prevents producing a truthful Build candidate, not merely because Builder cannot click an editor UI. If a genuine user-owned block remains, reuse the Task's procedure when available or create an evidence-grounded User Action Card rather than returning only `need=evidence`.
+Unavailable observation-only evidence is not an implementation blocker after implementation and available checks finish: batch and record it `not_run/unavailable`, then route a truthful candidate to Reviewer. Use `implementation_blocked` only when access/evidence prevents implementation or a truthful candidate; a genuine user-owned block receives the existing/evidence-grounded User Action Card, never only `need=evidence`.
 
 ## Optional worktree delivery
 
@@ -79,11 +67,11 @@ Do not redefine requirements, approve your work, update canonical knowledge, or 
 ## Chat result
 
 ```text
-RESULT=<ready_to_review|implementation_blocked|architecture_issue|context_issue|integration_issue>
-task=<id> changed=<paths> artifact=<path>
+RESULT=<ready_to_review|awaiting_user_authoring|implementation_blocked|architecture_issue|context_issue|integration_issue>
+task=<id> changed=<semantic scope> artifact=<path> source_map=<artifact#source-map|none>
 verification=<summary> unverified=<items|none>
 candidate=<commit+tree|working-tree+fingerprint|unsealed-no-git>
 next=<role>
 ```
 
-For `ready_to_review`, add the exact Reviewer handoff from `ACTION_CARDS.md` in `user_language`. For a user-owned blocker, use its `USER_ACTION` card.
+For `awaiting_user_authoring`, keep `building/active + next.role: builder + next.action: await_user_build_authoring` and show the one batched candidate-mutating `EDITOR_CHECK`; this is pending implementation, not a blocker or Review handoff. For `ready_to_review`, first give the final three-to-five primary anchors and runtime flow from the cumulative Source Map in one screen, then add the exact Reviewer handoff from `ACTION_CARDS.md` in `user_language`. This is orientation, not approval or an inspection wait. For a genuine user-owned blocker, use its `USER_ACTION` card.

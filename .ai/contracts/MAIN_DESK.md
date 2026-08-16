@@ -28,7 +28,7 @@ A non-`main` candidate is eligible for Integration only when:
 5. `reviewed_revision..handoff_revision` changes only current-Lane workflow artifacts under `.ai/lanes/<lane>/**`.
 6. No Task-attributed production/test change remains outside `reviewed_revision`.
 
-The last required Lane role creates the metadata-only handoff commit as part of its selected PASS or `PREPARE_DELTA` route, before session close. Reviewer does it when Knowledge sync is `defer` or `none`; Knowledge Maintainer does it after required `PREPARE_DELTA`. This commit stages only `.ai/lanes/<lane>/**`. It never includes production files, shared/canonical Knowledge, the Integration queue, or Workflow maintenance files.
+The last required Lane role creates the Lane handoff commit as part of its selected PASS or `PREPARE_DELTA` route, before session close. Reviewer does it when Knowledge sync is `defer` or `none`; Knowledge Maintainer does it after required `PREPARE_DELTA`. This commit stages only `.ai/lanes/<lane>/**`. It never includes production files, shared/canonical Knowledge, the Integration queue, or Workflow maintenance files.
 
 Candidate and handoff commits are normal, explicitly defined worktree-mode delivery steps. A bare close request never creates either commit. If a commit cannot be created safely because attribution, credentials, hooks, signing, or permissions are unresolved, keep the candidate `unsealed` and emit an actionable route or User Action Card.
 
@@ -44,13 +44,13 @@ Builder creates the immutable Task candidate:
 2. stage only Task-attributed production/config/asset/test paths;
 3. inspect the staged diff and prove every path maps to the Task/AC;
 4. commit with the Task ID, then record the commit as `result_revision` and its tree as `result_tree`;
-5. leave Build Result, state, and other current-Lane `.ai` artifacts for the later metadata-only handoff commit.
+5. leave Build Result, state, and other current-Lane `.ai` artifacts for the later Lane handoff commit.
 
 The approved worktree flow authorizes this isolated commit without another confirmation. Never include unrelated user changes, canonical/shared Knowledge, Integration state, Observations, or Workflow maintenance files. If attribution, hooks, signing, credentials, or permissions prevent a truthful commit, keep it unsealed and provide one actionable prerequisite.
 
 After exact-revision independent PASS:
 
-- With `knowledge_sync: defer | none`, Reviewer stages only current-Lane artifacts under `.ai/lanes/<lane>/**`, verifies the reviewed commit/tree and ancestry, confirms no Task production dirt remains, and creates the metadata-only `handoff_revision`.
+- With `knowledge_sync: defer | none`, Reviewer stages only current-Lane artifacts under `.ai/lanes/<lane>/**`, verifies the reviewed commit/tree and ancestry, confirms no Task production dirt remains, and creates the Lane `handoff_revision`.
 - With `knowledge_sync: required`, Reviewer does not seal. Knowledge Maintainer performs `PREPARE_DELTA`, stages only `.ai/lanes/<lane>/**`, repeats the same ancestry/dirty checks, and creates the handoff commit.
 - A failed seal does not erase a valid diagnostic PASS, but it leaves `candidate_status=unsealed` and requires an actionable Integration prerequisite.
 
@@ -58,7 +58,7 @@ After exact-revision independent PASS:
 
 Before emitting a return:
 
-1. Complete the Bootstrap Close checkpoint and Observation trigger.
+1. Complete the Bootstrap Close checkpoint. Preserve any already-created manual Observation, but never create one merely because the session is closing.
 2. Resolve the source repository root/worktree, Lane, current role, Branch, `HEAD`, and read-only Git status.
 3. Read only current lane state and its active artifact pointers.
 4. Resolve the primary/main worktree from approved Parallel Start data when available, otherwise verified Git worktree state. Never guess from a folder name.
@@ -125,7 +125,7 @@ On the copyable return instruction, Main Front Desk:
 2. If that path is inaccessible, resolves the supplied Branch and exact `head_revision`/`handoff_revision` in the shared repository and reads committed state/Review from there.
 3. If a copied locator is missing, derives it only when verified `git worktree` state, Branch, and `.ai/lanes/<lane>/state.yaml` identify one unique value. Otherwise emits a User Action Card; never guesses or treats chat as authority.
 4. Treats topology and language as presentation preferences only. If missing or invalid, defaults replacement sessions to compact topology and the current user language; tool choice defaults to `any`.
-5. Verifies sealed-candidate ancestry, tree hash, PASS Review, post-review metadata-only diff, pending user evidence, dependencies, local Observations, and the approved integration order.
+5. Verifies sealed-candidate ancestry, tree hash, PASS Review, post-review Lane-handoff-only diff, pending user evidence, dependencies, local Observations, and the approved integration order.
 6. Checks both source and main `knowledge_sync.status` plus `pending_reviews`. Preserve every deferred Review path in the committed handoff/main state; `none` never clears older entries. Run the required canonical checkpoint before a new Feature, final Integration completion, or any next candidate that needs the updated index.
 7. Chooses exactly one outcome: issue a replacement/next session, start the next eligible Integration candidate, request one actionable prerequisite, or accept the return with no next session.
 8. Never deletes a worktree. Report `safe_to_remove=yes` only when it is clean, has no unintegrated or uniquely needed state, local Observations are preserved, and any pending Review evidence also exists in the committed handoff or main checkout. Deferred canonical sync may remain batched when its evidence is safely preserved outside the source worktree.
@@ -147,14 +147,14 @@ first_request=<exact short instruction>
 
 The user opens a new session in `worktree`, pastes `prompt`, waits for `READY`, then pastes `first_request`. Never ask the user to edit `lane=main`, recover an old chat, or assemble a prompt. Use `Work` for Knowledge/Architect/Builder routes in compact topology and the fixed role in strict topology.
 
-If a new worktree/Lane is required, Main Front Desk routes Architect through `PARALLEL_START.md`; it does not fabricate a `NEXT_SESSION` before the boundary and committed base are approved. If the next candidate is sealed and dependency-eligible, follow `.ai/integration/README.md` and integrate one candidate ending at its exact `handoff_revision` before independent main Review; non-merge strategies must apply the complete sealed range, not the metadata commit alone.
+If a new worktree/Lane is required, Main Front Desk routes Architect through `PARALLEL_START.md`; it does not fabricate a `NEXT_SESSION` before the boundary and committed base are approved. If the next candidate is sealed and dependency-eligible, follow `.ai/integration/README.md` and integrate one candidate ending at its exact `handoff_revision` before independent main Review; non-merge strategies must apply the complete sealed range, not the Lane handoff commit alone.
 
 ## Post-integration Lane disposition
 
-After a Lane candidate is integrated, independently reviewed, and any required canonical Knowledge checkpoint is complete, Main Front Desk chooses one explicit disposition:
+After a Lane candidate is integrated, independently reviewed, and any required canonical Knowledge checkpoint is complete, Main Front Desk first inspects whether a next approved Task or active work remains. If none remains, it routes Architect through `STATE.md`'s `reconcile_feature_boundary` before choosing a disposition; Integration PASS alone never establishes Feature completion or authorizes `synced/idle`. It then records one explicit disposition from the returned state:
 
-- `complete`: leave the Lane `active` and resting at `synced/idle`; `retired` requires a separate explicit user decision. Report whether the old worktree is safe to remove, but never delete it.
-- `continue`: reuse the same Lane ID and approved ownership only sequentially from the current clean main baseline. Do not continue in the old worker worktree/Branch: merge, cherry-pick, and squash can leave its history or Knowledge behind main even when its candidate was accepted.
+- `complete`: only after Feature convergence reaches `synced/idle`; report Feature complete only for all-`implemented|excluded` coverage, otherwise report the user-approved deferral as paused/incomplete. Leave the Lane `active`; `retired` requires a separate explicit user decision. Report whether the old worktree is safe to remove, but never delete it.
+- `continue`: only when a next approved Task already exists or Feature convergence returns `design/active` with a specified open outcome materialized for delivery. Reuse the same Lane ID and approved ownership only sequentially from the current clean main baseline. Do not continue in the old worker worktree/Branch: merge, cherry-pick, and squash can leave its history or Knowledge behind main even when its candidate was accepted.
 - `redesign`: route Architect before another worktree when ownership, shared contracts, dependency order, or purpose changes.
 
 For `continue`, verify that main contains the accepted Lane artifacts, no source-Lane `pending_reviews` needed by the next work remain unsynchronized, the prior candidate is integrated, and no second active worktree is bound to the same Lane. Then read `PARALLEL_START.md#post-integration-continuation` and emit its fresh worktree/Branch card pinned to current main. The new Work session performs targeted Knowledge/state validation, updates the Lane `source_revision`, and resumes Architect; it does not broad-scan or replay the integrated Task.
