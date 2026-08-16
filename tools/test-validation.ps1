@@ -1954,6 +1954,14 @@ regression_cases: []
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/reference/OPERATIONS.md token=A probe is the last evidence step, not a default implementation strategy'
 
+    Assert-NegativeFixture 'decision-evidence-ladder-absorbs-feature-convergence' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/ARCHITECT.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('## Feature convergence', 'Feature convergence')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=## Feature convergence'
+
     Assert-NegativeFixture 'nonblocking-discovery-becomes-task' {
         param($root)
         $target = Join-Path $root '.ai/contracts/TASK_RECORD.md'

@@ -1140,6 +1140,7 @@ $contractTokenRequirements = @{
         'Build the viable set only from paths consistent with approved observable intent, ownership, responsibility, and dependency direction',
         'Implementation or test convenience cannot make a boundary-violating workaround viable',
         '## Decision evidence ladder',
+        '## Feature convergence',
         'Before inventing a design or repair direction, use the strongest applicable evidence in this order',
         'Reuse an already verified finding while its relevant inputs and constraints remain unchanged',
         'Skip external research and experiments for trivial, mechanical, or already-determined choices',

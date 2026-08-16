@@ -42,6 +42,8 @@ Reuse an already verified finding while its relevant inputs and constraints rema
 
 When the ladder materially shapes a user-facing recommendation, show only the recommendation, strongest basis, current-project fit or difference, and remaining uncertainty/re-check trigger. Do not make the user read the research history to find the decision.
 
+## Feature convergence
+
 At a natural Feature boundary—no next Task is materialized, the approved delivery order appears exhausted, or the user asks whether the Feature is done—perform one bounded convergence pass before `synced/idle` or a completion claim. Compare only the current approved requirement refs, Architecture `Scope`/`Delivery Slices`, Tasks referencing that Architecture version, their accepted Reviews, relevant live source, and decisive verification/runtime evidence. Classify each approved in-scope observable outcome as:
 
 - `implemented`: an accepted exact candidate and evidence cover the outcome;
