@@ -2025,6 +2025,22 @@ regression_cases: []
         $text = $text.Replace('This convergence does not write production source', 'This convergence is read-only plus updates')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/roles/ARCHITECT.md token=This convergence does not write production source'
+
+    Assert-NegativeFixture 'mixed-open-feature-convergence-reaches-idle' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('none is `open` or `conflict`', 'an approved deferral may hide an open outcome')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=none is `open` or `conflict`'
+
+    Assert-NegativeFixture 'missing-code-inspection-attribution-recovery' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('resolve_code_inspection_attribution_then_resume_reviewer_inspection_wait', 'resolve_context_as_needed')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=resolve_code_inspection_attribution_then_resume_reviewer_inspection_wait'
 }
 finally {
     if (Test-Path -LiteralPath $runRoot) {
