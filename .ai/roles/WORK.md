@@ -34,10 +34,11 @@ Do not load either procedure during ordinary single-`main` development.
 ## Continuous route
 
 - After explicit Architecture approval, Architect may approve a routine Task that stays inside the approved design and continue as Builder in the same user turn.
-- A separate Task approval is required only for new user-owned intent, a new Architecture Gate, irreversible/external effects, material cost or scope growth, or a mandatory human gate.
+- Separate Task approval follows `approval_basis` in `.ai/contracts/TASK_RECORD.md`.
 - Execute at most one Build candidate before stopping for independent Review.
 - After Review FAIL, resume only the routed Architect or Builder repair.
 - After single-`main` PASS, follow the state-selected Knowledge route and `.ai/shared/knowledge/project.yaml#interaction` through `ACTION_CARDS.md`. Missing preferences mean one exact logical checkpoint plus one routine Task; deterministic revision repinning is closure, not another choice. Never start a Task over an uncommitted/incompletely repinned accepted candidate.
+- At that closure, append the accepted Task's `.ai/contracts/STATE.md#run-ledger` line; when Git is unusable, append it at the accepted transition instead. This is a silent artifact projection, never user-visible output, a choice, or a reason to stop.
 - Compact `one_task` continuation may materialize and build one already-approved routine Task without a user-visible Architect handoff or repeated approval, then stops at `ready_to_review`. Every new Gate, user-owned intent, manual gate, blocker, changed evidence, or exhausted delivery order stops it; preferences never authorize Push/tag, another content checkpoint, or an unreviewed candidate.
 - When no next Task is materialized after the accepted candidate and required Knowledge/checkpoint closure, run Architect's bounded Feature convergence in the same compact Work session when possible. Do not declare completion from the last Task PASS, invent another user confirmation, or skip a specified open slice; strict topology may hand off to Architect with `reconcile_feature_boundary`.
 - `before_next_task` uses the durable Reviewer-owned code-inspection wait only for revalidatable identity; no-Git/unsealed shows without pausing. Work never consumes that reply or routes around the wait.

@@ -424,6 +424,7 @@ $sourceRequiredPaths = @(
     '.gitattributes',
     'tools/validate-workflow.ps1',
     'tools/test-validation.ps1',
+    'tools/compare-validation.ps1',
     '.github/workflows/validate.yml',
     '.github/workflows/release-evidence.yml',
     'maintenance/WORKFLOW_REVIEW.md',
@@ -574,6 +575,123 @@ if (Test-Path -LiteralPath $stateContractPath -PathType Leaf) {
             Add-Failure "STATE.md declares an unsupported Lane phase: $phase"
         }
     }
+
+    # Structural transition validation. The transition table is deterministically
+    # parseable, so validate the state machine itself instead of asserting that
+    # individual rows exist as literal strings. This catches an unreachable state,
+    # a dead-end blocker, an undocumented blocker type, and an illegal target that
+    # no hand-maintained token list would notice.
+    $expectedStatuses = @('idle', 'active', 'blocked', 'complete')
+    $expectedBlockerTypes = @(
+        'implementation',
+        'architecture',
+        'contract',
+        'context',
+        'verification',
+        'integration'
+    )
+    $stateLines = $stateContractText -split "`r?`n"
+    $transitionHeader = -1
+    for ($i = 0; $i -lt $stateLines.Count; $i++) {
+        if ($stateLines[$i] -match '^\| From \| Event \| To \| Next \|$') {
+            $transitionHeader = $i
+            break
+        }
+    }
+    if ($transitionHeader -lt 0) {
+        Add-Failure 'STATE.md is missing the From/Event/To/Next transition table'
+    }
+    else {
+        $pairPattern = '`(?<phase>[a-z_]+)/(?<status>[a-z_]+)`'
+        $preservePattern = 'preserve `(?<phase>[a-z_]+)`[^|]*?set `status: blocked`'
+        $fromPairs = New-Object System.Collections.Generic.HashSet[string]
+        $toPairs = New-Object System.Collections.Generic.HashSet[string]
+        $blockedWithType = New-Object System.Collections.Generic.HashSet[string]
+        $transitionRowCount = 0
+        for ($i = $transitionHeader + 2; $i -lt $stateLines.Count; $i++) {
+            $row = $stateLines[$i]
+            if (-not $row.StartsWith('| ')) {
+                break
+            }
+            $cells = @($row.Trim().Trim('|') -split '\|' | ForEach-Object { $_.Trim() })
+            if ($cells.Count -ne 4) {
+                Add-Failure "STATE.md transition row does not have four columns: $row"
+                continue
+            }
+            $transitionRowCount++
+            $fromCell = $cells[0]
+            $toCell = $cells[2]
+            foreach ($match in [regex]::Matches($fromCell, $pairPattern)) {
+                $phase = $match.Groups['phase'].Value
+                $status = $match.Groups['status'].Value
+                if ($expectedPhases -notcontains $phase) {
+                    Add-Failure "STATE.md transition uses an undeclared source phase: $phase"
+                }
+                if ($expectedStatuses -notcontains $status) {
+                    Add-Failure "STATE.md transition uses an undeclared status: $status"
+                }
+                $null = $fromPairs.Add("$phase/$status")
+                if ($status -eq 'blocked') {
+                    foreach ($typeMatch in [regex]::Matches($fromCell, '`(?<type>[a-z]+)`')) {
+                        $blockerType = $typeMatch.Groups['type'].Value
+                        if ($expectedBlockerTypes -contains $blockerType) {
+                            $null = $blockedWithType.Add($blockerType)
+                        }
+                    }
+                }
+            }
+            foreach ($match in [regex]::Matches($toCell, $pairPattern)) {
+                $phase = $match.Groups['phase'].Value
+                $status = $match.Groups['status'].Value
+                if ($expectedPhases -notcontains $phase) {
+                    Add-Failure "STATE.md transition targets an undeclared phase: $phase"
+                }
+                if ($expectedStatuses -notcontains $status) {
+                    Add-Failure "STATE.md transition targets an undeclared status: $status"
+                }
+                if ($status -eq 'complete') {
+                    Add-Failure "STATE.md transition targets reserved retired status complete: $row"
+                }
+                $null = $toPairs.Add("$phase/$status")
+            }
+            foreach ($match in [regex]::Matches($toCell, $preservePattern)) {
+                $null = $toPairs.Add("$($match.Groups['phase'].Value)/blocked")
+            }
+            if ($toCell -match '`phase: blocked`' -or $toCell -match 'set `phase` to `blocked`') {
+                Add-Failure "STATE.md transition sets phase to blocked, which the contract forbids: $row"
+            }
+        }
+        if ($transitionRowCount -lt 1) {
+            Add-Failure 'STATE.md transition table has no rows'
+        }
+        $seedPair = 'uninitialized/idle'
+        foreach ($pair in $fromPairs) {
+            if ($pair -ne $seedPair -and -not $toPairs.Contains($pair)) {
+                Add-Failure "STATE.md transition leaves from an unreachable state: $pair"
+            }
+        }
+        foreach ($pair in $toPairs) {
+            $phase = $pair.Split('/')[0]
+            $status = $pair.Split('/')[1]
+            if ($status -eq 'blocked' -and -not $fromPairs.Contains($pair)) {
+                Add-Failure "STATE.md blocked state has no recovery transition: $pair"
+            }
+            if ($expectedPhases -notcontains $phase) {
+                Add-Failure "STATE.md transition reaches an undeclared phase: $phase"
+            }
+        }
+        foreach ($phase in $expectedPhases) {
+            $used = @(@($fromPairs) + @($toPairs) | Where-Object { $_.StartsWith("$phase/") })
+            if ($used.Count -lt 1) {
+                Add-Failure "STATE.md declares a phase with no transition: $phase"
+            }
+        }
+        foreach ($blockerType in $expectedBlockerTypes) {
+            if (-not $blockedWithType.Contains($blockerType)) {
+                Add-Failure "STATE.md has no blocked-state recovery row for blocker type: $blockerType"
+            }
+        }
+    }
 }
 
 $roleTransitionRequirements = @{
@@ -623,6 +741,9 @@ $contractTokenRequirements = @{
         '`FRONT_DESK_RECOVERY`'
     )
     '.ai/WORKFLOW.md' = @(
+        'Establish the smallest sufficient whole, then build through it',
+        'continuous source truth',
+        'Model-agnostic behavioral floor without assumed parity',
         'Evaluative or tacit seeds are valid problem signals, not failed requirements',
         'For broad collaborative planning, orient one bounded pass by its current design altitude',
         'A concise assent is valid after one decision-ready semantic choice',
@@ -631,7 +752,9 @@ $contractTokenRequirements = @{
         'the smallest discriminating probe or proposed improvement',
         'A green check is evidence, not proof that its oracle, architecture, or long-term maintainability remained sound',
         'Independent AI Review reduces review burden but never transfers code ownership',
-        'Decision authority and learning visibility are separate',
+        'Decision authority, delivery, and learning visibility are separate',
+        'User-facing output is scan-first rather than line-count-first',
+        'No arbitrary reading-time, terminal-screen, line, or anchor count is a correctness rule',
         'A user Gate exists only when the user has a real choice',
         'Run a Gate necessity check before every approval request',
         'independent Review PASS is the default authorization for one exact local logical checkpoint',
@@ -641,7 +764,7 @@ $contractTokenRequirements = @{
         'specified | implementation_open | product_open | authority_unknown',
         'The user should not need a second request for the core problem',
         'Independent Review removes authoring-session memory and self-confirmation, not approved project context',
-        'add a bounded expert note only when one non-obvious principle',
+        'integrate a bounded expert note only when a non-obvious principle',
         'This is a presentation/default behavior, never a new artifact',
         'A cross-session handoff is transport, not approval',
         'configured code-inspection pause when applicable',
@@ -692,12 +815,16 @@ $contractTokenRequirements = @{
         'Known user/editor authoring that saves Task-attributed bytes is implementation and must finish inside the active Build attempt',
         '| Path | Change | AC/reason | Source role / key symbol |',
         '## Source Map',
-        'primary read: <three-to-five path#symbol anchors in runtime order|none>',
+        'primary read: <smallest connected path#symbol sequence that exposes entry, important responsibility/decision or state, and observable effect|none>',
         'For every Task-touched hand-written production source path in `Changes`',
         'Builder owns this revision-scoped Source Map while implementing',
         'Historical completed Build Results with the three-column `Changes` table and no `Source Map` remain readable'
     )
     '.ai/contracts/TASK_RECORD.md' = @(
+        'A trivial-fix batch is the only Goal naming a set',
+        'each item stays reversible with no approved-behavior or contract change and keeps its own AC',
+        'Review may reject one item alone',
+        'a batch never hides a behavior change, unrelated cleanup, or an avoided Gate',
         '## Task Quality Gate',
         'Split only when reduced context, risk, or review ambiguity repays another handoff',
         'Prefer a narrow end-to-end/vertical slice',
@@ -710,7 +837,9 @@ $contractTokenRequirements = @{
         'A discovered `follow_up` is not independently READY',
         'do not knowingly design a Build -> Review -> save -> Build loop',
         'proportional cross-artifact consistency check over only this Task''s exact lineage',
-        'intent -> Architecture -> Task lineage has no material gap or contradiction'
+        'intent -> Architecture -> Task lineage has no material gap or contradiction',
+        'Complete local frame',
+        'the first Task realizes the Architecture''s executable backbone'
     )
     '.ai/contracts/ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -720,7 +849,12 @@ $contractTokenRequirements = @{
         'current approved `Scope` and `Delivery Slices` are the intent-coverage baseline',
         'Task PASS alone is not whole-Feature coverage',
         'A historical approved Architecture without `Delivery Slices` remains readable',
-        'Backfill the living Architecture without a new Gate only when that map is lossless'
+        'Backfill the living Architecture without a new Gate only when that map is lossless',
+        'approved_behavior_oracle | project_precedent | normative_standard | reference_implementation | analogous_case_or_principle',
+        'For a material reference, record its role',
+        'the first slice is the executable backbone',
+        'Select the lowest sufficient altitude',
+        'Stop Architecture expansion when the baseline is contradiction-free'
     )
     '.ai/shared/SYSTEM_ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -773,6 +907,20 @@ $contractTokenRequirements = @{
         'an inference never becomes PASS evidence'
     )
     '.ai/contracts/STATE.md' = @(
+        '`integration/blocked` with `verification` or `context`',
+        '`integration/blocked` with non-material `contract`',
+        '`ready_to_build/blocked` with `architecture`',
+        '`building/blocked` with `architecture`',
+        '`ready_to_review/blocked`',
+        '## Run ledger',
+        'One JSON object per line, appended once when an accepted Task reaches its closure, never rewritten',
+        'Append exactly one line when an accepted Task closes, and record which path closed it',
+        'Every delivery mode has exactly one such point, so no mode is silently unmeasured',
+        '`lane_handoff`: a non-`main` Lane candidate sealed',
+        'Append only after the verdict and its owning artifacts are final',
+        'Do not record provider, model, effort, token counts, elapsed time, file counts',
+        'This file is write-only during ordinary work',
+        'A missing, empty, or partial ledger is always valid',
         'Integration queue',
         'reviewed_fingerprint',
         'continue_architecture_repair',
@@ -782,11 +930,6 @@ $contractTokenRequirements = @{
         'an authorized `candidate_mutating` Editor/runtime action changes Task-attributed bytes',
         'the action changes an unowned/unknown path, exceeds the authorized mutation set',
         'final Task PASS has `knowledge_sync: none`',
-        '`integration/blocked` with `verification` or `context`',
-        '`integration/blocked` with non-material `contract`',
-        '`ready_to_build/blocked` with `architecture`',
-        '`building/blocked` with `architecture`',
-        '`ready_to_review/blocked`',
         'the repair changed any Task-attributed byte',
         'repair preserves candidate bytes, approved intent, Task outcome, public boundary, and applicable Integration contract',
         'apply the canonical interrupted-attempt disposition in `.ai/contracts/TASK_RECORD.md#task-quality-gate`',
@@ -895,6 +1038,13 @@ $contractTokenRequirements = @{
         'active_transaction_manifest: null'
     )
     '.ai/contracts/ACTION_CARDS.md' = @(
+        'append the single accepted-Task line defined in `.ai/contracts/STATE.md#run-ledger`',
+        'a failed append never blocks the route or the next Task',
+        '## Scan-first composition',
+        'This is a comprehension criterion, not an arbitrary seconds, line, terminal-screen, or anchor-count limit',
+        'Keep one semantic thread across roles',
+        'current_blocker | after_current_work | optional',
+        'deterministic_ai_owned | user_owned',
         '## Working summary',
         'WORKING_SUMMARY',
         'A human-readable label precedes its internal ID',
@@ -920,10 +1070,11 @@ $contractTokenRequirements = @{
         'user_decision=<the remaining user-visible/product behavior the user can truly choose|none>',
         'A rejected or previously failed approach belongs under evidence/rejected direction, not under `choices`',
         '## Bounded expert note',
-        'Default to one; a `deep` explanation may use at most two or three',
+        'Prefer one useful idea; add more only when the current high-risk explanation genuinely needs them',
         'When the user says the explanation is unclear or tiring',
         'The Build Result `Changes` and `Source Map` are the one cumulative revision-scoped inventory',
-        'The chat walkthrough selects only three-to-five anchors',
+        'The chat walkthrough selects the smallest connected source path',
+        'never an arbitrary anchor quota',
         'A summary, raw directory list, Review link, or selected hunk alone never substitutes for opening the actual changed source',
         'primary_read=',
         'full_map=<Build Result#changes + #source-map, validated by Review Result>',
@@ -1049,11 +1200,11 @@ $contractTokenRequirements = @{
         'project interaction preference defaults to automatic exact local checkpoint plus one routine next Task under unchanged approved Architecture',
         'cross-session `DO_NEXT` is transport rather than approval',
         'a foregone, unreadable, or effectively unavoidable confirmation earns no quality credit',
-        'a returning or confused user receives a one-screen chat-only `WORKING_SUMMARY`',
+        'a returning or confused user receives a scan-first chat-only `WORKING_SUMMARY`',
         '`intent-gap-first-brief`',
         'incomplete planning is decision-ready on the first response',
         'non-obvious reversible technical choices do not create a user Gate but remain learnable',
-        'non-trivial explanations may add one bounded expert note after the core result/action by default',
+        'non-trivial explanations may integrate one useful bounded expert note after the core result/action remains easy to locate',
         'independent Reviewer freshness removes authoring memory, not approved user/project context',
         'name the compared baseline and concrete observable invariants',
         '`diff-first-code-ownership`',
@@ -1065,9 +1216,13 @@ $contractTokenRequirements = @{
         'iterative verification adds distinct evidence rather than ceremony',
         'makes structural authoring self-contained with whole-flow/first-use-term/finished-shape guidance',
         'manual structural authoring shows the whole behavior flow',
-        'every non-trivial hand-written production change exposes current source entry points during Build',
+        'every non-trivial hand-written production change exposes the connected current source path during Build',
         'keeps one complete per-path Source Map in its Build Result',
-        'three-to-five verified primary runtime anchors directly inspectable',
+        'verified entry-to-effect source path directly inspectable while the full map remains one pointer away',
+        '`lowest-sufficient-architecture-baseline`',
+        '`continuous-source-truth`',
+        '`reference-role-and-fit`',
+        'user-facing results compose result/consequence, flow/source, evidence/uncertainty, and next action',
         'a last Task PASS never substitutes for Feature intent coverage',
         '`artifact-authority-single-source`',
         '`terminal-no-knowledge-transition`',
@@ -1082,8 +1237,10 @@ $contractTokenRequirements = @{
         'Use `source_regression` for canonical release evidence',
         '| intent-gap + decision clarity / current-design-altitude fit / unnecessary questions or gates / informed assent vs surrender |',
         '| intent/scope convergence + contract equivalent |',
-        '| Change Brief / bounded expert-note grounding and fatigue |',
-        '| Progressive source orientation / compact verified Diff walkthrough / durable-pause usefulness |',
+        '| lowest-sufficient Architecture baseline / executable backbone vs empty scaffold / local-change proportionality |',
+        '| scan-first result/source/evidence/next composition / bounded expert-note grounding and fatigue |',
+        '| continuous Architecture-to-Builder-to-Review source truth / direct Diff inspection / durable-pause usefulness |',
+        '| reference role/scope/fit/non-copy/re-check discipline |',
         '| verification cadence / distinct evidence per repeated check |'
     )
     '.ai/maintenance/MAINTAIN.md' = @(
@@ -1093,17 +1250,22 @@ $contractTokenRequirements = @{
         'WORKFLOW_OBSERVATION=<path> source=manual'
     )
     '.ai/BOOTSTRAP.md' = @(
+        'Never read `.ai/lanes/<lane>/ledger.jsonl` during ordinary work',
         'the one contract for an artifact the role will create or change',
         'never combine unrelated outcomes or widen an approved Task merely to reduce messages',
         '## Active delivery kernel',
+        'read `#scan-first-composition` plus only the one triggered section below',
+        'return/orientation after interruption, confusion, or context loss',
+        'post-PASS reviewed source/Diff orientation or inspection follow-up',
         'Do not reread unchanged inputs or rerun a check whose relevant inputs and oracle are unchanged',
         'one successful final affected suite is enough',
-        'readable-decision rules in `ACTION_CARDS.md`',
+        'or readable-decision rules there',
         'At a natural boundary before a new Architecture decision, Task/Build attempt, Review attempt, or Integration candidate',
         'Never invent an exact token/quota value, interrupt every turn, or replace solely because the chat is old',
-        'Do not require external study for the active decision',
+        'do not infer a permanent skill level, reduce AI assistance, require external study',
         'CODE_WALKTHROUGH',
-        'three-to-five primary reading anchors',
+        'smallest connected primary source path',
+        'This is not a line, time, terminal-screen, or anchor-count target',
         'complete per-path Source Map',
         'never silently drop an outcome to satisfy the cap',
         'Separate AI-owned implementation gaps from user-owned product gaps'
@@ -1168,6 +1330,9 @@ $contractTokenRequirements = @{
         'this is pending implementation, not a blocker or Review handoff'
     )
     '.ai/roles/REVIEWER.md' = @(
+        'Distinguish `observed`, `inferred`, and `confirmed`',
+        'append the accepted Task''s `.ai/contracts/STATE.md#run-ledger` line with `closure: lane_handoff`',
+        'It is a silent post-verdict projection and never changes this verdict, route, or finding set',
         '.ai/contracts/REVIEW_RESULT.md',
         'single authority for PASS conditions',
         'apply the exact-range and immutable-candidate rules in `.ai/contracts/REVIEW_RESULT.md`',
@@ -1187,7 +1352,7 @@ $contractTokenRequirements = @{
         'route=<knowledge_maintainer|work|builder|architect|integration|user>',
         'Work owns the exact policy-controlled local checkpoint and the optional `COMMIT_READY` projection',
         'independently verify the Build Result''s complete per-path roles and Source Map against the exact candidate',
-        'it does not rewrite or dump the complete inventory',
+        'it does not rewrite the inventory or stack duplicate Change Brief',
         'change_brief=<none|brief|deep>',
         'code_inspection=<awaiting_user|shown_no_pause|not_applicable>',
         'Set `code_inspection=awaiting_user` only for an identity-revalidatable ordinary Task PASS with non-trivial hand-written production source under `before_next_task`',
@@ -1197,11 +1362,12 @@ $contractTokenRequirements = @{
         'only when `code_inspection` is not `awaiting_user`',
         'direct Diff/source inspection support human code ownership',
         'Only `current_blocker` changes the current verdict/route',
-        'distinguish `observed`, `inferred`, and `confirmed`',
-        'Use the Action Cards terminology, bounded-expert-note, semantic-label',
+        'Distinguish `observed`, `inferred`, and `confirmed`',
+        'Use the Action Cards scan-first composition, terminology, bounded-expert-note, semantic-label',
         'Do not repeat the entire Builder suite merely for independence'
     )
     '.ai/roles/WORK.md' = @(
+        'when Git is unusable, append it at the accepted transition instead',
         'explicit current-status, Task-diff, source-reading, commit-readiness, or interaction-preference question',
         'without a user-visible Architect handoff or repeated approval',
         'stops at `ready_to_review`',
@@ -1219,6 +1385,7 @@ $contractTokenRequirements = @{
         'Do not declare completion from the last Task PASS'
     )
     '.ai/roles/KNOWLEDGE_MAINTAINER.md' = @(
+        'append the accepted Task''s `.ai/contracts/STATE.md#run-ledger` line with `closure: lane_handoff`',
         '.ai/contracts/KNOWLEDGE.md',
         'A changed requirements document does not automatically rewrite Architecture or Tasks',
         'Mark only owned Knowledge entries that point to affected requirement refs `stale/conflict`; never edit the Architecture/Task artifacts',
@@ -1229,6 +1396,15 @@ $contractTokenRequirements = @{
         'updates only `.ai/shared/knowledge/project.yaml#interaction`'
     )
     'maintenance/WORKFLOW_REVIEW.md' = @(
+        'also run `tools/compare-validation.ps1`',
+        'every `contract_changed` entry names a protection the change gave up and must be confirmed deliberate',
+        '## Observed activation',
+        'budget=<pass|fail> activation=<main:<n> lane:<n> no_git:<n>|not_available>',
+        'A rule that can only fire in an unobserved mode is `not_observed`, never zero-activation',
+        'Partition the window by `closure` before judging any rule',
+        'Zero activation is not automatic deletion',
+        'never discovered by crawling',
+        'a missing ledger is never a finding and never blocks a release',
         'It is not the project `Reviewer`, a fifth runtime role, an installed `.ai` document',
         'Workflow Review is read-only',
         '`automated`',
@@ -1247,9 +1423,9 @@ $contractTokenRequirements = @{
         'invariant | gate | default | presentation',
         'One personal observation is discovery evidence, not universal authority',
         'concise informed assent bound to one displayed outcome',
-        'broad collaborative planning stay at one current design altitude',
+        'Does Architecture establish the smallest sufficient whole',
         'Feature-boundary intent-to-code convergence',
-        'living views, reference-only intent, and flow-forward evidence',
+        'living views, reference-only intent, approved behavior-oracle scope, and flow-forward evidence',
         'WORKFLOW_REVIEW RESULT=<pass|changes_required|blocked>',
         'independence=<independent_session|reduced_assurance>',
         'self_check=<pass|corrected|blocked> corrections=<n>',
@@ -1305,6 +1481,7 @@ if (Test-Path -LiteralPath $architectRolePath -PathType Leaf) {
     }
 
     $architectSectionSequence = @(
+        'Architecture baseline and executable backbone',
         'Decision evidence ladder',
         'Feature convergence',
         'Requirement changes and cross-lane ownership',
@@ -1324,12 +1501,21 @@ if (Test-Path -LiteralPath $architectRolePath -PathType Leaf) {
         $previousArchitectSection = $architectSectionName
     }
 
+    $architectBaselineContent = @(
+        'Choose the lowest altitude that contains the material uncertainty',
+        'At the selected altitude, establish only the smallest sufficient whole',
+        'The baseline is sufficient when these facts form one contradiction-free path',
+        'often called a walking skeleton',
+        'This is an internal Architect procedure inside `design/active`'
+    )
     $architectLadderContent = @(
         'Before inventing a design or repair direction, use the strongest applicable evidence in this order',
         'Reuse an already verified finding while its relevant inputs and constraints remain unchanged',
         'A bounded experiment names one question',
+        'approved_behavior_oracle | project_precedent | normative_standard | reference_implementation | analogous_case_or_principle',
         'Do not make the user read the research history to find the decision',
-        'Within the decision evidence ladder, research current external information only when'
+        'Within the decision evidence ladder, research external information when a material decision depends on',
+        'unfamiliar API/version or domain concept'
     )
     $architectConvergenceContent = @(
         'perform one bounded convergence pass before `synced/idle` or a completion claim',
@@ -1348,24 +1534,29 @@ if (Test-Path -LiteralPath $architectRolePath -PathType Leaf) {
 
     $architectSectionOwnership = @(
         @{
+            Section = 'Architecture baseline and executable backbone'
+            Owns = $architectBaselineContent
+            Foreign = $architectLadderContent + $architectConvergenceContent + $architectRequirementContent + $architectParallelContent
+        },
+        @{
             Section = 'Decision evidence ladder'
             Owns = $architectLadderContent
-            Foreign = $architectConvergenceContent + $architectRequirementContent + $architectParallelContent
+            Foreign = $architectBaselineContent + $architectConvergenceContent + $architectRequirementContent + $architectParallelContent
         },
         @{
             Section = 'Feature convergence'
             Owns = $architectConvergenceContent
-            Foreign = $architectLadderContent + $architectRequirementContent + $architectParallelContent
+            Foreign = $architectBaselineContent + $architectLadderContent + $architectRequirementContent + $architectParallelContent
         },
         @{
             Section = 'Requirement changes and cross-lane ownership'
             Owns = $architectRequirementContent
-            Foreign = $architectLadderContent + $architectConvergenceContent + $architectParallelContent
+            Foreign = $architectBaselineContent + $architectLadderContent + $architectConvergenceContent + $architectParallelContent
         },
         @{
             Section = 'Parallel lanes and Main Front Desk routing'
             Owns = $architectParallelContent
-            Foreign = $architectLadderContent + $architectConvergenceContent + $architectRequirementContent
+            Foreign = $architectBaselineContent + $architectLadderContent + $architectConvergenceContent + $architectRequirementContent
         }
     )
     foreach ($architectOwnershipRule in $architectSectionOwnership) {
@@ -1766,6 +1957,9 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             '## Fixture 22',
             '## Fixture 23',
             '## Fixture 24',
+            '## Fixture 25',
+            '## Fixture 26',
+            '## Fixture 27',
             'The canonical trigger list and case routing live there; do not maintain a second list in this file',
             'the Task PASS first routes Architect''s bounded Feature convergence, then state transitions to `synced/idle` without an empty Knowledge handoff or user confirmation',
             'A Task PASS is not by itself a Feature-completion claim',
@@ -1830,7 +2024,7 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'Missing preferences read as `auto_after_pass + one_task`',
             'The Reviewer `DO_NEXT` is transport rather than approval',
             'No preference or short continuation ever authorizes hidden paths, a new Architecture Gate, external effects, Push/tag, history rewrite, or another commit',
-            'The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence',
+            'The role returns one scan-first `WORKING_SUMMARY` derived from durable evidence',
             'external prerequisite study is optional, never required for approval or continuation',
             'Scenario C does not accept an uninformed affirmative reply',
             'The broad collaborative seed first receives one compact collaboration frame',
@@ -1845,7 +2039,7 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'Builder gives one non-blocking source orientation no later than the first coherent non-trivial production edit',
             'The Build Result `Changes`/`Source Map` is the one complete revision-scoped inventory',
             'Reviewer independently reconciles that map with the exact candidate',
-            'The chat `primary_read` contains only three-to-five `R#` anchors',
+            'The chat `primary_read` contains the smallest connected `R#` path',
             'internal tokens such as `inspected_continue` or an unqualified `explain_2` never replace their meaning',
             'A Change Brief, Review artifact link, directory list, or selected hunk alone does not satisfy the walkthrough',
             '`accepted/active + next.role: reviewer + next.action: await_code_inspection_then_resume_review_route`',
@@ -1877,7 +2071,7 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'The unspecified later user-visible behavior is `product_open`',
             'already disproven technical approach is shown only as rejected evidence',
             'A fresh independent Reviewer still reconstructs the approved user need from exact requirement refs',
-            'a non-trivial change may add one bounded expert note by default',
+            'a non-trivial change may integrate one useful bounded expert note',
             'The expert note never precedes or obscures the action',
             'When confusion or fatigue is signaled, the role simplifies the core before adding depth',
             'Before proposing a cause, choice, or new Task, the role reconstructs and states the exact approved observable outcome',
@@ -1901,7 +2095,22 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'obtains one successful final affected-suite result',
             'Known Task-scoped user/editor saves return `awaiting_user_authoring`',
             'Reviewer verifies evidence scope/oracle and candidate identity, then reruns the smallest decisive affordable subset',
-            'Saving tokens never removes a mandatory AC, safety check, release gate, or final evidence'
+            'Saving tokens never removes a mandatory AC, safety check, release gate, or final evidence',
+            'Architect selects the lowest altitude containing the material decision',
+            'The stub/interface-only slice is rejected as an empty scaffold',
+            'Design stops when that bounded baseline is contradiction-free',
+            'No architecture-baseline phase, ProgramDesign document, new role/session, score, quiz, or approval Gate is created',
+            'The same semantic thread remains traceable from approved intent and planned responsibility/flow',
+            'The user need not wait until Review to learn which classes/functions own the behavior',
+            'It uses no arbitrary seconds, line, screen, or anchor-count rule',
+        'AI assistance, implementation scope, and verification do not taper',
+        'Multiple technical upkeep findings are classified as `current_blocker | after_current_work | optional`',
+        'Optional card use reads `ACTION_CARDS.md#scan-first-composition` plus the one exact triggered card section',
+            'Architect classifies evidence as `approved_behavior_oracle | project_precedent | normative_standard | reference_implementation | analogous_case_or_principle` before use',
+            'The named target behavior is intent only inside the user-approved scope',
+            'AI studies the strongest applicable official/primary material and verified behavior itself',
+            'Builder implements only the adopted project-fit consequence',
+            'The mechanical change receives no research ceremony'
         )) {
         if (-not $goldenCoreText.Contains($goldenToken)) {
             Add-Failure "Golden Core Behavior is missing oracle token: $goldenToken"
@@ -2615,6 +2824,39 @@ foreach ($file in $markdownFiles) {
         }
         $referenceCount++
         Test-LocalReference $file.FullName $target 'repository path'
+    }
+}
+
+# Always-read budget. A ceiling is the counter-pressure that keeps rule volume
+# from growing without a trade: adding rule text to one of these paths requires
+# removing or relocating other rule text. Raise a ceiling only with a recorded
+# reason in the Changelog, never to make a new rule fit.
+#
+# Scope limit, stated so the numbers are not read as more than they are: each set
+# covers only the role entry path that Bootstrap always loads. Artifact contracts
+# opened on demand -- STATE.md, ACTION_CARDS.md sections, MAIN_DESK.md,
+# PARALLEL_START.md, integration -- are outside these totals, so a ceiling bounds
+# entry cost, not the whole context a run may reach.
+$alwaysReadBudgets = @(
+    @{ name = 'work+architect'; ceiling = 61440; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/ARCHITECT.md', '.ai/contracts/ARCHITECTURE.md', '.ai/contracts/TASK_RECORD.md') }
+    @{ name = 'work+builder'; ceiling = 49152; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/BUILDER.md', '.ai/contracts/TASK_RECORD.md', '.ai/contracts/BUILD_RESULT.md') }
+    @{ name = 'work+knowledge'; ceiling = 44032; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/KNOWLEDGE_MAINTAINER.md', '.ai/contracts/KNOWLEDGE.md') }
+    @{ name = 'reviewer'; ceiling = 50176; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/REVIEWER.md', '.ai/contracts/BUILD_RESULT.md', '.ai/contracts/REVIEW_RESULT.md') }
+)
+foreach ($alwaysReadBudget in $alwaysReadBudgets) {
+    $budgetBytes = 0
+    $budgetComplete = $true
+    foreach ($budgetPath in $alwaysReadBudget.paths) {
+        $absoluteBudgetPath = Get-RepositoryPath $budgetPath
+        if (-not (Test-Path -LiteralPath $absoluteBudgetPath -PathType Leaf)) {
+            Add-Failure "Always-read budget path is missing: budget=$($alwaysReadBudget.name) path=$budgetPath"
+            $budgetComplete = $false
+            continue
+        }
+        $budgetBytes += (Get-Item -LiteralPath $absoluteBudgetPath).Length
+    }
+    if ($budgetComplete -and $budgetBytes -gt $alwaysReadBudget.ceiling) {
+        Add-Failure "Always-read budget exceeded: budget=$($alwaysReadBudget.name) bytes=$budgetBytes ceiling=$($alwaysReadBudget.ceiling). Remove or relocate rule text instead of raising the ceiling to fit a new rule."
     }
 }
 

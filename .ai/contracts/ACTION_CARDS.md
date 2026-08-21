@@ -2,6 +2,16 @@
 
 Read only when return/orientation, a cross-role/session handoff, user-owned external/manual action, explicit developer-status or source-inspection request, post-PASS code walkthrough, or single-main commit checkpoint is actually needed.
 
+## Scan-first composition
+
+This section owns the first visible user-facing composition for the cards below and for Architect/Builder/Reviewer result explanations. Compose rather than stack: when a result header, Change Brief, source walkthrough, expert note, risk, or handoff would repeat the same fact, say it once in the earliest useful field and omit the duplicate.
+
+The first visible block must let a busy reader locate, without parsing internal history: `result/observable consequence`, `why it matters now`, `responsibility/runtime or data flow`, `exact current source anchor when known`, `decisive evidence or uncertainty`, and `one next action or real user decision`. Put full inventories, commands, logs, research trails, internal IDs, and secondary risks afterward or behind exact pointers. This is a comprehension criterion, not an arbitrary seconds, line, terminal-screen, or anchor-count limit.
+
+When several technical upkeep findings appear, do not hand the user an undifferentiated "handle these?" list. Classify each as `current_blocker | after_current_work | optional` and `deterministic_ai_owned | user_owned`, lead with the current deliverable and its actual blocker, and place safe deterministic cleanup in the owning existing route. A user choice exists only when observable scope, compatibility, cost/risk, or another user-owned outcome genuinely differs. Name scope, rollback, and decisive proof for any upkeep action that is proposed; revision/index repinning follows reviewed content instead of competing with it as a choice.
+
+Keep one semantic thread across roles: Architecture's observable intent and planned responsibility/flow become Builder's exact source symbols and then Reviewer's verified Diff/source path. Source corrects the plan when they disagree. The base fields never disappear because a user seems experienced; definitions, examples, alternatives, and theory expand only for first-use unfamiliar terms, a confusion signal, material risk, or a request. AI assistance and delivery pace do not taper, and no explanation creates a quiz, score, mandatory reply, or new Gate.
+
 ## Working summary
 
 When the user returns after unrelated work, asks what is happening, signals confusion, or several related clarification/choice turns have obscured the thread, reconstruct this compact view from lane state, current Architecture/Task/Build/Review pointers, and read-only Git evidence:
@@ -17,7 +27,7 @@ terms=<only unfamiliar terms needed now as term: plain meaning|none>
 next=<one bounded user-language action>
 ```
 
-This is a chat-only projection, not a durable artifact, state field, handoff payload, or new approval Gate. Derive it again instead of copying an old chat summary. Keep it to one terminal screen, omit completed history that does not explain the current step, and never infer progress from a remembered conversation. `open` contains only a current blocker or user-owned decision/evidence; non-blocking follow-up never displaces the active outcome. A human-readable label precedes its internal ID; derive the label from the artifact heading/goal rather than adding a second durable name field. If a deeper explanation is useful, offer it after the one next action instead of expanding every prerequisite automatically.
+This is a chat-only projection, not a durable artifact, state field, handoff payload, or new approval Gate. Derive it again instead of copying an old chat summary. Apply `Scan-first composition`, omit completed history that does not explain the current step, and never infer progress from a remembered conversation. `open` contains only a current blocker or user-owned decision/evidence; non-blocking follow-up never displaces the active outcome. A human-readable label precedes its internal ID; derive the label from the artifact heading/goal rather than adding a second durable name field. If a deeper explanation is useful, offer it after the one next action instead of expanding every prerequisite automatically.
 
 ## Developer Status
 
@@ -38,7 +48,7 @@ Derive classification from the Task, Build Result Changes/Baseline, Review ident
 
 ## Readable atomic decisions
 
-Use this rendering rule for every user-owned Decision Brief, checkpoint choice, or non-evidence User Action choice. If only one materially safe path remains, do not emit a choice: execute it when authorized or report the predetermined action and consequence. If two or three genuinely viable outcomes remain, keep the decision to one terminal screen and show the recommendation and every viable alternative together. If four or more genuinely viable user-owned outcomes remain, never omit one or break the three-choice screen cap: first ask one bounded discriminator using at most three mutually exclusive, collectively exhaustive groups, list every included semantic outcome under its group in `groups`, then show every viable outcome in the selected group; repeat only when that group still exceeds three. Group only when no semantic outcome is lost, and exclude an outcome only with evidence that it is not currently viable. A general decision begins directly with `DECISION`; it does not receive the intent-gap preface unless an applicable request or approved planning source is incomplete.
+Use this rendering rule for every user-owned Decision Brief, checkpoint choice, or non-evidence User Action choice. If only one materially safe path remains, do not emit a choice: execute it when authorized or report the predetermined action and consequence. If two or three genuinely viable outcomes remain, apply `Scan-first composition` and show the recommendation and every viable alternative together. If four or more genuinely viable user-owned outcomes remain, never omit one or break the three-choice cap: first ask one bounded discriminator using at most three mutually exclusive, collectively exhaustive groups, list every included semantic outcome under its group in `groups`, then show every viable outcome in the selected group; repeat only when that group still exceeds three. Group only when no semantic outcome is lost, and exclude an outcome only with evidence that it is not currently viable. A general decision begins directly with `DECISION`; it does not receive the intent-gap preface unless an applicable request or approved planning source is incomplete.
 
 ```text
 DECISION
@@ -73,7 +83,7 @@ Classify each relevant gap as `specified`, `implementation_open`, `product_open`
 
 ## Bounded expert note
 
-This is an optional chat section inside an existing Architect explanation or Reviewer Change Brief, not a durable artifact, role, session, Gate, quiz, or correctness condition. The core problem, direction/accepted result, and next action always appear first. Add a note only when it provides a non-obvious reusable engineering principle, names a material failure mode, or helps the user find and maintain the relevant code. Default to one; a `deep` explanation may use at most two or three. Omit mechanical, repeated, speculative, and unrelated knowledge.
+This is optional depth integrated into an existing Architect or Reviewer scan-first view, not another stacked chat section, durable artifact, role, session, Gate, quiz, or correctness condition. The core problem, direction/accepted result, and next action always remain easy to locate. Add a note only when it provides a non-obvious reusable engineering principle, names a material failure mode, or helps the user find and maintain the relevant code. Prefer one useful idea; add more only when the current high-risk explanation genuinely needs them. Omit mechanical, repeated, speculative, and unrelated knowledge.
 
 Render in `user_language` with short labels equivalent to:
 
@@ -94,22 +104,24 @@ After every PASS, keep the exact reviewed Diff directly inspectable. A purely me
 
 ```text
 CODE_WALKTHROUGH
+result=<PASS + observable accepted result>
 change=<plain outcome + semantic label before internal Task id>
 snapshot=<base..reviewed revision | base revision + reviewed fingerprint | no-git/unsealed + reviewed changed-file manifest>
 diff=<exact per-file git diff/show command or preferred Git UI range | no-git direct R# path+symbol open sequence>
 new_files=<primary-read paths that must be opened as whole files|none>
 primary_read=
-R1. <path>#<symbol> — <what this file owns> — <what to follow here>
+R1. <path>#<symbol> — <what this code owns> — <what to follow here>
 full_map=<Build Result#changes + #source-map, validated by Review Result>
 flow=<entry -> important decision/state -> observable effect>
 invariants=<what must remain true and where it is enforced>
 tests=<test path/case -> what it proves and does not prove>
+next=<one existing route/action; inspection reply only when the configured pause applies>
 reply=<descriptive user_language choices meaning "I inspected the primary reviewed source path; continue the existing route" or "explain R#/path/symbol", plus free-form questions>
 ```
 
-The Build Result `Changes` and `Source Map` are the one cumulative revision-scoped inventory: every Task-touched hand-written production source path has a key symbol, plain-language role, and Task reason there; generated/vendor/mechanical paths are grouped, and new source files are marked for whole-file reading. Reviewer independently validates that map against the exact candidate and records its pointer plus corrections instead of copying it. The chat walkthrough selects only three-to-five anchors that explain entry, important decision/state, and observable effect, then points to the complete map. Mark unchanged context as `context`, never as part of the Diff.
+The Build Result `Changes` and `Source Map` are the one cumulative revision-scoped inventory: every Task-touched hand-written production source path has a key symbol, plain-language role, and Task reason there; generated/vendor/mechanical paths are grouped, and new source files are marked for whole-file reading. Reviewer independently validates that map against the exact candidate and records its pointer plus corrections instead of copying it. The chat walkthrough selects the smallest connected source path that explains entry, responsibility/decision or state, and observable effect, then points to the complete map. It may be short or longer according to the actual flow, never an arbitrary anchor quota. Mark unchanged context as `context`, never as part of the Diff.
 
-Make direct inspection practical rather than dumping code: for Git-backed work, start with `--stat`, then provide the primary file/symbols in runtime order and the corresponding scoped `git diff`/`git show` command or Git UI range. For a supported no-Git Review, write `snapshot=no-git/unsealed`, use the reconciled Build/Review changed-file manifest as the bounded reviewed set, and provide the exact `R#` path+symbol open sequence instead of inventing a revision, Diff command, or sealed identity. Keep its reduced attribution assurance visible. A summary, raw directory list, Review link, or selected hunk alone never substitutes for opening the actual changed source. Keep the first pass to the primary path; answer numbered or free-form follow-ups from the same reviewed snapshot and expand only the requested file, symbol, flow, complete-map entry, or prerequisite term.
+Make direct inspection practical rather than dumping code: for Git-backed work, start with `--stat`, then provide the connected primary file/symbol path in runtime order and the corresponding scoped `git diff`/`git show` command or Git UI range. For a supported no-Git Review, write `snapshot=no-git/unsealed`, use the reconciled Build/Review changed-file manifest as the bounded reviewed set, and provide the exact `R#` path+symbol open sequence instead of inventing a revision, Diff command, or sealed identity. Keep its reduced attribution assurance visible. A summary, raw directory list, Review link, or selected hunk alone never substitutes for opening the actual changed source. Keep the first pass to the primary path; answer numbered or free-form follow-ups from the same reviewed snapshot and expand only the requested file, symbol, flow, complete-map entry, or prerequisite term.
 
 This is not a quiz, correctness approval, or claim that the user permanently understands the code. Read-only inspection does not change the candidate. If the user edits or saves any candidate byte while inspecting, apply the candidate-mutation Build/Review rule before reusing PASS.
 
@@ -124,6 +136,8 @@ When an identity-revalidatable ordinary Task PASS includes a non-trivial hand-wr
 For a Git-backed ordinary single-`main` candidate, independent Review PASS is the default authorization for one exact local logical checkpoint when `.ai/shared/knowledge/project.yaml#interaction.checkpoint` is `auto_after_pass` or absent. This never authorizes Push, tag, history rewrite, merge/rebase, external effects, a different candidate, or unrelated/unknown paths.
 
 After settling the required Knowledge route, reread status/diff, prove the accepted fingerprint and exact `include`/`exclude` attribution are unchanged, verify any commit hook/signing/credential behavior is already trusted and non-interactive, stage exactly `include`, inspect the staged diff and exclusions, create the reviewed content commit, and verify it contains no excluded path. If commit-backed state or Knowledge cannot name that new revision until it exists, immediately repin only the role-owned state/Knowledge metadata to the content revision, verify the revision-repin-only diff, and create at most one single-main revision-repin closure commit. This deterministic repin is part of the same logical checkpoint, not a second choice or permission to change source/tests/assets. Return `COMMIT_DONE task=<id> content_revision=<commit> metadata_revision=<commit|none> next=<route>` with the semantic change summary and exclusions. If any proof fails, do not guess, widen scope, or start the next Task; return the owning blocker or actionable User Action Card.
+
+After the checkpoint closes, append the single accepted-Task line defined in `.ai/contracts/STATE.md#run-ledger` with `closure: main_checkpoint`. It is a silent projection of artifacts that already exist: it never appears in `COMMIT_DONE`, never becomes a choice, blocker, or Review finding, and a failed append never blocks the route or the next Task.
 
 Emit the following pre-commit choice only when `interaction.checkpoint: ask`, the user explicitly requests a pre-commit Diff, or safe automatic checkpoint preconditions cannot be established but a user choice can resolve them:
 

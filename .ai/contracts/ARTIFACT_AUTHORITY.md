@@ -6,6 +6,7 @@ No single artifact is authoritative for every fact.
 |---|---|
 | user goal | latest explicit request / approved spec |
 | approved product requirement | latest explicit user-owned intent or applicable approved product/requirements/specification section at its recorded revision; unapproved or generated document edits are candidate context, not approval |
+| approved target/original/compatibility behavior | latest explicit user-owned scope naming that reference and behavior plus verified observation at its recorded version/date; it is intent only inside that scope and ordinary reference evidence elsewhere |
 | Task scope and completion | approved Task + its exact accepted Review/evidence |
 | Feature intent coverage and completion | approved requirement/explicit intent + current Architecture Scope/Delivery Slices reconciled by Architect against accepted Reviews, live implementation, and decisive evidence |
 | intended structure | approved architecture/ADR |
@@ -27,7 +28,7 @@ No single artifact is authoritative for every fact.
 
 Knowledge status: `verified | inferred | stale | unknown | conflict`.
 
-Decision evidence does not create another fact authority. Verified project precedent, observed reference behavior, trusted reference implementations, official examples/standards, sourced domain principles, and bounded experiments may support a direction only within their confirmed scope and fit. They never override approved user intent, the current implementation, or an owning contract merely because they appear expert or familiar. Record the supported claim, material mismatch/uncertainty, and re-check trigger when consequential; reuse the finding while its relevant conditions remain unchanged.
+Decision evidence does not create another fact authority. Classify a material source as `approved_behavior_oracle | project_precedent | normative_standard | reference_implementation | analogous_case_or_principle` before use. Except for the explicitly approved behavior scope above, verified project precedent, observed reference behavior, trusted reference implementations, official examples/standards, sourced domain principles, and bounded experiments may support a direction only within their confirmed scope and fit. They never override approved user intent, the current implementation, or an owning contract merely because they appear expert or familiar. Record the supported claim, scope/date or revision, project fit/difference, adopted principle, deliberately un-copied parts, material uncertainty, and re-check trigger when consequential; reuse the finding while its relevant conditions remain unchanged.
 
 ## Artifact evolution
 

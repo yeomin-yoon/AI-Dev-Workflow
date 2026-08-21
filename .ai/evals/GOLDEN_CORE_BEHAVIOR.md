@@ -113,6 +113,7 @@ Given four proposed slices under one approved notification-delivery Architecture
 - C: `Deliver one approved notification request through the existing dispatcher`, with existing dependencies, narrow complete writes, observable accepted/delivered outcomes, and executable focused checks.
 - D: the same as C, but it depends on an unapproved public event contract or has no feasible mandatory verification method/user procedure.
 - E: a horizontal delivery plan creates data types, service scaffolding, API wiring, and UI shells as separate Tasks, but none has a standalone approved outcome until later layers land.
+- F: three unrelated fixes—a comment typo, a stale log string, and one constant the approved Architecture already fixes—are each individually reversible with no approved-behavior or contract change, plus a fourth item that changes retry timing users can observe.
 
 Expected:
 
@@ -129,6 +130,7 @@ Expected:
 - If Reviewer rejects preflight, state becomes `ready_to_review/blocked`. Evidence-only repair retries complete preflight against unchanged bytes, changed candidate bytes return to a new Build attempt, and changed intent/outcome/public boundary returns to design. An `integration` finding during Task Review follows the same identity-sensitive split and always creates a new Review/Build/Task path rather than reusing the old verdict.
 - The Task Record fields prove the decision. A numeric score or bare pass label is not evidence, and `SPLIT`/`MERGE` do not create a user gate unless they expose a consequential user-owned choice.
 - Related constraints and evidence may be batched while evaluating the same slice, but batching never crosses a pending consequential approval, combines unrelated outcomes, or widens C. Once any required approval is recorded, Work may continue without asking for the same approval again.
+- F's first three items return `MERGE` into one trivial-fix batch Task whose Goal names the set, each item keeping its own AC so Review can reject one without the batch. The fourth item is not trivial and becomes its own Task; it is never absorbed to save a handoff. The batch receives one ordinary independent Review, and a batch is never used to skip Review, group unrelated cleanup, or avoid an approval that a single item would have required.
 
 ## Fixture 7 — Requirement drift routing
 
@@ -256,10 +258,11 @@ Given:
 Expected:
 
 - Work returns `DEV_STATUS` from state, Task/Build/Review, `git status`, `git diff --stat`, and untracked files, grouping Task, Workflow, unrelated, and unknown changes without dumping the whole diff.
-- After the accepted fingerprint is revalidated and the Knowledge route is settled, Work returns a one-screen `COMMIT_READY` with semantic scope, recommendation, every viable atomic alternative, decisive evidence, and a `details` pointer to the exact include/exclude inventory and scoped Diff.
+- After the accepted fingerprint is revalidated and the Knowledge route is settled, Work returns a scan-first `COMMIT_READY` with semantic scope, recommendation, every viable atomic alternative, decisive evidence, and a `details` pointer to the exact include/exclude inventory and scoped Diff.
 - Under `checkpoint: ask`, Review PASS does not itself stage, commit, Push, or tag. An explicit user commit request authorizes only the displayed include set, requires staged-diff/exclusion verification, and returns the created revision.
 - No next Task is materialized over the uncommitted accepted candidate. A failed or blocked candidate may be described as `wip_only` but never receives `COMMIT_READY` or accepted status.
 - Unattributed paths remain `unknown`; they are never relabeled or swept into the commit to make the tree look clean.
+- After the checkpoint closes, the run ledger receives exactly one appended accepted-Task line marked `closure: main_checkpoint`, whose every field is derived from the Task, Build, Review, code-inspection, and checkpoint artifacts. A non-`main` sealed candidate instead receives one `lane_handoff` line from whichever role creates the Lane handoff commit, and an unusable Git records `accepted_no_git`; no delivery mode closes an accepted Task without a line. It is never mentioned in chat, never offered as a choice, and never gates the next Task; an unwritable ledger changes nothing about the route. No line is appended for a superseded, abandoned, or still-open Task, and no provider, model, token, timing, or file-count value is recorded.
 
 ## Fixture 14 — Session exhaustion and deterministic recovery
 
@@ -337,10 +340,10 @@ Given:
 
 Expected:
 
-- The role returns one terminal-screen `WORKING_SUMMARY` derived from durable evidence: plain goal/why, verified done, a semantic user-language label before `(TASK-MAIN-009)`, one open item, only terms needed now, and one bounded next action. It does not copy old chat, create a summary artifact/Gate, or narrate unrelated history.
+- The role returns one scan-first `WORKING_SUMMARY` derived from durable evidence: plain goal/why, verified done, a semantic user-language label before `(TASK-MAIN-009)`, one open item, only terms needed now, and one bounded next action. It does not copy old chat, create a summary artifact/Gate, narrate unrelated history, or use an arbitrary line/time limit as a correctness proxy.
 - The explanation starts with the observable product/runtime problem and plain-language solution. At first use it defines `work queue` in one behavior-linked sentence, then maps that term to the exact module/class/function only after the user can understand the current choice; external prerequisite study is optional, never required for approval or continuation.
 - The reversible internal choice proceeds without a user Gate but remains learnable: it gives the project-grounded reason, one meaningful alternative and tradeoff, and a concrete reconsider/revert condition. Deeper foundations are offered on request instead of recursively teaching every prerequisite.
-- After the core problem, result/direction, and next action, a non-trivial change may add one bounded expert note by default: plain meaning, precise professional term, exact current code/evidence anchor, and one reusable criterion. A `deep` explanation uses at most two or three; mechanical, repeated, speculative, and unrelated knowledge produces no note.
+- After the core problem, result/direction, and next action remain easy to locate, a non-trivial change may integrate one useful bounded expert note: plain meaning, precise professional term, exact current code/evidence anchor, and one reusable criterion. More depth appears only for current material risk or request; mechanical, repeated, speculative, and unrelated knowledge produces no note.
 - The expert note never precedes or obscures the action, becomes a finding/Gate/quiz/PASS condition, requires external study, or claims user understanding. When confusion or fatigue is signaled, the role simplifies the core before adding depth.
 - Scenario A is selected automatically and explained only if non-obvious. Scenario B is reported as a constrained decision, not presented as a fake approval. Scenario C does not accept an uninformed affirmative reply: Architect first investigates evidence it can obtain, then provides an understandable problem/difference/recommendation/default/defer consequence; if the user still cannot choose, it uses the smallest discriminating probe or a clearly provisional reversible default when safe and blocks only for unresolved user-owned intent or material risk.
 - A concise assent to one decision-ready outcome remains valid, but an explicit surrender signal never becomes product authority. In scenario D, Architect preserves the earlier exact choice, then re-runs `gate necessity`, `needed now`, and `decision readiness`: it decides/explains an AI-owned reversible detail, defers a premature choice, simplifies or investigates a necessary product choice, and blocks only when material user-owned intent remains unresolved. Repetition or brevity alone never proves fatigue.
@@ -378,9 +381,9 @@ Given:
 
 Expected:
 
-- Builder gives one non-blocking source orientation no later than the first coherent non-trivial production edit: current purpose/flow plus at most three `path#symbol` anchors with plain roles and Task reasons. It continues without a reply and reports only the later responsibility-boundary delta, not the accumulated inventory again.
+- Builder gives one non-blocking source orientation no later than the first coherent non-trivial production edit: current purpose/flow plus the smallest connected `path#symbol` path with plain roles and Task reasons. It continues without a reply and reports only the later responsibility-boundary delta, not the accumulated inventory again.
 - The Build Result `Changes`/`Source Map` is the one complete revision-scoped inventory. Every changed hand-written production source file receives a plain role, key symbol, and Task-specific reason there; the new source is marked for whole-file reading, and generated/mechanical content is grouped without hiding production paths.
-- Reviewer independently reconciles that map with the exact candidate, stores a validated pointer plus corrections instead of rewriting the inventory, and shows the exact snapshot/range plus a scoped Diff command or Git UI range. The chat `primary_read` contains only three-to-five `R#` anchors in observable runtime order—entry, important state/decision, effect—and points to the complete map.
+- Reviewer independently reconciles that map with the exact candidate, stores a validated pointer plus corrections instead of rewriting the inventory, and shows the exact snapshot/range plus a scoped Diff command or Git UI range. The chat `primary_read` contains the smallest connected `R#` path in observable runtime order—entry, important responsibility/state/decision, effect—and points to the complete map without an arbitrary anchor quota.
 - Displayed replies are descriptive sentences in `user_language`; internal tokens such as `inspected_continue` or an unqualified `explain_2` never replace their meaning. A complete-map follow-up uses its exact path/symbol.
 - The primary read maps invariants to enforcement points and tests to what they prove and do not prove. Unchanged context files are labeled `context`, not presented as changed.
 - A Change Brief, Review artifact link, directory list, or selected hunk alone does not satisfy the walkthrough; the user is directed to open the actual reviewed Diff and source files.
@@ -481,3 +484,59 @@ Expected:
 - Reviewer verifies evidence scope/oracle and candidate identity, then reruns the smallest decisive affordable subset rather than the Builder's whole suite merely for independence. Scenario B reuses unchanged credible evidence and adds only that distinct independent check.
 - Scenario A invalidates the Review candidate and follows the fresh Build/Review route. An explicit impact check may preserve unaffected evidence, but an old verdict or stale affected check is never reused by assumption.
 - The same cadence applies to service/API, CLI/library, editor/runtime, Git, and no-Git work; it adds no role, artifact, session, score, or user approval Gate.
+
+## Fixture 25 — Lowest-sufficient baseline and executable backbone
+
+Given:
+
+- scenario A starts a new subsystem whose owner, mutable-state authority, failure/exit behavior, and dependency direction are not yet established;
+- scenario B changes one non-trivial interaction inside an already approved, working system, while scenario C is a mechanical rename whose behavior and owner are already determined;
+- the user wants a sound overall structure before coding but has not requested every class, function, tuning value, or future feature;
+- one proposed first slice creates interfaces, folders, and stubs without an observable path, while another traverses a real entry through one responsibility/decision or state to an observable effect and decisive oracle.
+
+Expected:
+
+- Architect selects the lowest altitude containing the material decision: system/subsystem for A, component/interaction or Task for B, and direct Task handling for C. It never re-baselines the whole project merely because B is non-trivial, and C gains no design ceremony.
+- At that altitude the existing Architecture/Task fields collectively close purpose/non-goals, responsible owner/non-owner and state/data owner, inputs/outputs, critical flow, invariants with applicable failure/recovery/finish behavior, decisive verification, and deliberately deferred reversible/tunable detail.
+- Design stops when that bounded baseline is contradiction-free, the highest-cost uncertainty is resolved or assigned one bounded experiment, and implementation can proceed without inventing another owner, contract, or user-visible outcome. The ability to specify more detail is not a reason to continue planning.
+- The stub/interface-only slice is rejected as an empty scaffold. The first executable backbone is the thinnest real entry-to-effect path that proves the chosen responsibilities and integration boundary; later delivery remains small vertical Tasks.
+- Every non-trivial Task has a complete local frame through its existing Goal/Scope/Context/Constraints/AC/Verification fields, while exact Architecture/source pointers prevent duplication.
+- No architecture-baseline phase, ProgramDesign document, new role/session, score, quiz, or approval Gate is created.
+
+## Fixture 26 — Continuous source truth with adaptive explanation
+
+Given:
+
+- Architecture establishes an observable outcome, responsible component, critical flow, invariants, and a planned source boundary;
+- Builder discovers the real entry points, moves one responsibility from the planned location, and edits several production files before independent Review;
+- the user initially asks what one unfamiliar term means, later recognizes it, and still wants AI to implement at full speed while being able to find the actual code;
+- a naive PASS response would stack a verdict, Change Brief, expert note, large file table, walkthrough, tests, risks, and handoff with repeated facts.
+
+Expected:
+
+- The same semantic thread remains traceable from approved intent and planned responsibility/flow to Builder's exact current `path#symbol` anchors, cumulative Source Map, reviewed Diff, invariants, and Knowledge when the location becomes durable. Live source corrects the planned location rather than preserving a false map.
+- Builder exposes the connected actual source path no later than the first coherent non-trivial production edit and reports only material map deltas. The user need not wait until Review to learn which classes/functions own the behavior.
+- Reviewer independently validates the complete map and shows the smallest connected path that exposes entry, responsibility/decision or state, and observable effect. It uses no arbitrary seconds, line, screen, or anchor-count rule and never substitutes a summary or file list for direct source inspection.
+- The first visible response composes result/consequence, why it matters, flow/source, decisive evidence or uncertainty, and one next action. Duplicate Change Brief/expert-note/walkthrough/handoff facts are omitted or placed behind exact pointers.
+- The behavior/source/evidence base remains visible for both unfamiliar and experienced users. Only explanatory depth adapts to current conversational evidence: define the unfamiliar term once with a current-code example, stop repeating it after demonstrated understanding, and expand theory only for material risk, confusion, or request.
+- AI assistance, implementation scope, and verification do not taper. No novice/expert profile, mandatory lesson, quiz, score, forced inspection reply, separate teaching path, or learning Gate is introduced.
+- Multiple technical upkeep findings are classified as `current_blocker | after_current_work | optional` and `deterministic_ai_owned | user_owned`; they never become an undifferentiated user choice that obscures the current deliverable, and deterministic cleanup/repinning uses its existing owner and route.
+- Optional card use reads `ACTION_CARDS.md#scan-first-composition` plus the one exact triggered card section rather than loading the whole multi-purpose file; return orientation, status/Diff, user decisions, post-PASS source inspection, handoff, manual action, and checkpoint each have an explicit route.
+
+## Fixture 27 — Reference roles become project judgment, not cargo cult
+
+Given:
+
+- one approved request explicitly names a target/original product behavior to reproduce for a bounded interaction, but leaves unrelated behavior open;
+- the project has a verified precedent for one implementation dimension, a normative standard for another, and a trusted reference implementation or analogous engineering case for a third;
+- one costly-to-reverse design depends on an unfamiliar but stable computer-science/domain principle that project files cannot answer, while a separate mechanical change is already determined;
+- the external implementation differs materially in lifecycle and data ownership from the current project.
+
+Expected:
+
+- Architect classifies evidence as `approved_behavior_oracle | project_precedent | normative_standard | reference_implementation | analogous_case_or_principle` before use. The named target behavior is intent only inside the user-approved scope; it does not silently govern unrelated behavior or reveal its hidden implementation as fact.
+- AI studies the strongest applicable official/primary material and verified behavior itself, then records only supported claim, scope/date or revision, project fit/difference, adopted principle, deliberately un-copied parts, and re-check trigger in existing Architecture evidence/decisions.
+- The project precedent and adopted intent outrank convenience; the normative standard constrains only its actual scope; the external implementation and analogous case provide transferable principles rather than code or structure to copy. The lifecycle/data-owner mismatch is explicit and prevents cargo-cult reuse.
+- Builder implements only the adopted project-fit consequence and connects it to exact source symbols. Reviewer verifies that principle and its non-copied boundary against the candidate and evidence; research prose is not duplicated into source, Task, Review, and Knowledge.
+- User-facing explanation gives the recommendation, strongest basis, project fit/difference, reusable principle, current Architecture/source anchor, and reconsider trigger without requiring the user to study the research trail first.
+- The mechanical change receives no research ceremony. Research stops once the bounded decision is supported, and any remaining material uncertainty uses one reversible experiment under existing Task/Builder authority rather than speculative production work.

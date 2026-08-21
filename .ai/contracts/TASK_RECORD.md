@@ -57,21 +57,22 @@ When existing source and approved Architecture do not determine a consequential 
 
 ## Task Quality Gate
 
-This is the single canonical Task-splitting gate. Before a Task becomes `approved` or lane state reaches `ready_to_build`, Architect evaluates the completed Task Record against all seven checks. A file, class, or function boundary alone is not a Task boundary; required supporting edits may span several files when they produce one independently verifiable outcome.
+This is the single canonical Task-splitting gate. Before a Task becomes `approved` or lane state reaches `ready_to_build`, Architect evaluates the completed Task Record against all eight checks. A file, class, or function boundary alone is not a Task boundary; required supporting edits may span several files when they produce one independently verifiable outcome.
 
-Prefer a narrow end-to-end/vertical slice that can be exercised at its approved boundary. A horizontal layer or scaffold is a separate Task only when it has a standalone approved outcome/oracle or must land atomically; otherwise merge it with the first observable behavior.
+Prefer a narrow end-to-end/vertical slice that can be exercised at its approved boundary. When establishing a new or changed foundation, the first Task realizes the Architecture's executable backbone through a real entry, responsibility/decision or state, and observable effect. A horizontal layer, empty interface set, stub-only scaffold, or file skeleton is a separate Task only when it has a standalone approved outcome/oracle or must land atomically; otherwise merge it with the first observable behavior.
 
 The Gate includes a proportional cross-artifact consistency check over only this Task's exact lineage: applicable approved intent/requirement refs -> current Architecture scope or delivery slice -> Task Goal/ACs -> verification. Reject an orphan Task outcome, a contradicted constraint, a claimed slice with omitted observable or terminal behavior, or an AC with no approved intent/Architecture basis. Inspect broader sibling slices only when meaningful ambiguity or dependency evidence requires it; do not scan an entire specification or generate another checklist for a small already-determined Task.
 
 | Check | Evidence required for `READY` |
 |---|---|
 | One outcome | Goal names one observable behavior or deliverable and one primary reason to change, grounded in the approved request or one current Architecture scope/delivery slice. |
+| Complete local frame | For a non-trivial unit, the existing Goal, Scope, Context, Constraints, ACs, and Verification collectively identify its purpose, responsible owner/non-owner, inputs/outputs, critical flow and finish/exit behavior, invariants/applicable failure, proof, and deliberately deferred detail. Reuse the Architecture/source instead of copying it; mechanical or already-determined work may satisfy this by exact pointers. |
 | Independent delivery | Builder can implement it and Reviewer can PASS/FAIL it without a future Task or unapproved redesign. |
 | Narrow, complete writes | `allowed_write` contains every required atomic edit, stays within the Lane boundary, and excludes unrelated cleanup. A replacement Task after an interrupted/superseded single-main attempt classifies every inherited Task path as `retain | adapt | remove` in Scope or Constraints and keeps each retained/adapted/removed path inside `allowed_write`. |
 | Observable acceptance | Every mandatory result—including relevant finish/exit behavior—has an objective AC; labels such as `improve`, `refactor`, or `implement system` are insufficient by themselves. |
 | Executable verification | Every mandatory AC maps to a feasible method and required evidence; any human gate has the complete procedure below. |
 | Ready dependencies | Required source, contracts, decisions, predecessor results, and applicable requirement refs exist at their approved or verified revisions, and the exact intent -> Architecture -> Task lineage has no material gap or contradiction. |
-| Worth the handoff | Split only when reduced context, risk, or review ambiguity repays another handoff; merge a fragment that has no standalone oracle or must land atomically with adjacent work. |
+| Worth the handoff | Split only when reduced context, risk, or review ambiguity repays another handoff; otherwise return `MERGE`. |
 
 The gate returns exactly one internal planning outcome:
 
@@ -79,7 +80,7 @@ The gate returns exactly one internal planning outcome:
 |---|---|
 | `READY` | All checks pass. Architect may approve and hand the Task to Builder. |
 | `SPLIT` | It contains multiple independently verifiable outcomes or separable risk/context. Architect reframes the delivery order and materializes/evaluates only the next smaller slice. |
-| `MERGE` | It lacks a standalone outcome/oracle or must land atomically with adjacent work. Architect combines it and evaluates again. |
+| `MERGE` | It lacks a standalone outcome/oracle, must land atomically with adjacent work, or is one of several individually trivial fixes. Architect combines it and evaluates again. A trivial-fix batch is the only Goal naming a set: each item stays reversible with no approved-behavior or contract change and keeps its own AC, so Review may reject one item alone. Any item failing that is its own Task; a batch never hides a behavior change, unrelated cleanup, or an avoided Gate. |
 | `BLOCKED` | A required decision, dependency, boundary, or verification method is unresolved. Route the owning issue and do not hand off. |
 
 `SPLIT` and `MERGE` are private Architect revisions, not new user gates. Ask the user only when the underlying change requires user-owned intent or an Architecture Gate. Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`; the Task Record fields are the evidence.

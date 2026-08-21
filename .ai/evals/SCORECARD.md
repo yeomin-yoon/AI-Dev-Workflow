@@ -46,13 +46,15 @@ Use `source_regression` for canonical release evidence. For that type, provider/
 | accepted | | |
 | quality floor passed | | |
 | intent/scope convergence + contract equivalent | | |
+| lowest-sufficient Architecture baseline / executable backbone vs empty scaffold / local-change proportionality | | |
 | integrated existing behavior vs isolated skeleton | | |
 | route + artifact/state contract compliance | | |
 | reviewer independence | | |
 | intent-gap + decision clarity / current-design-altitude fit / unnecessary questions or gates / informed assent vs surrender | | |
 | user-language approval and blocker actionability | | |
-| Change Brief / bounded expert-note grounding and fatigue | | |
-| Progressive source orientation / compact verified Diff walkthrough / durable-pause usefulness | | |
+| scan-first result/source/evidence/next composition / bounded expert-note grounding and fatigue | | |
+| continuous Architecture-to-Builder-to-Review source truth / direct Diff inspection / durable-pause usefulness | | |
+| reference role/scope/fit/non-copy/re-check discipline | | |
 | verification cadence / distinct evidence per repeated check | | |
 | verification-claim accuracy | | |
 | simplicity / reuse without safety loss | | |

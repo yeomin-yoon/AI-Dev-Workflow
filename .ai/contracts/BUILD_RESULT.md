@@ -31,7 +31,7 @@ builder: <session-id|unknown>
 | <path or none> | <add/modify/delete> | <AC/reason> | <plain role + path#symbol; whole file; generated/mechanical; or n/a> |
 
 ## Source Map
-- primary read: <three-to-five path#symbol anchors in runtime order|none>
+- primary read: <smallest connected path#symbol sequence that exposes entry, important responsibility/decision or state, and observable effect|none>
 - runtime flow: <entry -> important decision/state -> observable effect|none>
 - new source files: <whole-file paths|none>
 - generated/mechanical group: <paths or category|none>
@@ -62,8 +62,8 @@ Rules:
 - List only executed checks; use `not_run/unavailable` explicitly.
 - Keep only decisive output excerpts and link the full log.
 - Every changed path maps to the task or an AC.
-- For every Task-touched hand-written production source path in `Changes`, record its key symbol, plain-language role, and Task-specific reason in that row. The `Source Map` selects only the three-to-five anchors that best explain entry, important decision/state, and observable effect; it never repeats the full inventory. Mark a newly added source as `whole file`, group generated/vendor/mechanical paths, and omit the map only when no hand-written production source changed.
-- Builder owns this revision-scoped Source Map while implementing. It exposes at most three current anchors after the first coherent edit, reports only material map deltas during Build, and gives the final primary read before Review handoff. The map is orientation rather than architecture or permanent Knowledge; Reviewer independently checks it against the exact candidate.
+- For every Task-touched hand-written production source path in `Changes`, record its key symbol, plain-language role, and Task-specific reason in that row. The `Source Map` selects the smallest connected runtime path that exposes the actual entry, important responsibility/decision or state, and observable effect; it never repeats the full inventory or obeys an arbitrary anchor count. Mark a newly added source as `whole file`, group generated/vendor/mechanical paths, and omit the map only when no hand-written production source changed.
+- Builder owns this revision-scoped Source Map while implementing. It exposes the current connected path after the first coherent edit, reports only material map deltas during Build, and gives the final primary read before Review handoff. The map is orientation rather than architecture or permanent Knowledge; Reviewer independently checks it against the exact candidate.
 - Historical completed Build Results with the three-column `Changes` table and no `Source Map` remain readable and are never rewritten merely for this presentation change. Before a still-active historical candidate first enters Review under this contract, Builder reconstructs the missing role/symbol column and Source Map from the exact current candidate; accepted historical evidence needs no migration.
 - `unrelated_pre_existing` requires evidence that the path predates the applicable Workflow attempt and is not attributable to it. Preserve it and never claim it as this Task's work.
 - `inherited_task` means bytes attributable to an interrupted or superseded Workflow attempt. Preserve that attribution across Task/attempt IDs and reconcile it against the active Task's explicit `retain | adapt | remove` disposition when one is required.
