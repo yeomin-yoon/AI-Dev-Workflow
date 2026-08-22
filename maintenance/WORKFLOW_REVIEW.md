@@ -201,11 +201,11 @@ automated=<pass|fail|not_run> regression=<pass|fail|not_run>
 findings=P1:<n>,P2:<n>,P3:<n>
 independence=<independent_session|reduced_assurance>
 self_check=<pass|corrected|blocked> corrections=<n>
-budget=<pass|fail> activation=<main:<n> lane:<n> no_git:<n>|not_available>
+budget=<pass|fail> slack=<set>:<bytes>,... activation=<main:<n> lane:<n> no_git:<n>|not_available>
 release_recommendation=<ready|not_ready|not_assessed>
 ```
 
-`budget` is the validator's always-read ceiling check for the reviewed source: `pass` when every role-entry path is within its ceiling, `fail` otherwise. `activation` counts the accepted-Task ledger lines actually read, by closure mode, or `not_available` when no installation root was supplied.
+`budget` is the validator's always-read ceiling check for the reviewed source: `pass` when every role-entry path is within its ceiling, `fail` otherwise. Report the measured slack per set with it, as `budget=pass slack=<set>:<bytes>,...`, because a ceiling that passes while its slack quietly shrinks recreates the tripwire the ceiling was raised to remove; consecutive reviews must be able to compare that number. `activation` counts the accepted-Task ledger lines actually read, by closure mode, or `not_available` when no installation root was supplied.
 
 Then provide:
 

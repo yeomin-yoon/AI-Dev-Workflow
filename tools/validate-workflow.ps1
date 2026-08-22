@@ -919,6 +919,8 @@ $contractTokenRequirements = @{
         '`lane_handoff`: a non-`main` Lane candidate sealed',
         'Append only after the verdict and its owning artifacts are final',
         'Every Git-backed closure commits the line with the change it describes',
+        'A line therefore exists only inside the commit that carries it',
+        'a later attempt discards any uncommitted ledger change it finds instead of building on it',
         'No entry records the revision it landed in',
         'Do not record provider, model, effort, token counts, elapsed time, file counts',
         'This file is write-only during ordinary work',
@@ -1042,6 +1044,7 @@ $contractTokenRequirements = @{
     '.ai/contracts/ACTION_CARDS.md' = @(
         'append the single accepted-Task line defined in `.ai/contracts/STATE.md#run-ledger`',
         'a failed append never blocks the route or the next Task',
+        'remove the ledger line this attempt appended so a retry appends exactly one',
         '## Scan-first composition',
         'This is a comprehension criterion, not an arbitrary seconds, line, terminal-screen, or anchor-count limit',
         'Keep one semantic thread across roles',
@@ -1237,6 +1240,7 @@ $contractTokenRequirements = @{
         'required deterministic closure is not an option'
     )
     '.ai/evals/SCORECARD.md' = @(
+        'canonical source-only records use <run-scope> in place of <provider>, matching their filename',
         'eval_type: <source_regression|end_to_end|fixed_contract>',
         'Use `source_regression` for canonical release evidence',
         '| intent-gap + decision clarity / current-design-altitude fit / unnecessary questions or gates / informed assent vs surrender |',
@@ -1373,6 +1377,7 @@ $contractTokenRequirements = @{
         'Do not repeat the entire Builder suite merely for independence'
     )
     '.ai/roles/WORK.md' = @(
+        'At that closure, before staging, append the accepted Task''s',
         'when Git is unusable, append it at the accepted transition instead',
         'explicit current-status, Task-diff, source-reading, commit-readiness, or interaction-preference question',
         'without a user-visible Architect handoff or repeated approval',
@@ -1409,7 +1414,8 @@ $contractTokenRequirements = @{
         'Does broad design stop before reversible detail while a local change avoids whole-project re-baselining?',
         'living views, reference-only intent, approved behavior-oracle scope, and flow-forward evidence kept distinct',
         '## Observed activation',
-        'budget=<pass|fail> activation=<main:<n> lane:<n> no_git:<n>|not_available>',
+        'budget=<pass|fail> slack=<set>:<bytes>,... activation=<main:<n> lane:<n> no_git:<n>|not_available>',
+        'a ceiling that passes while its slack quietly shrinks recreates the tripwire',
         'A rule that can only fire in an unobserved mode is `not_observed`, never zero-activation',
         'Partition the window by `closure` before judging any rule',
         'Zero activation is not automatic deletion',
@@ -1435,7 +1441,6 @@ $contractTokenRequirements = @{
         'concise informed assent bound to one displayed outcome',
         'Does Architecture establish the smallest sufficient whole',
         'Feature-boundary intent-to-code convergence',
-        'living views, reference-only intent, approved behavior-oracle scope, and flow-forward evidence',
         'WORKFLOW_REVIEW RESULT=<pass|changes_required|blocked>',
         'independence=<independent_session|reduced_assurance>',
         'self_check=<pass|corrected|blocked> corrections=<n>',
@@ -2122,7 +2127,8 @@ if (Test-Path -LiteralPath $goldenCorePath -PathType Leaf) {
             'The named target behavior is intent only inside the user-approved scope',
             'AI studies the strongest applicable official/primary material and verified behavior itself',
             'Builder implements only the adopted project-fit consequence',
-            'The mechanical change receives no research ceremony'
+            'The mechanical change receives no research ceremony',
+            'As part of the checkpoint and before staging, the run ledger receives exactly one appended accepted-Task line'
         )) {
         if (-not $goldenCoreText.Contains($goldenToken)) {
             Add-Failure "Golden Core Behavior is missing oracle token: $goldenToken"

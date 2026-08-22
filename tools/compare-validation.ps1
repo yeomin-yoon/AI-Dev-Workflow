@@ -26,7 +26,8 @@ $ErrorActionPreference = 'Stop'
 #
 # So the comparison is mechanical. Every baseline token lands in exactly one class:
 #
-#   enforced           still in the current validator's list        -> fine
+#   enforced           still in the current validator's list, or
+#                      contained by a longer guard on the same file  -> fine
 #   dropped_protection sentence still in the contract file,
 #                      but no longer in the validator's list        -> REGRESSION
 #   wording_drift      sentence gone, but the same text is present
@@ -128,10 +129,31 @@ function Get-Normalized {
 # case or spacing is the same guard, so re-guarding a drifted rule under its
 # corrected wording counts as enforced rather than as a fresh drift.
 $currentTokens = New-Object System.Collections.Generic.HashSet[string]
+$currentByPath = @{}
 foreach ($path in $currentMap.Keys) {
+    $currentByPath[$path] = New-Object System.Collections.Generic.List[string]
     foreach ($token in $currentMap[$path]) {
-        $null = $currentTokens.Add("$path`t$(Get-Normalized $token)")
+        $normalized = Get-Normalized $token
+        $null = $currentTokens.Add("$path`t$normalized")
+        $currentByPath[$path].Add($normalized)
     }
+}
+
+# A longer guard that contains a shorter one enforces strictly more: if the long
+# sentence must be present, so must every substring of it. Collapsing a redundant
+# pair of guards into the longer one is therefore not a lost protection, and the
+# per-token exact match above cannot see that on its own.
+function Test-SubsumedGuard {
+    param([string]$Path, [string]$NormalizedToken)
+    if (-not $currentByPath.ContainsKey($Path)) {
+        return $false
+    }
+    foreach ($candidate in $currentByPath[$Path]) {
+        if ($candidate.Length -gt $NormalizedToken.Length -and $candidate.Contains($NormalizedToken)) {
+            return $true
+        }
+    }
+    return $false
 }
 
 $fileCache = @{}
@@ -161,7 +183,8 @@ $baselineTokenCount = 0
 foreach ($path in ($baselineMap.Keys | Sort-Object)) {
     foreach ($token in $baselineMap[$path]) {
         $baselineTokenCount++
-        if ($currentTokens.Contains("$path`t$(Get-Normalized $token)")) {
+        $normalizedToken = Get-Normalized $token
+        if ($currentTokens.Contains("$path`t$normalizedToken") -or (Test-SubsumedGuard $path $normalizedToken)) {
             $enforced.Add("$path :: $token")
             continue
         }

@@ -1,6 +1,6 @@
 ---
 schema_version: 2
-id: EVAL-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug>
+id: EVAL-<YYYYMMDDTHHMMSSfffZ>-<provider>-<short-slug> # canonical source-only records use <run-scope> in place of <provider>, matching their filename
 date: null
 status: draft
 result: pending

@@ -2269,6 +2269,30 @@ regression_cases: []
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'STATE.md transition targets reserved retired status complete'
 
+    Assert-NegativeFixture 'run-ledger-orphan-line-on-failed-checkpoint' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('remove the ledger line this attempt appended so a retry appends exactly one, then return', 'return')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=remove the ledger line this attempt appended so a retry appends exactly one'
+
+    Assert-NegativeFixture 'run-ledger-append-order-contradicts-role-contract' {
+        param($root)
+        $target = Join-Path $root '.ai/roles/WORK.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('At that closure, before staging, append the accepted Task''s', 'At that closure, append the accepted Task''s')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/roles/WORK.md token=At that closure, before staging, append the accepted Task''s'
+
+    Assert-NegativeFixture 'always-read-slack-not-reported' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('a ceiling that passes while its slack quietly shrinks recreates the tripwire', 'a passing ceiling is sufficient evidence')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/WORKFLOW_REVIEW.md token=a ceiling that passes while its slack quietly shrinks recreates the tripwire'
+
     Assert-NegativeFixture 'run-ledger-git-disposition-undefined' {
         param($root)
         $target = Join-Path $root '.ai/contracts/STATE.md'
