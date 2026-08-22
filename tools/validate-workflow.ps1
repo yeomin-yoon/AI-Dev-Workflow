@@ -918,6 +918,8 @@ $contractTokenRequirements = @{
         'Every delivery mode has exactly one such point, so no mode is silently unmeasured',
         '`lane_handoff`: a non-`main` Lane candidate sealed',
         'Append only after the verdict and its owning artifacts are final',
+        'Every Git-backed closure commits the line with the change it describes',
+        'No entry records the revision it landed in',
         'Do not record provider, model, effort, token counts, elapsed time, file counts',
         'This file is write-only during ordinary work',
         'A missing, empty, or partial ledger is always valid',
@@ -1163,6 +1165,8 @@ $contractTokenRequirements = @{
         'All ten cases must agree across:'
     )
     '.ai/evals/README.md' = @(
+        'a release record is permanent and its filename must not carry a vendor or product name',
+        'Provenance is not lost, because front matter `provider`/`model` already record it',
         '`source_regression`: the default canonical release Eval',
         "exactly A's provider/host tool/model/reasoning/configuration",
         "Never use a model's conversational self-identification as evidence",
@@ -1254,7 +1258,9 @@ $contractTokenRequirements = @{
         'the one contract for an artifact the role will create or change',
         'never combine unrelated outcomes or widen an approved Task merely to reduce messages',
         '## Active delivery kernel',
-        'read `#scan-first-composition` plus only the one triggered section below',
+        'read `#scan-first-composition` plus only the triggered sections below',
+        'One turn may trigger more than one: a Reviewer PASS needs the walkthrough and the handoff together',
+        '`ACTION_CARDS.md#bounded-expert-note`, loaded with the card it accompanies',
         'return/orientation after interruption, confusion, or context loss',
         'post-PASS reviewed source/Diff orientation or inspection follow-up',
         'Do not reread unchanged inputs or rerun a check whose relevant inputs and oracle are unchanged',
@@ -1397,7 +1403,11 @@ $contractTokenRequirements = @{
     )
     'maintenance/WORKFLOW_REVIEW.md' = @(
         'also run `tools/compare-validation.ps1`',
-        'every `contract_changed` entry names a protection the change gave up and must be confirmed deliberate',
+        '`dropped_protection` and `wording_drift` must both be zero',
+        '`budget` is the validator''s always-read ceiling check for the reviewed source',
+        'Every `enforcement_ended` entry needs a human decision',
+        'Does broad design stop before reversible detail while a local change avoids whole-project re-baselining?',
+        'living views, reference-only intent, approved behavior-oracle scope, and flow-forward evidence kept distinct',
         '## Observed activation',
         'budget=<pass|fail> activation=<main:<n> lane:<n> no_git:<n>|not_available>',
         'A rule that can only fire in an unobserved mode is `not_observed`, never zero-activation',
@@ -1434,6 +1444,8 @@ $contractTokenRequirements = @{
         'include one detailed `[P2]...` finding per count'
     )
     'maintenance/RELEASE.md' = @(
+        'Raising an always-read byte ceiling in `tools/validate-workflow.ps1` is a triage decision',
+        'Deleting or compressing protective text purely to stay under a ceiling is a rejected change',
         'workflow_review=<required_after_source_commit|not_run>',
         'workflow_review_independence: independent_session',
         'workflow_review_self_check: pass | corrected',
@@ -2837,11 +2849,18 @@ foreach ($file in $markdownFiles) {
 # opened on demand -- STATE.md, ACTION_CARDS.md sections, MAIN_DESK.md,
 # PARALLEL_START.md, integration -- are outside these totals, so a ceiling bounds
 # entry cost, not the whole context a run may reach.
+#
+# Each ceiling is the measured size rounded up to the next KiB plus one KiB of
+# slack. Ordinary wording work therefore does not trip it, while a new rule still
+# forces a recorded trade. Without that slack the cheapest way to pass is to
+# delete protective text, which is the opposite of the intent. Changing a ceiling
+# is a release-triage decision under maintenance/RELEASE.md, not a side effect of
+# making a new rule fit.
 $alwaysReadBudgets = @(
-    @{ name = 'work+architect'; ceiling = 61440; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/ARCHITECT.md', '.ai/contracts/ARCHITECTURE.md', '.ai/contracts/TASK_RECORD.md') }
-    @{ name = 'work+builder'; ceiling = 49152; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/BUILDER.md', '.ai/contracts/TASK_RECORD.md', '.ai/contracts/BUILD_RESULT.md') }
-    @{ name = 'work+knowledge'; ceiling = 44032; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/KNOWLEDGE_MAINTAINER.md', '.ai/contracts/KNOWLEDGE.md') }
-    @{ name = 'reviewer'; ceiling = 50176; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/REVIEWER.md', '.ai/contracts/BUILD_RESULT.md', '.ai/contracts/REVIEW_RESULT.md') }
+    @{ name = 'work+architect'; ceiling = 62464; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/ARCHITECT.md', '.ai/contracts/ARCHITECTURE.md', '.ai/contracts/TASK_RECORD.md') }
+    @{ name = 'work+builder'; ceiling = 50176; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/BUILDER.md', '.ai/contracts/TASK_RECORD.md', '.ai/contracts/BUILD_RESULT.md') }
+    @{ name = 'work+knowledge'; ceiling = 45056; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/KNOWLEDGE_MAINTAINER.md', '.ai/contracts/KNOWLEDGE.md') }
+    @{ name = 'reviewer'; ceiling = 51200; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/REVIEWER.md', '.ai/contracts/BUILD_RESULT.md', '.ai/contracts/REVIEW_RESULT.md') }
 )
 foreach ($alwaysReadBudget in $alwaysReadBudgets) {
     $budgetBytes = 0

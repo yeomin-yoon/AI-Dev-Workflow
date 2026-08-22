@@ -2085,9 +2085,9 @@ regression_cases: []
         param($root)
         $target = Join-Path $root '.ai/BOOTSTRAP.md'
         $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
-        $text = $text.Replace('read `#scan-first-composition` plus only the one triggered section below; do not load the whole file by default', 'read the complete ACTION_CARDS.md for every result')
+        $text = $text.Replace('read `#scan-first-composition` plus only the triggered sections below; do not load the whole file by default', 'read the complete ACTION_CARDS.md for every result')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
-    } 'Contract is missing a required invariant token: path=.ai/BOOTSTRAP.md token=read `#scan-first-composition` plus only the one triggered section below'
+    } 'Contract is missing a required invariant token: path=.ai/BOOTSTRAP.md token=read `#scan-first-composition` plus only the triggered sections below'
 
     Assert-NegativeFixture 'scan-first-becomes-fixed-anchor-quota' {
         param($root)
@@ -2268,6 +2268,38 @@ regression_cases: []
             "| ``discovery/active`` | fixture event reaching retired status | ``synced/complete`` | Architect |`n| ``discovery/active`` | initial discovery completes |")
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'STATE.md transition targets reserved retired status complete'
+
+    Assert-NegativeFixture 'run-ledger-git-disposition-undefined' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/STATE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Every Git-backed closure commits the line with the change it describes', 'The ledger is written wherever the closing role prefers')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/STATE.md token=Every Git-backed closure commits the line with the change it describes'
+
+    Assert-NegativeFixture 'always-read-ceiling-raised-without-triage' {
+        param($root)
+        $target = Join-Path $root 'maintenance/RELEASE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Raising an always-read byte ceiling in `tools/validate-workflow.ps1` is a triage decision', 'Raise an always-read byte ceiling whenever a new rule needs the room')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/RELEASE.md token=Raising an always-read byte ceiling in `tools/validate-workflow.ps1` is a triage decision'
+
+    Assert-NegativeFixture 'release-eval-filename-admits-vendor-name' {
+        param($root)
+        $target = Join-Path $root '.ai/evals/README.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('a release record is permanent and its filename must not carry a vendor or product name', 'a release record may name its provider in the filename')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/evals/README.md token=a release record is permanent and its filename must not carry a vendor or product name'
+
+    Assert-NegativeFixture 'compare-classes-named-wrongly-in-review' {
+        param($root)
+        $target = Join-Path $root 'maintenance/WORKFLOW_REVIEW.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('`dropped_protection` and `wording_drift` must both be zero', '`contract_changed` must be reviewed')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=maintenance/WORKFLOW_REVIEW.md token=`dropped_protection` and `wording_drift` must both be zero'
 
     Assert-NegativeFixture 'run-ledger-misses-worktree-closure' {
         param($root)

@@ -40,7 +40,7 @@ If the user later requests fixes, perform them as a separate change and rerun th
 ## Evidence-first read order
 
 1. `README.md`, current `.ai/maintenance/release.yaml`, Changelog, and read-only Git status/diff.
-2. Results from `tools/validate-workflow.ps1`, `tools/test-validation.ps1`, and applicable completed Evals. When the change refactors validation itself, also run `tools/compare-validation.ps1`: `dropped_protection` must be zero, and every `contract_changed` entry names a protection the change gave up and must be confirmed deliberate.
+2. Results from `tools/validate-workflow.ps1`, `tools/test-validation.ps1`, and applicable completed Evals. When the change refactors validation itself, also run `tools/compare-validation.ps1`. `dropped_protection` and `wording_drift` must both be zero: the first means a rule still stands in the contract with nothing enforcing it, the second means the rule survived a rewrite while its guard stopped matching. Every `enforcement_ended` entry needs a human decision, because the tool cannot tell a deliberate rule removal from a rewrite that quietly lost its guard; confirm each as removed on purpose or re-guard it under its current wording.
 3. In `changed` mode, only changed artifacts plus their authority, state, role, and output contracts.
 4. Applicable Golden Core/Worktree fixtures and regression catalog entries.
 5. In `full` mode, the remaining Core entry points and source-only maintenance boundaries needed for every lens below.
@@ -204,6 +204,8 @@ self_check=<pass|corrected|blocked> corrections=<n>
 budget=<pass|fail> activation=<main:<n> lane:<n> no_git:<n>|not_available>
 release_recommendation=<ready|not_ready|not_assessed>
 ```
+
+`budget` is the validator's always-read ceiling check for the reviewed source: `pass` when every role-entry path is within its ceiling, `fail` otherwise. `activation` counts the accepted-Task ledger lines actually read, by closure mode, or `not_available` when no installation root was supplied.
 
 Then provide:
 

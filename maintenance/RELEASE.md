@@ -112,6 +112,8 @@ Run only on explicit maintenance request. Batch related pending observations, ve
 
 Never release solely from popularity, one unsupported observation, or lower token count that loses correctness, safety, verification, or user understanding.
 
+Raising an always-read byte ceiling in `tools/validate-workflow.ps1` is a triage decision, never an incidental step in making a new rule fit. Accept a raise only with the same evidence any accepted change needs: name the rule that required the room, the alternative that was considered and why relocating or removing existing text was worse, and the new measured slack. Deleting or compressing protective text purely to stay under a ceiling is a rejected change, because it inverts what the ceiling exists to enforce.
+
 Before promoting an accepted candidate, classify its enforcement level as `invariant | gate | default | presentation`:
 
 - `invariant`: prevents evidenced loss, authority/scope corruption, unsafe external effect, candidate-identity confusion, or quality-floor failure;

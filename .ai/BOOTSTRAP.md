@@ -40,7 +40,7 @@ Do not preload all roles, knowledge, history, tasks, logs, or the whole reposito
 
 Load optional procedures only for their trigger:
 
-For `ACTION_CARDS.md`, search its headings and read `#scan-first-composition` plus only the one triggered section below; do not load the whole file by default.
+For `ACTION_CARDS.md`, search its headings and read `#scan-first-composition` plus only the triggered sections below; do not load the whole file by default. One turn may trigger more than one: a Reviewer PASS needs the walkthrough and the handoff together.
 
 | Trigger | Read |
 |---|---|
@@ -54,6 +54,7 @@ For `ACTION_CARDS.md`, search its headings and read `#scan-first-composition` pl
 | cross-role/session handoff | `ACTION_CARDS.md#handoff`; for close/replacement also `SESSION_CLOSE.md`, then `MAIN_DESK.md` only when identity/Integration requires it |
 | external/manual action or planned editor/runtime authoring/check | `ACTION_CARDS.md#user-action` or `#editorruntime-check`, whichever matches the effect |
 | single-main commit checkpoint | `ACTION_CARDS.md#single-main-commit-checkpoint` |
+| a non-trivial result may carry one reusable professional insight | `ACTION_CARDS.md#bounded-expert-note`, loaded with the card it accompanies |
 | explicit local observation capture or update | `.ai/maintenance/MAINTAIN.md` or `UPDATE.md` respectively; ordinary work never opens either automatically |
 | release collection/build/triage/finalization in the distribution checkout | source-only `maintenance/RELEASE.md`; installed projects route there and never activate a project role |
 
