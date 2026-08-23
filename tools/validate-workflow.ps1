@@ -2862,11 +2862,21 @@ foreach ($file in $markdownFiles) {
 # delete protective text, which is the opposite of the intent. Changing a ceiling
 # is a release-triage decision under maintenance/RELEASE.md, not a side effect of
 # making a new rule fit.
+#
+# Record the measurement each ceiling was derived from, so the formula stays
+# auditable. Deriving a ceiling and then continuing to edit the same commit is how
+# one set ended up a KiB below its own formula: the later edits crossed a KiB
+# boundary that nobody recomputed. Re-measure before writing these numbers, not
+# during the edits that change them.
 $alwaysReadBudgets = @(
-    @{ name = 'work+architect'; ceiling = 62464; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/ARCHITECT.md', '.ai/contracts/ARCHITECTURE.md', '.ai/contracts/TASK_RECORD.md') }
-    @{ name = 'work+builder'; ceiling = 50176; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/BUILDER.md', '.ai/contracts/TASK_RECORD.md', '.ai/contracts/BUILD_RESULT.md') }
-    @{ name = 'work+knowledge'; ceiling = 45056; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/KNOWLEDGE_MAINTAINER.md', '.ai/contracts/KNOWLEDGE.md') }
-    @{ name = 'reviewer'; ceiling = 51200; paths = @('.ai/BOOTSTRAP.md', '.ai/roles/REVIEWER.md', '.ai/contracts/BUILD_RESULT.md', '.ai/contracts/REVIEW_RESULT.md') }
+    @{ name = 'work+architect'; ceiling = 62464; # measured 61106 at the manual-v1.4 baseline
+       paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/ARCHITECT.md', '.ai/contracts/ARCHITECTURE.md', '.ai/contracts/TASK_RECORD.md') }
+    @{ name = 'work+builder'; ceiling = 51200; # measured 49333 at the manual-v1.4 baseline
+       paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/BUILDER.md', '.ai/contracts/TASK_RECORD.md', '.ai/contracts/BUILD_RESULT.md') }
+    @{ name = 'work+knowledge'; ceiling = 45056; # measured 43956 at the manual-v1.4 baseline
+       paths = @('.ai/BOOTSTRAP.md', '.ai/roles/WORK.md', '.ai/roles/KNOWLEDGE_MAINTAINER.md', '.ai/contracts/KNOWLEDGE.md') }
+    @{ name = 'reviewer'; ceiling = 51200; # measured 49905 at the manual-v1.4 baseline
+       paths = @('.ai/BOOTSTRAP.md', '.ai/roles/REVIEWER.md', '.ai/contracts/BUILD_RESULT.md', '.ai/contracts/REVIEW_RESULT.md') }
 )
 foreach ($alwaysReadBudget in $alwaysReadBudgets) {
     $budgetBytes = 0

@@ -1,6 +1,6 @@
 schema_version: 1
 workflow_version: manual-v1.4
-released_at: 2026-08-22
+released_at: 2026-08-23
 
 compatibility:
   lane_schema: [3]
