@@ -1,6 +1,6 @@
 # Contract: Lane State
 
-Path: `.ai/lanes/<lane>/state.yaml`
+Paths: `.ai/lanes/<lane>/state.yaml` (current pointers, mutable) and `.ai/lanes/<lane>/ledger.jsonl` (closed-Task record, append-only). See `#run-ledger`.
 
 ```yaml
 schema_version: 3
@@ -148,3 +148,27 @@ For a superseded single-main working-tree Build, apply the canonical interrupted
 A deferred Knowledge entry is not `none`: before Feature-boundary convergence can rest at `synced/idle`, synchronize it. A deferred product/delivery outcome is different: require its explicit user-owned approval basis, consequence, and trigger in current Architecture and never call the Feature complete. Without that authority it remains `open` or follows the existing blocker route rather than resting at `synced/idle`.
 
 Only the listed phase/status/blocker enums and transitions are valid. Task status records approval, not execution progress; state plus Build/Review Results record execution. On recovery, inspect state, its evidence artifact, and Git. Resume an in-progress phase only when those agree; otherwise route a context/attribution issue instead of silently replaying work.
+
+## Run ledger
+
+Path: `.ai/lanes/<lane>/ledger.jsonl`. One JSON object per line, appended once when an accepted Task reaches its closure, never rewritten. It exists so Workflow maintenance can decide from observed runs which rules, gates, and roles actually earn their cost.
+
+```json
+{"schema_version":1,"task":"<task-id>","closed_at":"<ISO-8601>","closure":"<main_checkpoint|lane_handoff|accepted_no_git>","build_attempts":<n>,"review_attempts":<n>,"findings_total":<n>,"finding_types":["<review finding type>"],"code_inspection":"<shown_no_pause|awaiting_user|inspected|not_applicable>","checkpoint":"<auto|ask|none>"}
+```
+
+Every field is a projection of artifacts that already exist at closure: the Task record, its Build Results, its Review Results, the recorded code-inspection disposition, and the checkpoint outcome. Derive each value by counting or reading those artifacts.
+
+- Append exactly one line when an accepted Task closes, and record which path closed it. Every delivery mode has exactly one such point, so no mode is silently unmeasured:
+  - `main_checkpoint`: the single-`main` logical checkpoint. Work appends the line before staging and includes that one path in the checkpoint, so the line is committed with the Task it describes.
+  - `lane_handoff`: a non-`main` Lane candidate sealed. The role that creates the Lane handoff commit appends it — Reviewer for `knowledge_sync: defer|none`, Knowledge Maintainer after a required `PREPARE_DELTA`. The ledger already lies inside the `.ai/lanes/<lane>/**` that commit stages.
+  - `accepted_no_git`: Git is unusable. Append at the accepted transition with `checkpoint: none`.
+- A Task that is superseded, abandoned, or still open produces no line. Integration reviews a merged range rather than a Task and appends nothing; its activation is read from the `lane_handoff` lines that fed it.
+- Append only after the verdict and its owning artifacts are final, so a line can never influence a verdict, route, or Review. That ordering, not the identity of the writing role, is what preserves independence.
+- Every Git-backed closure commits the line with the change it describes, so the ledger is never left as permanent untracked drift and never falls into an unrelated Task's commit. No entry records the revision it landed in: Git already answers that, and a field that can only be filled after the commit would force the append out of the commit it belongs to.
+- A line therefore exists only inside the commit that carries it. An attempt that appends but cannot commit removes its own line before returning a blocker, and a later attempt discards any uncommitted ledger change it finds instead of building on it. Discarding restores the file to its committed state, so a retry appends exactly one line without ever reading the entries.
+- Never infer a field from chat memory, and never write a value an artifact does not support. Omit an unsupported optional field rather than guessing.
+- Do not record provider, model, effort, token counts, elapsed time, file counts, or any other value that is not durably recorded at closure. Comparative provenance belongs to `.ai/evals/README.md`, which pins configuration explicitly; a model's self-identification is never evidence.
+- Never record source, chat text, logs, secrets, user data, or free-form prose.
+
+This file is write-only during ordinary work. Bootstrap, roles, recovery, status projections, and handoffs never read it, never report it, and never gate on it. A missing, empty, or partial ledger is always valid and never a blocker, a Review finding, or a reason to pause: it is evidence for Workflow maintenance, not project state. Reading it is a maintenance action performed in the canonical distribution checkout under `maintenance/WORKFLOW_REVIEW.md`.

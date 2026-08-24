@@ -40,10 +40,11 @@ If the user later requests fixes, perform them as a separate change and rerun th
 ## Evidence-first read order
 
 1. `README.md`, current `.ai/maintenance/release.yaml`, Changelog, and read-only Git status/diff.
-2. Results from `tools/validate-workflow.ps1`, `tools/test-validation.ps1`, and applicable completed Evals.
+2. Results from `tools/validate-workflow.ps1`, `tools/test-validation.ps1`, and applicable completed Evals. When the change refactors validation itself, also run `tools/compare-validation.ps1`. `dropped_protection` and `wording_drift` must both be zero: the first means a rule still stands in the contract with nothing enforcing it, the second means the rule survived a rewrite while its guard stopped matching. Every `enforcement_ended` entry needs a human decision, because the tool cannot tell a deliberate rule removal from a rewrite that quietly lost its guard; confirm each as removed on purpose or re-guard it under its current wording.
 3. In `changed` mode, only changed artifacts plus their authority, state, role, and output contracts.
 4. Applicable Golden Core/Worktree fixtures and regression catalog entries.
 5. In `full` mode, the remaining Core entry points and source-only maintenance boundaries needed for every lens below.
+6. Only when the user explicitly supplies installation roots, their read-only `.ai/lanes/<lane>/ledger.jsonl` for `#observed-activation`.
 
 Do not preload historical Evals, every installed-project artifact, or unrelated project source. Request missing evidence only when it can change a finding.
 
@@ -63,14 +64,14 @@ Judge every applicable lens as `PASS | PARTIAL | FAIL | N/A`, with the minimum s
 | Lens | Questions |
 |---|---|
 | 1. Purpose and differentiation | Is the target user, problem, and reason for this Workflow clear? Does it describe a Workflow rather than an AI-model guide? |
-| 2. First-use and human usability | Can a first visitor install, initialize, recognize success/failure, start work, and find the next instruction from README alone? |
-| 3. End-to-end lifecycle | Do start, design, approval, small build, independent Review, Knowledge, Feature-boundary intent-to-code convergence, Integration, continuation, and finish connect in executable order without missing an approved outcome? Are optional steps truly optional? |
+| 2. First-use and human usability | Can a first visitor install, initialize, recognize success/failure, start work, and find the next instruction from README alone? Can a busy reader locate result, consequence, current flow/source, evidence/uncertainty, and next action without parsing repeated internal history or relying on arbitrary line limits? |
+| 3. End-to-end lifecycle | Do start, lowest-sufficient Architecture baseline, executable backbone/first vertical Task, approval, Build, independent Review, Knowledge, Feature-boundary intent-to-code convergence, Integration, continuation, and finish connect in executable order without missing an approved outcome? Does broad design stop before reversible detail while a local change avoids whole-project re-baselining? Are optional steps truly optional? |
 | 4. Responsibility and human gates | Are AI roles, artifacts, and human decisions separated? Does the user intervene only for consequential intent, approval, external effects, or unavailable evidence? Is concise informed assent bound to one displayed outcome while confusion or surrender is never treated as product authority? |
 | 5. Failure, routing, and recovery | Does every blocker/finding have one owner and a defined repair/resume path? Can session/model replacement restore state without chat memory or restarting everything? |
 | 6. Verification and reproducibility | Are completion, candidate identity, Build/Test/Review/runtime evidence, unverified risk, and release claims independently checkable and truthful? |
-| 7. Authority, context, and portability | Is each fact and artifact lifetime owned once? Are living views, reference-only intent, and flow-forward evidence kept distinct? Can another session reconstruct state without rewriting completed history, and can projects, languages, providers, and sessions change without rewriting Core? Are personal/project defaults prevented from silently becoming universal invariants? |
-| 8. Efficiency and proportionality | Are Context, prompts, questions, approvals, handoffs, retries, optional procedures, and hard-rule volume proportionate to risk and value without lowering the quality floor? Does broad collaborative planning stay at one current design altitude and ask or write only what is needed now for its bounded deliverable? Trace the ordinary single-main one-Task path: did always-read files, user stops, cross-session handoffs, broad-suite runs, or durable outputs increase, and does each increase catch a named failure? Are presentation/default rules prevented from creating false blockers or ceremonial gates? |
-| 9. Documentation and maintenance | Are terminology, names, abstraction level, single-source rules, links, update paths, and change locations consistent? Is README progressively disclosed rather than merely short? |
+| 7. Authority, context, and portability | Is each fact and artifact lifetime owned once? Are living views, reference-only intent, approved behavior-oracle scope, and flow-forward evidence kept distinct? Are project precedent, standards, reference implementations, analogous principles, and experiments used in their recorded roles rather than promoted to authority? Can another session reconstruct state without rewriting completed history, and can projects, languages, providers, and sessions change without rewriting Core? Are personal/project/model defaults prevented from silently becoming universal invariants? |
+| 8. Efficiency and proportionality | Are Context, prompts, questions, approvals, handoffs, retries, research, optional procedures, and hard-rule volume proportionate to risk and value without lowering the quality floor? Does Architecture establish the smallest sufficient whole, stop at an executable backbone, and avoid both premature coding and exhaustive up-front detail? Trace the ordinary single-main one-Task path: did always-read files, user stops, output stacks, repeated explanation, cross-session handoffs, broad-suite runs, or durable outputs increase, and does each increase catch a named failure? Are presentation/default rules prevented from creating false blockers, fixed-length cargo cults, or ceremonial gates? |
+| 9. Documentation and maintenance | Are terminology, names, abstraction level, single-source rules, links, update paths, and change locations consistent? Does the same intent/responsibility/flow vocabulary remain traceable from Architecture through exact Builder source anchors and reviewed Diff/Knowledge without duplicated inventories? Is README progressively disclosed rather than merely short? |
 | 10. Trust, security, and losslessness | Are repository instructions, secrets, scripts/hooks, write scope, updates, migrations, backups, rollback, project state, and supplied installations safely bounded? |
 
 Interpret common heuristics carefully:
@@ -96,12 +97,12 @@ Judge the README as the Workflow's first user interface. It passes only when the
 | First action | A new user can copy the correct install payload and start the first Work session without reading another document. |
 | Session separation | Work and Reviewer are visibly assigned to different sessions, and the Bootstrap Prompt location is unambiguous. |
 | Success recognition | The user can distinguish successful initialization, `READY`, and `BLOCKED`, then identify the next action. |
-| Normal loop | Request, design/approval when needed, Build, Review, repair/PASS, and continuation/finish can be traced in execution order. |
+| Normal loop | Request, lowest-sufficient design/approval when needed, executable vertical Build, progressive exact-source orientation, Review, repair/PASS, and continuation/finish can be traced in execution order. |
 | Failure recovery | A blocked or failed common path identifies the responsible session or points to the exact recovery instruction. |
 | Progressive disclosure | Everything required for first success remains visible; optional Worktree, strict-session, update, release, and conceptual detail stays on demand. |
 | Contract accuracy | Prompts, paths, role names, states, and generated-card names match their current canonical contracts. |
 | Single source | README summarizes user actions and links to canonical detailed rules instead of becoming a second authority. |
-| Terminology | User-facing terms remain stable and are explained before unexplained use can block the normal path. |
+| Terminology | User-facing terms remain stable, responsibility/flow names stay continuous from design to source/Review, and unfamiliar terms are explained before unexplained use can block the normal path. |
 | Claims | Design properties and measured outcomes are distinguished; unavailable evidence is not presented as proof. |
 
 Perform one bounded cold-reader trace using README alone. The reviewer must be able to answer, with exact visible evidence:
@@ -114,6 +115,28 @@ Perform one bounded cold-reader trace using README alone. The reviewer must be a
 6. Where are optional or unusual procedures found without obstructing the normal path?
 
 If a required normal-path answer needs guessing, mark the applicable lens `PARTIAL` or `FAIL`. Classify an unusable or unsafe first path or incorrect command as P1; recurring ambiguity in role, next action, or recovery as P2; and bounded wording, placement, or navigation improvement as P3. P3 alone does not fail the Workflow. Do not require a table of contents, folder tree, screenshot, example, or arbitrary line limit unless its absence creates a concrete failed trace.
+
+## Observed activation
+
+The Workflow can only add rules until observed runs show which ones never fire. This section is the required subtraction pass and supplies the strongest available evidence for lens 8.
+
+Evidence is `.ai/lanes/<lane>/ledger.jsonl` from installed projects the user explicitly supplies, read exactly as `maintenance/RELEASE.md` reads supplied installation roots: read-only, direct paths only, never discovered by crawling. The canonical checkout owns no runtime Lane and therefore no ledger of its own. When the user supplies none, report `activation=not_available` and continue; a missing ledger is never a finding and never blocks a release.
+
+When at least one ledger is supplied, report over its accepted-Task lines:
+
+| Signal | Read it as |
+|---|---|
+| `findings_total` and `finding_types` distribution | whether independent Review earns its separate session, and which finding types are real |
+| `review_attempts` / `build_attempts` distribution | whether the retry and repair routes are exercised or theoretical |
+| declared blocker/finding types with zero occurrences | rules whose cost is currently unproven |
+| `code_inspection` and `checkpoint` values | whether configured pauses and checkpoint modes are actually used |
+| `closure` distribution | which delivery modes the window actually contains |
+
+Partition the window by `closure` before judging any rule, and report each count. A rule that can only fire in an unobserved mode is `not_observed`, never zero-activation: with no `lane_handoff` line, the worktree, Front Desk, sealed-candidate, and Integration rules are unmeasured, not unused. Reporting them as unused would aim the subtraction pass at the least-exercised and most safety-critical machinery in the Workflow.
+
+Within an observed mode, list every contract-declared blocker type, finding type, and optional card that has zero occurrences, with the window size. Zero activation is not automatic deletion: a rule may exist for a rare high-severity case, and a small window proves little. It is a required question to answer, not a verdict. Recommend removal only when the rule also has no named safety, correctness, or loss consequence, and record the retained ones with the reason they stay.
+
+Never add a rule in the same review that reports zero-activation rules without stating which existing rule it replaces or why the always-read budget still holds.
 
 ## Findings
 
@@ -178,8 +201,11 @@ automated=<pass|fail|not_run> regression=<pass|fail|not_run>
 findings=P1:<n>,P2:<n>,P3:<n>
 independence=<independent_session|reduced_assurance>
 self_check=<pass|corrected|blocked> corrections=<n>
+budget=<pass|fail> slack=<set>:<bytes>,... activation=<main:<n> lane:<n> no_git:<n>|not_available>
 release_recommendation=<ready|not_ready|not_assessed>
 ```
+
+`budget` is the validator's always-read ceiling check for the reviewed source: `pass` when every role-entry path is within its ceiling, `fail` otherwise. Report the measured slack per set with it, as `budget=pass slack=<set>:<bytes>,...`, because a ceiling that passes while its slack quietly shrinks recreates the tripwire the ceiling was raised to remove; consecutive reviews must be able to compare that number. `activation` counts the accepted-Task ledger lines actually read, by closure mode, or `not_available` when no installation root was supplied.
 
 Then provide:
 
@@ -187,8 +213,9 @@ Then provide:
 2. findings in priority order;
 3. valuable mechanisms that should remain;
 4. the smallest safe fix order;
-5. unverified claims or evidence gaps; and
-6. a short self-check record: frozen-draft corrections with reasons, or `none`.
+5. unverified claims or evidence gaps;
+6. the `#observed-activation` report, including zero-activation rules and whether each is retained or recommended for removal; and
+7. a short self-check record: frozen-draft corrections with reasons, or `none`.
 
 For canonical release embedding, finish the section with `- findings: P1:<n>, P2:<n>, P3:<n>` and `- deferred P2: none` when P2 is zero. When P2 is nonzero, include one detailed `[P2]...` finding per count and a non-`none` deferred-P2 line naming consequence and follow-up evidence/proof.
 
