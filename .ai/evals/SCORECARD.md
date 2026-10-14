@@ -64,6 +64,8 @@ Use `source_regression` for canonical release evidence. For that type, provider/
 | tokens: input / cached / output / total-to-accept | | |
 | initial/expanded context + expansion reason | | |
 
+Use the existing intent/scope, decision, explanation, cadence, and human-correction rows to assess request continuity, enclosing-purpose stops, tuning, and repair of misunderstood feedback. For source-only runs, record contract/scenario coverage rather than claiming a user understood or learned. For live runs, separate observed corrections or source-based reasoning from unobserved comprehension; silence, assent, copying, and successful tests are not learning evidence. No mandatory quiz or extra user-reporting row is implied.
+
 ## Targeted Regressions
 
 List only the regression cases named in front matter; use `not_applicable` rather than inventing evidence.

@@ -118,23 +118,24 @@ If a required normal-path answer needs guessing, mark the applicable lens `PARTI
 
 ## Observed activation
 
-The Workflow can only add rules until observed runs show which ones never fire. This section is the required subtraction pass and supplies the strongest available evidence for lens 8.
+Use recorded runs for a bounded subtraction pass under lens 8. Interpret only the activity the supplied evidence actually measures; missing evidence is not evidence that a rule never fires.
 
 Evidence is `.ai/lanes/<lane>/ledger.jsonl` from installed projects the user explicitly supplies, read exactly as `maintenance/RELEASE.md` reads supplied installation roots: read-only, direct paths only, never discovered by crawling. The canonical checkout owns no runtime Lane and therefore no ledger of its own. When the user supplies none, report `activation=not_available` and continue; a missing ledger is never a finding and never blocks a release.
 
-When at least one ledger is supplied, report over its accepted-Task lines:
+When at least one ledger is supplied, report over its accepted-Task lines, naming the window size and field coverage. This is a selected window of accepted closures: superseded, abandoned, and still-open Tasks produce no line. Do not infer whole-project success, failure/retry cost, productivity, Review effectiveness, or learning from this window alone. Missing fields or incomplete records stay `not_measured`, not zero; they never justify another runtime record or a release blocker.
 
 | Signal | Read it as |
 |---|---|
-| `findings_total` and `finding_types` distribution | whether independent Review earns its separate session, and which finding types are real |
-| `review_attempts` / `build_attempts` distribution | whether the retry and repair routes are exercised or theoretical |
-| declared blocker/finding types with zero occurrences | rules whose cost is currently unproven |
-| `code_inspection` and `checkpoint` values | whether configured pauses and checkpoint modes are actually used |
-| `closure` distribution | which delivery modes the window actually contains |
+| `findings_total` and `finding_types` | recorded finding totals and Task lines listing each type; do not infer per-type finding counts from a type list |
+| `review_attempts` / `build_attempts` | recorded attempts for accepted Tasks only, not the cost of unsuccessful or unfinished work |
+| `code_inspection` and `checkpoint` | recorded closure dispositions, not every pause/card use or its duration |
+| `closure` distribution | accepted closure modes represented in this window, not proof that every downstream procedure ran |
 
 Partition the window by `closure` before judging any rule, and report each count. A rule that can only fire in an unobserved mode is `not_observed`, never zero-activation: with no `lane_handoff` line, the worktree, Front Desk, sealed-candidate, and Integration rules are unmeasured, not unused. Reporting them as unused would aim the subtraction pass at the least-exercised and most safety-critical machinery in the Workflow.
 
-Within an observed mode, list every contract-declared blocker type, finding type, and optional card that has zero occurrences, with the window size. Zero activation is not automatic deletion: a rule may exist for a rare high-severity case, and a small window proves little. It is a required question to answer, not a verdict. Recommend removal only when the rule also has no named safety, correctness, or loss consequence, and record the retained ones with the reason they stay.
+An observed closure mode does not make every event measurable. The ledger has no blocker-event or general optional-card-use field; classify those uses as `not_measured`, even inside an observed mode. A `lane_handoff` line proves an accepted Lane closure, not that main applied or reviewed it. Use other existing evidence only within an explicitly authorized read-only scope; never crawl installations, collect new runtime data automatically, or widen the report by guessing.
+
+Within an observed mode, report zero only for an event represented by an applicable recorded field whose coverage is complete for the named window. For example, complete `finding_types` lists with no `architecture` entry establish zero accepted-Task lines listing that finding type in that window, not zero Architecture blockers or decisions. An unsupported field or partial coverage is `not_measured`; an absent applicable mode is `not_observed`. Zero activation is not automatic deletion: a rule may exist for a rare high-severity case, and a small window proves little. It is a required question to answer, not a verdict. Recommend removal only when the rule also has no named safety, correctness, or loss consequence, and record the retained ones with the reason they stay.
 
 Never add a rule in the same review that reports zero-activation rules without stating which existing rule it replaces or why the always-read budget still holds.
 
@@ -214,7 +215,7 @@ Then provide:
 3. valuable mechanisms that should remain;
 4. the smallest safe fix order;
 5. unverified claims or evidence gaps;
-6. the `#observed-activation` report, including zero-activation rules and whether each is retained or recommended for removal; and
+6. the `#observed-activation` report, including the accepted-Task window/field coverage, measured zero-activation rules and their retention/removal reasons, and `not_measured`/`not_observed` limits; and
 7. a short self-check record: frozen-draft corrections with reasons, or `none`.
 
 For canonical release embedding, finish the section with `- findings: P1:<n>, P2:<n>, P3:<n>` and `- deferred P2: none` when P2 is zero. When P2 is nonzero, include one detailed `[P2]...` finding per count and a non-`none` deferred-P2 line naming consequence and follow-up evidence/proof.

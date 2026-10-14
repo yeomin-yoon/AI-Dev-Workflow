@@ -232,6 +232,18 @@ try {
     }
     Write-Output 'PASS fixture-baseline'
 
+    $localStagingRoot = New-Fixture 'preserved-local-staging'
+    $localStagingPath = Join-Path $localStagingRoot '.ai/maintenance/staging/TRIAGE-fixture.md'
+    $null = New-Item -ItemType Directory -Path (Split-Path -Parent $localStagingPath) -Force
+    [System.IO.File]::WriteAllText($localStagingPath, "# Local triage`n`nPreserved local evidence, not managed distribution payload.`n", [System.Text.UTF8Encoding]::new($false))
+    $localStagingHash = (Get-FileHash -LiteralPath $localStagingPath -Algorithm SHA256).Hash
+    $localStaging = Invoke-Validation $localStagingRoot
+    if ($localStaging.ExitCode -ne 0) { throw "Preserved local staging failed:`n$($localStaging.Text)" }
+    if (-not (Test-Path -LiteralPath $localStagingPath -PathType Leaf) -or (Get-FileHash -LiteralPath $localStagingPath -Algorithm SHA256).Hash -ne $localStagingHash) {
+        throw 'Validation changed or removed preserved local staging evidence'
+    }
+    Write-Output 'PASS preserved-local-staging=unchanged'
+
     $releasePassRoot = New-Fixture 'release-pass'
     Initialize-FixtureGit $releasePassRoot
     $null = Write-ModernEval $releasePassRoot 'pass'
@@ -2372,6 +2384,56 @@ regression_cases: []
         $text = $text.Replace('each item stays reversible with no approved-behavior or contract change and keeps its own AC', 'the batch as a whole stays reversible and keeps one shared AC')
         [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
     } 'Contract is missing a required invariant token: path=.ai/contracts/TASK_RECORD.md token=each item stays reversible with no approved-behavior or contract change and keeps its own AC'
+
+    # Authority/state safeguards only. Adaptive explanation is assessed through
+    # the existing Golden transcript oracles, not a phrase fixture per sentence.
+    Assert-NegativeFixture 'captured-request-becomes-approval' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ARCHITECTURE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Only approved outcomes enter approved Scope or Delivery Slices', 'Every captured proposal enters approved Scope and Delivery Slices')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ARCHITECTURE.md token=Only approved outcomes enter approved Scope or Delivery Slices'
+
+    Assert-NegativeFixture 'partial-success-withdraws-outstanding-request' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ARCHITECTURE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Partial success, topic change, silence, or brief assent never withdraws other requests', 'Partial success closes every other outstanding request')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ARCHITECTURE.md token=Partial success, topic change, silence, or brief assent never withdraws other requests'
+
+    Assert-NegativeFixture 'one-task-creates-unbounded-cleanup' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ARCHITECTURE.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('One-Task continuation never authorizes endless cleanup', 'One-Task continuation repeatedly adds every available cleanup')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ARCHITECTURE.md token=One-Task continuation never authorizes endless cleanup'
+
+    Assert-NegativeFixture 'post-handoff-tuning-reuses-verdict' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/TASK_RECORD.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('A mutation after handoff or verdict still requires a fresh Build/Review identity', 'A small numeric mutation after Review may reuse the old verdict')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/TASK_RECORD.md token=A mutation after handoff or verdict still requires a fresh Build/Review identity'
+
+    Assert-NegativeFixture 'intake-clears-inspection-wait' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Intake never clears the inspection wait or changes its recorded route/candidate identity', 'Intake clears the wait and executes the pending continuation')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=Intake never clears the inspection wait or changes its recorded route/candidate identity'
+
+    Assert-NegativeFixture 'unpersisted-intake-declared-recoverable' {
+        param($root)
+        $target = Join-Path $root '.ai/contracts/ACTION_CARDS.md'
+        $text = [System.IO.File]::ReadAllText($target, [System.Text.Encoding]::UTF8)
+        $text = $text.Replace('Do not claim a recoverable close until the request is retrievable from its owning artifact', 'A chat-only request is sufficient for recoverable close')
+        [System.IO.File]::WriteAllText($target, $text, [System.Text.UTF8Encoding]::new($false))
+    } 'Contract is missing a required invariant token: path=.ai/contracts/ACTION_CARDS.md token=Do not claim a recoverable close until the request is retrievable from its owning artifact'
 
     Assert-NegativeFixture 'always-read-budget-exceeded' {
         param($root)
