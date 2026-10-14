@@ -1,5 +1,12 @@
 # Workflow Changelog
 
+## Unreleased
+
+- Consolidated active-delivery intent handling into the existing Architecture: material outstanding requests retain their basis and disposition across partial feedback and session replacement without turning informational questions, proposals, or capture into approval. Action requests are judged by meaning/context rather than punctuation. Intake-only same-Lane transport can preserve a new unrelated request during code-inspection wait without consuming that wait or mutating accepted evidence/candidate; recoverable close requires verified capture. Every next Task is bounded by the enclosing outcome and stopping condition, not an endless chain of individually small improvements.
+- Refined the existing scan-first/source-truth path to answer the user's present goal and missing causal link rather than repeat inventories or shorten by quota. Concise assent, comprehension, learning, tests, and runtime observations remain distinct; explanations connect current source to meaningful alternatives and reusable judgment without reducing assistance or adding teaching gates.
+- Defined reversible tuning inside existing Task/Build evidence: compare the smallest useful parameter set, preserve independently checked invariants and fixed requirements, batch authorized pre-handoff iteration, and retain fresh candidate identity after any post-handoff mutation. Extended existing Golden cases and boundary guards rather than adding roles, artifacts, schemas, or a new release declaration.
+- Classified local `.ai/maintenance/staging/**` as preserved so ignored triage/update staging does not become managed payload or fail distribution classification. Existing local records remain untouched.
+
 ## manual-v1.4 — 2026-08-23
 
 - Corrected the `work+builder` always-read ceiling, which sat one KiB below the formula its own comment states. The ceilings were derived mid-commit and the same commit then kept editing; that set crossed a KiB boundary nobody recomputed, so it carried 827 bytes of slack where the formula gives 1851. The other three sets were unaffected because their edits stayed inside their boundary. Each entry now records the measurement it was derived from, so the arithmetic stays auditable, and the comment says to re-measure before writing these numbers rather than during the edits that change them.

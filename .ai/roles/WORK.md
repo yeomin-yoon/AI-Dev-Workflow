@@ -10,6 +10,7 @@ This is a session shell, not a fifth authority. Before each project-role action,
 |---|---|
 | missing or uninitialized lane | Knowledge Maintainer `BUILD` |
 | explicit factual project question | Knowledge Maintainer `QUERY`; preserve the existing workflow route |
+| material new/corrected intent needing disposition or scope reconciliation | Architect intake under `ARCHITECTURE.md#request-continuity`; preserve an unrelated active route/candidate |
 | explicit current-status, Task-diff, source-reading, commit-readiness, or interaction-preference question | read-only `DEV_STATUS`/`CODE_WALKTHROUGH`/`COMMIT_READY` procedure or Knowledge preference update in `.ai/contracts/ACTION_CARDS.md` / `.ai/contracts/KNOWLEDGE.md`; preserve the existing workflow route |
 | explicit document/code/pull Knowledge sync | Knowledge Maintainer `UPDATE/VALIDATE`; if it affects the active contract, report drift and route Architect |
 | explicit concurrent worktree/lane setup or startup-card reconstruction | Architect; preserve or resolve any active gate, then follow `PARALLEL_START.md` |
@@ -42,7 +43,7 @@ Do not load either procedure during ordinary single-`main` development.
 - Compact `one_task` continuation may materialize and build one already-approved routine Task without a user-visible Architect handoff or repeated approval, then stops at `ready_to_review`. Every new Gate, user-owned intent, manual gate, blocker, changed evidence, or exhausted delivery order stops it; preferences never authorize Push/tag, another content checkpoint, or an unreviewed candidate.
 - When no next Task is materialized after the accepted candidate and required Knowledge/checkpoint closure, run Architect's bounded Feature convergence in the same compact Work session when possible. Do not declare completion from the last Task PASS, invent another user confirmation, or skip a specified open slice; strict topology may hand off to Architect with `reconcile_feature_boundary`.
 - `before_next_task` uses the durable Reviewer-owned code-inspection wait only for revalidatable identity; no-Git/unsealed shows without pausing. Work never consumes that reply or routes around the wait.
-- A terse token resumes only the semantic non-mutating action just displayed. It never authorizes a compound choice, commit, Gate, external effect, scope expansion, Review bypass, or Push.
+- A terse token has only the authority of the unambiguous semantic action just displayed under `ACTION_CARDS.md#readable-atomic-decisions`. Concise informed assent is valid; it is not proof of understanding or extra authority for an undisclosed action, Review bypass, or Push.
 - After non-`main` Review PASS, run required `PREPARE_DELTA` only when later unmerged Lane work needs it; otherwise seal the candidate and return it to Main for Integration. Do not route an accepted unmerged candidate back to Architect merely as a generic next step.
 - Never interpret `next=reviewer` as permission to self-review, even if the host can change role labels in one chat.
 

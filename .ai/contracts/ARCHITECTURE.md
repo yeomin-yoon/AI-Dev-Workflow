@@ -76,3 +76,21 @@ Rules:
 - At a natural Feature boundary, the current approved `Scope` and `Delivery Slices` are the intent-coverage baseline. Architect reconciles them against Tasks, accepted Reviews, live implementation, and decisive evidence before claiming Feature completion or resting with user-approved deferred work; Task PASS alone is not whole-Feature coverage.
 - A historical approved Architecture without `Delivery Slices` remains readable. At Feature convergence, reconstruct a candidate outcome map from its approved `Scope`, explicit intent/requirement refs, Tasks, and accepted Reviews. Backfill the living Architecture without a new Gate only when that map is lossless and introduces no intent, scope, or structural decision; otherwise keep the outcome `open` or route `context | contract` and never claim completion from the missing section.
 - Shared contracts require Integration approval.
+
+## Request continuity
+
+This section owns supplied intent across turns and session replacement. Preserve a request and its supplied reason; capture is not implementation approval and missing basis stays unknown. An informational question alone is not a change request; judge action requests by meaning/context, not punctuation, and clarify only material ambiguity. An AI proposal is not an accepted requirement. Only approved outcomes enter approved Scope or Delivery Slices.
+
+Architect retains material outstanding requests in the living Architecture's Goal, Scope, Decisions, or Open Risks; use an optional `Request disposition` body note only when none fits. Record outcome, user/document basis, approval or unresolved choice, disposition/reason, owner/next trigger, and accepted evidence when resolved. Intake is not approved design, a Task queue, another specification, or a state field. Omit it for a single covered request; historical artifacts need no backfill until relevant work resumes.
+
+A later message changes only its addressed intent dimension. Partial success, topic change, silence, or brief assent never withdraws other requests. Withdrawal, replacement, or deferral needs its user-owned basis; unaccepted proposals need not become work. Preserve unresolved dispositions and existing input pointers through re-baselining or replacement, not a transcript or permanent user profile.
+
+Work may select Architect for bounded intake without changing an unrelated route/candidate. Fixed Builder/Reviewer uses its open evidence or the intake-only transport in `ACTION_CARDS.md#handoff`, never Architecture or completed evidence. Changed approved intent uses requirement-drift before Build; unrelated requests stay behind the result without a new Gate/Task. Report pending results, not completion.
+
+## Delivery purpose and stop
+
+Before the next Task, compare its distinct improvement, necessary dependency, or blocker with the enclosing approved outcome, outstanding deliverables, decisive evidence, and stopping boundary. Reuse Scope, Verification Strategy, and Delivery Slices, not a score or planning artifact. Completion follows accepted outcome coverage, not Task count or available cleanup.
+
+Bound diagnosis, cleanup, or optimization by its question/evidence. Stop expansion when the approved result is covered, no material problem remains supported, or further investigation cannot distinguish uncertainty or justify its cost. Keep unresolved mandatory outcomes open. Evidenced defects need no profiler; suspected bottlenecks remain hypotheses and performance gains need relevant runtime measurement. Local checks prove neither platform-wide speed nor user understanding.
+
+Group supporting fixes with one delivery reason/coherent verification under the Task Quality Gate; separate independent risks, owners, or outcomes. One-Task continuation never authorizes endless cleanup. Material expansion explains added outcome/cost and obtains the applicable scope decision, not ceremonial reapproval.

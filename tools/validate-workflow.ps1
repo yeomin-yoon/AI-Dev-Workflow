@@ -839,7 +839,8 @@ $contractTokenRequirements = @{
         'proportional cross-artifact consistency check over only this Task''s exact lineage',
         'intent -> Architecture -> Task lineage has no material gap or contradiction',
         'Complete local frame',
-        'the first Task realizes the Architecture''s executable backbone'
+        'the first Task realizes the Architecture''s executable backbone',
+        'A mutation after handoff or verdict still requires a fresh Build/Review identity'
     )
     '.ai/contracts/ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -854,7 +855,10 @@ $contractTokenRequirements = @{
         'For a material reference, record its role',
         'the first slice is the executable backbone',
         'Select the lowest sufficient altitude',
-        'Stop Architecture expansion when the baseline is contradiction-free'
+        'Stop Architecture expansion when the baseline is contradiction-free',
+        'Only approved outcomes enter approved Scope or Delivery Slices',
+        'Partial success, topic change, silence, or brief assent never withdraws other requests',
+        'One-Task continuation never authorizes endless cleanup'
     )
     '.ai/shared/SYSTEM_ARCHITECTURE.md' = @(
         'requirement_refs: []',
@@ -940,7 +944,7 @@ $contractTokenRequirements = @{
         'a Build/Review repair referenced by the active Integration queue `repair` mapping PASSes',
         'single-main working-tree PASS must reach the `ACTION_CARDS.md` scoped logical checkpoint',
         'await_code_inspection_then_resume_review_route',
-        'emit no `DO_NEXT` yet',
+        'emit no continuation `DO_NEXT` yet',
         'descriptive inspected/continue reply arrives and candidate identity is unchanged',
         'inspection changes Task-attributed candidate bytes',
         'resolve_code_inspection_attribution_then_resume_reviewer_inspection_wait',
@@ -1090,6 +1094,8 @@ $contractTokenRequirements = @{
         'code_inspection=awaiting_user',
         'purely mechanical/non-code PASS sets `not_applicable`',
         'a `CODE_WALKTHROUGH` with `code_inspection=awaiting_user` stays in Reviewer',
+        'Intake never clears the inspection wait or changes its recorded route/candidate identity',
+        'Do not claim a recoverable close until the request is retrievable from its owning artifact',
         'This pause applies only to an ordinary Task Review whose Git tree or canonical working-tree fingerprint can be revalidated',
         'Integration Review always sets `code_inspection=not_applicable`',
         '## Single-main commit checkpoint',
@@ -1382,7 +1388,7 @@ $contractTokenRequirements = @{
         'explicit current-status, Task-diff, source-reading, commit-readiness, or interaction-preference question',
         'without a user-visible Architect handoff or repeated approval',
         'stops at `ready_to_review`',
-        'A terse token resumes only the semantic non-mutating action just displayed',
+        'A terse token has only the authority of the unambiguous semantic action just displayed',
         'Use the exact executable `DO_NEXT` from `ACTION_CARDS.md` for cross-session transport',
         'preferences never authorize Push/tag, another content checkpoint, or an unreviewed candidate',
         'a feature boundary is only a safe checkpoint, not replacement evidence by itself',

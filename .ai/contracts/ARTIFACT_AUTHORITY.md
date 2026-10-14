@@ -4,7 +4,7 @@ No single artifact is authoritative for every fact.
 
 | Fact | Authority |
 |---|---|
-| user goal | latest explicit request / approved spec |
+| user goal | latest explicit request / approved spec for the addressed dimension; non-conflicting outstanding intent remains in force |
 | approved product requirement | latest explicit user-owned intent or applicable approved product/requirements/specification section at its recorded revision; unapproved or generated document edits are candidate context, not approval |
 | approved target/original/compatibility behavior | latest explicit user-owned scope naming that reference and behavior plus verified observation at its recorded version/date; it is intent only inside that scope and ordinary reference evidence elsewhere |
 | Task scope and completion | approved Task + its exact accepted Review/evidence |

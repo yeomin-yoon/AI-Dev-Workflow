@@ -37,7 +37,7 @@ Repair only the responsible artifact; do not restart the whole workflow.
 
 Use this before a cause, user choice, manual evidence request, new Task, or broader investigation can change an active delivery route:
 
-1. Reconstruct the delivery anchor from the current Task's exact observable ACs, applicable approved Architecture/requirement sections, and latest explicit user intent. State the intended observable behavior before technical hypotheses. Do not ask the user to choose an outcome that this evidence already determines.
+1. Reconstruct the delivery anchor from the current Task's exact observable ACs, applicable approved Architecture/requirement sections, and latest explicit user intent. Apply `ARCHITECTURE.md#request-continuity` when new input affects scope or outstanding work: a stale Task cannot erase a user's request, and capture cannot grant approval. State the intended observable behavior before technical hypotheses. Do not ask the user to choose an outcome that this evidence already determines.
 2. Label each claim `observed | inferred | confirmed`. `Observed` is direct source/runtime/diff evidence. `Inferred` is a plausible explanation with named uncertainty. `Confirmed` requires a discriminating check that rules out every materially viable competing cause. Use phrases such as `root cause confirmed` only for `confirmed` evidence, and correct an earlier inference explicitly when evidence disproves it.
 3. Classify each discovery against that same delivery anchor:
 

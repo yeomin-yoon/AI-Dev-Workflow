@@ -48,6 +48,7 @@ preserved:
   - .ai/maintenance/update-state.yaml
   - .ai/maintenance/observations/<observation>.yaml
   - .ai/maintenance/backups/**
+  - .ai/maintenance/staging/**
 
 precedence:
   - Managed documentation/template paths and preserved runtime paths do not overlap.

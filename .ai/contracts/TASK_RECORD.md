@@ -85,7 +85,7 @@ The gate returns exactly one internal planning outcome:
 
 `SPLIT` and `MERGE` are private Architect revisions, not new user gates. Ask the user only when the underlying change requires user-owned intent or an Architecture Gate. Do not add a separate Task-quality artifact, session, numeric score, or bare `task_quality=pass`; the Task Record fields are the evidence.
 
-Task creation also requires a current delivery reason: an explicit user-requested outcome, the approved Architecture delivery order, a dependency of the next observable outcome, or repair of an `OPERATIONS.md#bounded-diagnosis-during-active-delivery` `current_blocker`. A discovered `follow_up` is not independently READY merely because it is real or convenient to fix, and `not_actionable` evidence never becomes a Task.
+Task creation also requires a current delivery reason: an explicit user-requested outcome, the approved Architecture delivery order, a dependency of the next observable outcome, or repair of an `OPERATIONS.md#bounded-diagnosis-during-active-delivery` `current_blocker`. Apply `ARCHITECTURE.md#delivery-purpose-and-stop` to the enclosing result, not only this Task's size. A discovered `follow_up` is not independently READY merely because it is real or convenient to fix, and `not_actionable` evidence never becomes a Task.
 
 When the complete procedure includes known user/editor saves to Task-attributed paths, label that step as candidate-mutating implementation to be batched during Builder's active attempt before final verification. Reserve post-handoff Reviewer gates for observation-only evidence or newly discovered setup that could not be known from the approved Task; do not knowingly design a Build -> Review -> save -> Build loop.
 
@@ -105,3 +105,11 @@ Every mandatory human gate must use:
 ```
 
 Do not approve a mandatory gate described only as `manual test`, `editor/runtime required`, or `user evidence needed`.
+
+## Reversible tuning
+
+Distinguish an approved behavior/invariant or explicitly fixed default from a value deliberately left tunable. Record its bounds, coupled constraints, and comparison surface in existing Constraints/Verification only when relevant. Builder may adjust an approved tunable within that scope and record the actual value in Build evidence; it cannot rewrite a fixed approved value or product rule. Architect reconciles a changed fixed requirement before further Build.
+
+During a comparison, vary the smallest relevant parameter set and state what is held constant. Change a coupled profile together only when needed and explain its combined effect; do not turn one-variable-at-a-time into a universal Gate. Parameterize behavioral tests from configuration where appropriate while retaining independent assertions for invariants, ordering, bounds, and any expressly required default. Updating expected literals to match every tweak is not behavioral verification.
+
+Approved tuning before handoff stays in the active Builder attempt under the active delivery kernel. Run affected checks during iteration and the required final matrix for the coherent candidate; planned authoring ends before Review. A mutation after handoff or verdict still requires a fresh Build/Review identity. Unaffected evidence is reusable only after impact checking, not by assuming a small numeric change is harmless.
