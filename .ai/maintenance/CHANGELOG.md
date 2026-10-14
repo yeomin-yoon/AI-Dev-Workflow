@@ -6,6 +6,7 @@
 - Refined the existing scan-first/source-truth path to answer the user's present goal and missing causal link rather than repeat inventories or shorten by quota. Concise assent, comprehension, learning, tests, and runtime observations remain distinct; explanations connect current source to meaningful alternatives and reusable judgment without reducing assistance or adding teaching gates.
 - Defined reversible tuning inside existing Task/Build evidence: compare the smallest useful parameter set, preserve independently checked invariants and fixed requirements, batch authorized pre-handoff iteration, and retain fresh candidate identity after any post-handoff mutation. Extended existing Golden cases and boundary guards rather than adding roles, artifacts, schemas, or a new release declaration.
 - Classified local `.ai/maintenance/staging/**` as preserved so ignored triage/update staging does not become managed payload or fail distribution classification. Existing local records remain untouched.
+- Corrected source-only run-ledger interpretation: report only covered accepted-Task facts, distinguish measured zero from unmeasured fields and unobserved modes, and never infer Integration execution, whole-project failure cost, productivity, or learning from closure records alone. The existing ledger schema, capture, and runtime routes are unchanged; extended the existing Workflow Review case without another log or gate.
 
 ## manual-v1.4 — 2026-08-23
 

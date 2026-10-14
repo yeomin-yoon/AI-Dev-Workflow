@@ -154,7 +154,7 @@ Only the listed phase/status/blocker enums and transitions are valid. Task statu
 
 ## Run ledger
 
-Path: `.ai/lanes/<lane>/ledger.jsonl`. One JSON object per line, appended once when an accepted Task reaches its closure, never rewritten. It exists so Workflow maintenance can decide from observed runs which rules, gates, and roles actually earn their cost.
+Path: `.ai/lanes/<lane>/ledger.jsonl`. One JSON object per line, appended once when an accepted Task reaches its closure, never rewritten. It projects accepted-Task closure facts, not a complete activity or cost log. Interpret it only during source-only maintenance under `maintenance/WORKFLOW_REVIEW.md#observed-activation`.
 
 ```json
 {"schema_version":1,"task":"<task-id>","closed_at":"<ISO-8601>","closure":"<main_checkpoint|lane_handoff|accepted_no_git>","build_attempts":<n>,"review_attempts":<n>,"findings_total":<n>,"finding_types":["<review finding type>"],"code_inspection":"<shown_no_pause|awaiting_user|inspected|not_applicable>","checkpoint":"<auto|ask|none>"}
@@ -166,7 +166,7 @@ Every field is a projection of artifacts that already exist at closure: the Task
   - `main_checkpoint`: the single-`main` logical checkpoint. Work appends the line before staging and includes that one path in the checkpoint, so the line is committed with the Task it describes.
   - `lane_handoff`: a non-`main` Lane candidate sealed. The role that creates the Lane handoff commit appends it — Reviewer for `knowledge_sync: defer|none`, Knowledge Maintainer after a required `PREPARE_DELTA`. The ledger already lies inside the `.ai/lanes/<lane>/**` that commit stages.
   - `accepted_no_git`: Git is unusable. Append at the accepted transition with `checkpoint: none`.
-- A Task that is superseded, abandoned, or still open produces no line. Integration reviews a merged range rather than a Task and appends nothing; its activation is read from the `lane_handoff` lines that fed it.
+- A Task that is superseded, abandoned, or still open produces no line. Integration reviews a merged range rather than a Task and appends nothing; a `lane_handoff` line alone does not prove Integration execution.
 - Append only after the verdict and its owning artifacts are final, so a line can never influence a verdict, route, or Review. That ordering, not the identity of the writing role, is what preserves independence.
 - Every Git-backed closure commits the line with the change it describes, so the ledger is never left as permanent untracked drift and never falls into an unrelated Task's commit. No entry records the revision it landed in: Git already answers that, and a field that can only be filled after the commit would force the append out of the commit it belongs to.
 - A line therefore exists only inside the commit that carries it. An attempt that appends but cannot commit removes its own line before returning a blocker, and a later attempt discards any uncommitted ledger change it finds instead of building on it. Discarding restores the file to its committed state, so a retry appends exactly one line without ever reading the entries.
